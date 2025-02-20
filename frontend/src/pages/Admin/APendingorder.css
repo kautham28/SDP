@@ -1,0 +1,93 @@
+.admin-layout {
+  display: flex;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 50px;
+  margin-left: 500px;
+  margin-bottom: 16px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.search-bar input {
+  padding: 10px;
+  width: 250px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-bar button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #003f4f;
+  color: white;
+  cursor: pointer;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #a4d5de;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: 20px;
+  table-layout: fixed;
+}
+
+.orders-table th, .orders-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.orders-table th {
+  background-color: #003f4f;
+  color: white;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+button {
+  padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: 20px;
+    display: inline-block;
+}
+
+button.view {
+  background-color: transparent;
+  color: #3498db;
+}
+
+button.confirm {
+  background-color: transparent;
+  color: #278a50;
+}
+
+button.delete {
+  background-color: transparent;
+  color: #e74c3c;
+}

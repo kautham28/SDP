@@ -1,0 +1,24 @@
+/* Footer Styling */
+.footer {
+  position: fixed;  /* Fixes the footer at the bottom */
+  bottom: 0;
+  left: 0;
+  width: 100%;     /* Full width */
+  height: 50px;    /* Footer height */
+  background-color:  #2A8E9E; /* Footer background color */
+  color: white;    /* Text color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2); /* Adds shadow above footer */
+  z-index: 1000; /* Ensures footer is above other elements */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer {
+    font-size: 0.9rem;
+  }
+}

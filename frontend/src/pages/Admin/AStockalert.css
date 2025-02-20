@@ -1,0 +1,102 @@
+/* Full Page Layout for Stock Alert */
+.stock-alert-full-page {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    background-color:rgb(201, 239, 234);
+  }
+  
+  /* Sidebar and Content Area Layout */
+  
+  
+  /* Page Title for Stock Alert */
+  .stock-alert-page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 60px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Search Filters Row for Stock Alert */
+  .stock-alert-search-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .stock-alert-search-input {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+  
+  .stock-alert-search-button,
+  .stock-alert-report-button {
+    padding: 12px 24px;
+    background-color: #003f4f; /* Blue color */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .stock-alert-search-button:hover,
+  .stock-alert-report-button:hover {
+    background-color: #218838;
+  }
+  
+  /* Table Styles for Stock Alert */
+  .stock-alert-table {
+    width: 100%;
+    max-width: 1200px;
+    border-collapse: collapse;
+    background: #a4d5de;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 20px;
+    table-layout: fixed;
+  }
+  
+  .stock-alert-table th,
+  .stock-alert-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .stock-alert-table th {
+    background-color: #003f4f;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .stock-alert-table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  /* Conditional Row Styling for Low Stock */
+  .stock-alert-low-stock {
+    background-color: rgba(228, 99, 99, 0.7); /* Light red */
+  }
+  
+  /* Conditional Row Styling for High Stock */
+  .stock-alert-high-stock {
+    background-color: #a4d5de; /* Light blue */
+  }
+  
+  /* Stock Quantity Styling */
+  .stock-alert-low-quantity {
+    color: red;
+    font-weight: bold;
+  }
+  
+  /* Sidebar styles (assumed based on the import of ASidebar) */
+  
+  

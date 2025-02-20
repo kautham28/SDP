@@ -1,0 +1,74 @@
+/* General layout for the route details page */
+.route-details-full-page {
+    display: flex;
+}
+
+.content {
+    flex-grow: 1;
+    margin-left: 250px;
+    padding: 20px;
+}
+
+/* Title */
+.route-details-page-title {
+    size: 35px;
+    margin-top: 65px;
+    margin-bottom: 20px;
+    margin-left: 500px;
+}
+
+.route-details-page-title h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Search filters section */
+.route-details-search-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.route-details-search-input {
+    padding: 8px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.route-details-search-button,
+.route-details-report-button,
+.route-details-make-route-button {
+    padding: 8px 15px;
+    background-color: #003f4f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.route-details-search-button:hover,
+.route-details-report-button:hover,
+.route-details-make-route-button:hover {
+    background-color: #0056b3;
+}
+
+/* Table styles */
+.route-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #a4d5de; /* Applied to the entire table */
+}
+
+.route-details-table th,
+.route-details-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.route-details-table th {
+    background-color: #003f4f;
+    color: white;
+}
