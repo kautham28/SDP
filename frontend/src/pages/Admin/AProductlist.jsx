@@ -110,6 +110,14 @@ const AProductlist = () => {
     }
   };
 
+  const filteredProducts = products.filter((product) => {
+    return (
+      product.Name.toLowerCase().includes(nameSearch.toLowerCase()) &&
+      product.ExpiryDate.includes(expirySearch) &&
+      product.BatchNumber.toLowerCase().includes(batchSearch.toLowerCase())
+    );
+  });
+
   return (
     <div className="ap-dashboard-container">
       <ASidebar />
@@ -129,7 +137,7 @@ const AProductlist = () => {
           <div className="ap-table-container">
             {loading ? (
               <p className="ap-loading">Loading products...</p>
-            ) : products.length === 0 ? (
+            ) : filteredProducts.length === 0 ? (
               <p className="ap-no-products">No products available</p>
             ) : (
               <table className="ap-product-table">
@@ -146,7 +154,7 @@ const AProductlist = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product) => (
+                  {filteredProducts.map((product) => (
                     <tr key={product.ProductID}>
                       <td>{product.ProductID}</td>
                       <td>{product.Name}</td>
