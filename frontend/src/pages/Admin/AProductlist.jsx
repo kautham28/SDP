@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ASidebar from "../../components/Admin/ASidebar";
 import ANavbar from "../../components/Admin/ANavbar";
-import { Trash, Eye, Edit } from 'lucide-react'; // Import Lucide React icons
-import "./AProductlist.css"; // Updated styles
+import { Trash, Eye, Edit } from 'lucide-react';
+import "./AProductlist.css";
 
 const AProductlist = () => {
   const [products, setProducts] = useState([]);
@@ -11,20 +11,27 @@ const AProductlist = () => {
   const [expirySearch, setExpirySearch] = useState("");
   const [batchSearch, setBatchSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showPopup, setShowPopup] = useState(false); // State to manage popup visibility
+  const [showPopup, setShowPopup] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showViewPopup, setShowViewPopup] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
     Name: "",
     BatchNumber: "",
     ExpiryDate: "",
-    Quantity: 0,
-    UnitPrice: 0,
+    Quantity: "",
+    UnitPrice: "",
   });
 
   useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = () => {
     axios
       .get("http://localhost:5000/api/admin/products")
       .then((response) => {
-        console.log("Products received:", response.data);
         setProducts(response.data);
         setLoading(false);
       })
@@ -32,18 +39,8 @@ const AProductlist = () => {
         console.error("Error fetching products:", error);
         setLoading(false);
       });
-  }, []);
+  };
 
-  // Filter products based on search inputs
-  const filteredData = products.filter((product) => {
-    return (
-      (product.Name.toLowerCase().includes(nameSearch.toLowerCase()) || !nameSearch) &&
-      (product.ExpiryDate.includes(expirySearch) || !expirySearch) &&
-      (product.BatchNumber.toLowerCase().includes(batchSearch.toLowerCase()) || !batchSearch)
-    );
-  });
-
-  // Handle new product form changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prevProduct) => ({
@@ -52,20 +49,65 @@ const AProductlist = () => {
     }));
   };
 
-  // Handle form submission
+  const handleSearchSelect = (product) => {
+    setNewProduct({
+      Name: product.Name,
+      BatchNumber: product.BatchNumber,
+      ExpiryDate: product.ExpiryDate,
+      Quantity: product.Quantity,
+      UnitPrice: product.UnitPrice,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:5000/api/admin/products", newProduct)
-      .then((response) => {
-        console.log("New product added:", response.data);
-        setProducts([...products, response.data]); // Add the new product to the state
-        setShowPopup(false); // Close the popup
-        setNewProduct({ Name: "", BatchNumber: "", ExpiryDate: "", Quantity: 0, UnitPrice: 0 }); // Clear form
+    const url = editMode
+      ? `http://localhost:5000/api/admin/products/${selectedProduct.ProductID}`
+      : "http://localhost:5000/api/admin/products";
+    const method = editMode ? "put" : "post";
+
+    axios[method](url, newProduct)
+      .then(() => {
+        setShowPopup(false);
+        setShowSuccessPopup(true);
+        setNewProduct({ Name: "", BatchNumber: "", ExpiryDate: "", Quantity: "", UnitPrice: "" });
+        setEditMode(false);
+        setSelectedProduct(null);
+        fetchProducts();
       })
       .catch((error) => {
-        console.error("Error adding product:", error);
+        console.error("Error adding/updating product:", error);
       });
+  };
+
+  const handleSuccessPopupClose = () => {
+    setShowSuccessPopup(false);
+    fetchProducts();
+  };
+
+  const handleView = (product) => {
+    setSelectedProduct(product);
+    setShowViewPopup(true);
+  };
+
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
+    setNewProduct(product);
+    setEditMode(true);
+    setShowPopup(true);
+  };
+
+  const handleDelete = (productID) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      axios
+        .delete(`http://localhost:5000/api/admin/products/${productID}`)
+        .then(() => {
+          fetchProducts();
+        })
+        .catch((error) => {
+          console.error("Error deleting product:", error);
+        });
+    }
   };
 
   return (
@@ -76,39 +118,18 @@ const AProductlist = () => {
         <div className="ap-product-list-container">
           <h2 className="ap-heading">Product List</h2>
 
-          {/* Search and Generate Button Section */}
           <div className="ap-search-section">
-            <input
-              type="text"
-              className="ap-search-input"
-              placeholder="Search by Name"
-              value={nameSearch}
-              onChange={(e) => setNameSearch(e.target.value)}
-            />
-            <input
-              type="text"
-              className="ap-search-input"
-              placeholder="Search by Expiry Date"
-              value={expirySearch}
-              onChange={(e) => setExpirySearch(e.target.value)}
-            />
-            <input
-              type="text"
-              className="ap-search-input"
-              placeholder="Search by Batch Number"
-              value={batchSearch}
-              onChange={(e) => setBatchSearch(e.target.value)}
-            />
+            <input type="text" className="ap-search-input" placeholder="Search by Name" value={nameSearch} onChange={(e) => setNameSearch(e.target.value)} />
+            <input type="text" className="ap-search-input" placeholder="Search by Expiry Date" value={expirySearch} onChange={(e) => setExpirySearch(e.target.value)} />
+            <input type="text" className="ap-search-input" placeholder="Search by Batch Number" value={batchSearch} onChange={(e) => setBatchSearch(e.target.value)} />
             <button className="ap-generate-button">Generate Report</button>
-            {/* Add New Medicine Button */}
             <button className="ap-add-medicine-button" onClick={() => setShowPopup(true)}>Add New Medicine</button>
           </div>
 
-          {/* Table */}
           <div className="ap-table-container">
             {loading ? (
               <p className="ap-loading">Loading products...</p>
-            ) : filteredData.length === 0 ? (
+            ) : products.length === 0 ? (
               <p className="ap-no-products">No products available</p>
             ) : (
               <table className="ap-product-table">
@@ -125,7 +146,7 @@ const AProductlist = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((product) => (
+                  {products.map((product) => (
                     <tr key={product.ProductID}>
                       <td>{product.ProductID}</td>
                       <td>{product.Name}</td>
@@ -135,15 +156,9 @@ const AProductlist = () => {
                       <td>${product.UnitPrice.toFixed(2)}</td>
                       <td>${product.TotalPrice.toFixed(2)}</td>
                       <td>
-                        <button className="ap-action-button">
-                          <Eye size={18} /> {/* View Icon */}
-                        </button>
-                        <button className="ap-action-button">
-                          <Edit size={18} /> {/* Edit Icon */}
-                        </button>
-                        <button className="ap-action-button">
-                          <Trash size={18} /> {/* Delete Icon */}
-                        </button>
+                        <button className="ap-action-button" onClick={() => handleView(product)}><Eye size={18} /></button>
+                        <button className="ap-action-button" onClick={() => handleEdit(product)}><Edit size={18} /></button>
+                        <button className="ap-action-button" onClick={() => handleDelete(product.ProductID)}><Trash size={18} /></button>
                       </td>
                     </tr>
                   ))}
@@ -154,67 +169,43 @@ const AProductlist = () => {
         </div>
       </div>
 
-      {/* Popup Form */}
       {showPopup && (
         <div className="ap-popup-overlay">
           <div className="ap-popup-container">
-            <h3>Add New Product</h3>
+            <h3>{editMode ? "Edit Product" : "Add New Product"}</h3>
             <form onSubmit={handleSubmit}>
-              <div className="ap-form-group">
-                <label>Product Name</label>
-                <input
-                  type="text"
-                  name="Name"
-                  value={newProduct.Name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="ap-form-group">
-                <label>Batch Number</label>
-                <input
-                  type="text"
-                  name="BatchNumber"
-                  value={newProduct.BatchNumber}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="ap-form-group">
-                <label>Expiry Date</label>
-                <input
-                  type="date"
-                  name="ExpiryDate"
-                  value={newProduct.ExpiryDate}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="ap-form-group">
-                <label>Quantity</label>
-                <input
-                  type="number"
-                  name="Quantity"
-                  value={newProduct.Quantity}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="ap-form-group">
-                <label>Unit Price</label>
-                <input
-                  type="number"
-                  name="UnitPrice"
-                  value={newProduct.UnitPrice}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="ap-form-actions">
-                <button type="submit" className="ap-submit-button">Submit</button>
-                <button type="button" className="ap-cancel-button" onClick={() => setShowPopup(false)}>Cancel</button>
-              </div>
+              <input type="text" name="Name" value={newProduct.Name} onChange={handleInputChange} required placeholder="Product Name" />
+              <input type="text" name="BatchNumber" value={newProduct.BatchNumber} onChange={handleInputChange} required placeholder="Batch Number" />
+              <input type="date" name="ExpiryDate" value={newProduct.ExpiryDate} onChange={handleInputChange} required />
+              <input type="number" name="Quantity" value={newProduct.Quantity} onChange={handleInputChange} required placeholder="Quantity" />
+              <input type="number" name="UnitPrice" value={newProduct.UnitPrice} onChange={handleInputChange} required placeholder="Unit Price" />
+              <button type="submit">{editMode ? "Update" : "Submit"}</button>
+              <button type="button" onClick={() => setShowPopup(false)}>Cancel</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showSuccessPopup && (
+        <div className="ap-popup-overlay">
+          <div className="ap-popup-container">
+            <h3>Product {editMode ? "Updated" : "Added"} Successfully</h3>
+            <button onClick={handleSuccessPopupClose}>OK</button>
+          </div>
+        </div>
+      )}
+
+      {showViewPopup && selectedProduct && (
+        <div className="ap-popup-overlay">
+          <div className="ap-popup-container">
+            <h3>Product Details</h3>
+            <p><strong>Name:</strong> {selectedProduct.Name}</p>
+            <p><strong>Batch Number:</strong> {selectedProduct.BatchNumber}</p>
+            <p><strong>Expiry Date:</strong> {new Date(selectedProduct.ExpiryDate).toLocaleDateString("en-GB")}</p>
+            <p><strong>Quantity:</strong> {selectedProduct.Quantity}</p>
+            <p><strong>Unit Price:</strong> ${selectedProduct.UnitPrice.toFixed(2)}</p>
+            <p><strong>Total Price:</strong> ${selectedProduct.TotalPrice.toFixed(2)}</p>
+            <button onClick={() => setShowViewPopup(false)}>Close</button>
           </div>
         </div>
       )}

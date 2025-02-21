@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
-const productRoutes = require("./routes/productRoutes"); // New route for products
+const productRoutes = require("./routes/productRoutes"); // Import product routes
 
 const app = express();
 app.use(cors());
