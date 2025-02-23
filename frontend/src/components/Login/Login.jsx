@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css";
+import logo from "../../assets/logo.png"; // Adjust the path as needed
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -38,7 +39,9 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <img src={logo} alt="RAM Medical Logo" />
+      <h2>Welcome to RAM Medical</h2>
+      <h3>Please login to continue</h3>
       <form onSubmit={handleLogin}>
         <div>
           <label>Username:</label>
