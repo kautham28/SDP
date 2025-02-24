@@ -21,6 +21,11 @@
   gap: 15px;
   margin-bottom: 20px;
   align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: rgb(201, 239, 234);
+  z-index: 1;
+  padding: 10px 0;
 }
 
 .search-bar input {
@@ -30,13 +35,9 @@
   border-radius: 4px;
 }
 
-.search-bar button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #003f4f;
-  color: white;
-  cursor: pointer;
+.table-container {
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .orders-table {
@@ -58,6 +59,25 @@
 .orders-table th {
   background-color: #003f4f;
   color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.orders-table tbody tr:nth-child(odd) {
+  background-color: #e6f7ff;
+}
+
+.orders-table tbody tr:nth-child(even) {
+  background-color: #cce7f0;
+}
+
+.orders-table th:nth-child(1), .orders-table td:nth-child(1) {
+  width: 10%;
+}
+
+.orders-table th:nth-child(2), .orders-table td:nth-child(2) {
+  width: 30%;
 }
 
 .action-buttons {
@@ -68,13 +88,13 @@
 
 button {
   padding: 0;
-    margin: 0;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: inherit;
-    font-size: 20px;
-    display: inline-block;
+  margin: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 20px;
+  display: inline-block;
 }
 
 button.view {
