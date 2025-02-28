@@ -49,4 +49,28 @@ router.delete("/:id", (req, res) => {
   });
 });
 
+// Get products expiring within 60 days
+router.get("/expiring-soon", (req, res) => {
+  const sql = "SELECT * FROM products WHERE ExpiryDate <= DATE_ADD(CURDATE(), INTERVAL 60 DAY)";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching products:", err);
+      return res.status(500).json({ error: "Database query error" });
+    }
+    res.json(results);
+  });
+});
+
+router.get("/low-stock", (req, res) => {
+  const sql = "SELECT * FROM products WHERE Quantity < 100";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching products:", err);
+      return res.status(500).json({ error: "Database query error" });
+    }
+    res.json(results);
+  });
+});
+
+
 module.exports = router;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ASidebar from '../../components/Admin/ASidebar';
 import ANavbar from '../../components/Admin/ANavbar';
 import './ARouteDetails.css';
@@ -7,14 +7,25 @@ const ARouteDetails = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [repQuery, setRepQuery] = useState('');
   const [dateQuery, setDateQuery] = useState('');
-  const [routeData, setRouteData] = useState([
-    // Sample data (Replace with real data)
-    { id: 1, rep: 'Rep A', majorArea: 'Area 1', date: '2025-03-01' },
-    { id: 2, rep: 'Rep B', majorArea: 'Area 2', date: '2025-04-15' },
-    { id: 3, rep: 'Rep C', majorArea: 'Area 3', date: '2025-06-20' },
-    { id: 4, rep: 'Rep D', majorArea: 'Area 4', date: '2025-02-28' },
-    { id: 5, rep: 'Rep E', majorArea: 'Area 5', date: '2025-05-10' },
-  ]);
+  const [routeData, setRouteData] = useState([]);
+  
+  useEffect(() => {
+    fetch('http://localhost:5000/api/routes') // Ensure you are pointing to the correct API endpoint
+      .then((response) => {
+        console.log('Response:', response); // This is useful for debugging
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Fetched route data:', data); // Log the data to check what you get
+        setRouteData(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching route data:', error);
+      });
+  }, []);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -45,19 +56,15 @@ const ARouteDetails = () => {
 
   return (
     <div className="route-details-full-page">
-      {/* Sidebar */}
       <ASidebar />
 
       <div className="content">
-        {/* Navbar */}
         <ANavbar />
 
-        {/* Page Content */}
         <div className="route-details-page-title">
           <h1>Route Details</h1>
         </div>
 
-        {/* Search Filters Row */}
         <div className="route-details-search-container">
           <input
             className="route-details-search-input"
@@ -100,25 +107,30 @@ const ARouteDetails = () => {
           </button>
         </div>
 
-        {/* Table */}
         <table className="route-details-table">
           <thead>
             <tr>
               <th>Route ID</th>
-              <th>Rep Name</th> {/* Added Rep Name column */}
+              <th>Rep Name</th>
               <th>Rep Major Area</th>
               <th>Date</th>
             </tr>
           </thead>
           <tbody>
-            {routeData.map((route) => (
-              <tr key={route.id}>
-                <td>{route.id}</td>
-                <td>{route.rep}</td> {/* Added Rep Name in table */}
-                <td>{route.majorArea}</td>
-                <td>{route.date}</td>
+            {routeData.length > 0 ? (
+              routeData.map((route) => (
+                <tr key={route.RouteID}>
+                  <td>{route.RouteID}</td>
+                  <td>{route.RepName}</td>
+                  <td>{route.RouteArea}</td>
+                  <td>{new Date(route.RouteDate).toLocaleDateString()}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4">No routes found</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

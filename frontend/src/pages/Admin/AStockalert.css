@@ -1,102 +1,127 @@
-/* Full Page Layout for Stock Alert */
+/* Stock Alert Page Layout */
 .stock-alert-full-page {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    background-color:rgb(201, 239, 234);
-  }
-  
-  /* Sidebar and Content Area Layout */
-  
-  
-  /* Page Title for Stock Alert */
-  .stock-alert-page-title {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #333;
-    margin-top: 60px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  /* Search Filters Row for Stock Alert */
-  .stock-alert-search-container {
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .stock-alert-search-input {
-    width: 200px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 15px;
-  }
-  
-  .stock-alert-search-button,
-  .stock-alert-report-button {
-    padding: 12px 24px;
-    background-color: #003f4f; /* Blue color */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .stock-alert-search-button:hover,
-  .stock-alert-report-button:hover {
-    background-color: #218838;
-  }
-  
-  /* Table Styles for Stock Alert */
-  .stock-alert-table {
-    width: 100%;
-    max-width: 1200px;
-    border-collapse: collapse;
-    background: #a4d5de;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-top: 20px;
-    table-layout: fixed;
-  }
-  
-  .stock-alert-table th,
-  .stock-alert-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .stock-alert-table th {
-    background-color: #003f4f;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .stock-alert-table tr:hover {
-    background-color: #f9f9f9;
-  }
-  
-  /* Conditional Row Styling for Low Stock */
-  .stock-alert-low-stock {
-    background-color: rgba(228, 99, 99, 0.7); /* Light red */
-  }
-  
-  /* Conditional Row Styling for High Stock */
-  .stock-alert-high-stock {
-    background-color: #a4d5de; /* Light blue */
-  }
-  
-  /* Stock Quantity Styling */
-  .stock-alert-low-quantity {
-    color: red;
-    font-weight: bold;
-  }
-  
-  /* Sidebar styles (assumed based on the import of ASidebar) */
-  
-  
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  background-color: rgb(201, 239, 234);
+}
+
+/* Page Title */
+.stock-alert-page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #003f4f;
+  margin-top: 50px;
+  text-align: center;
+}
+
+/* Search Section */
+.stock-alert-search-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stock-alert-search-input {
+  width: 220px;
+  padding: 10px;
+  border: 1px solid #003f4f;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.stock-alert-search-button,
+.stock-alert-report-button {
+  padding: 12px 24px;
+  background-color: #003f4f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.stock-alert-search-button:hover,
+.stock-alert-report-button:hover {
+  background-color: #1f077a;
+}
+
+/* Table Container */
+.stock-alert-table-container {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgb(201, 239, 234);
+  max-width: calc(100vw - 280px);
+}
+
+/* Table Styles */
+.stock-alert-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #a4d5de;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.stock-alert-table thead {
+  background-color: #003f4f;
+  color: white;
+}
+
+.stock-alert-table th {
+  position: sticky;
+  top: 0;
+  background-color: #003f4f;
+  z-index: 10;
+  padding: 10px;
+}
+
+.stock-alert-table tbody tr:nth-child(odd) {
+  background-color: #e6f7ff;
+}
+
+.stock-alert-table tbody tr:nth-child(even) {
+  background-color: #cce7f0;
+}
+
+.stock-alert-table th,
+.stock-alert-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  word-wrap: break-word;
+}
+
+/* Column Styling */
+.stock-alert-table td.stock-low {
+  color: red;
+  font-weight: bold;
+}
+
+.stock-alert-low-stock {
+  background-color: rgba(228, 99, 99, 0.7);
+}
+
+.stock-alert-high-stock {
+  background-color: #a4d5de;
+}
+
+/* Scrollbar */
+.stock-alert-table-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.stock-alert-table-container::-webkit-scrollbar-thumb {
+  background-color: #003f4f;
+  border-radius: 4px;
+}
+
+.stock-alert-table-container::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+}
