@@ -20,6 +20,11 @@ const AExpiryalert = () => {
     fetchExpiringProducts();
   }, []);
 
+  const handleReturn = (productId) => {
+    console.log('Return product with ID:', productId);
+    // You can add logic for returning the product here
+  };
+
   return (
     <div className="admin-layout">
       <ASidebar />
@@ -40,7 +45,7 @@ const AExpiryalert = () => {
                 <th>Batch Number</th>
                 <th>Quantity</th>
                 <th>Days to Expiry</th>
-                <th>Total Value</th>
+                <th>Action</th> {/* Added Action column */}
               </tr>
             </thead>
             <tbody>
@@ -54,7 +59,9 @@ const AExpiryalert = () => {
                     <td className="days-to-expiry">
                       {daysToExpiry}
                     </td>
-                    <td>{item.TotalValue}</td>
+                    <td>
+                      <button className="return-button" onClick={() => handleReturn(item.ID)}>Return</button> {/* Return button */}
+                    </td>
                   </tr>
                 );
               })}

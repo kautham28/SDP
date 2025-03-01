@@ -1,74 +1,156 @@
-/* General layout for the route details page */
-.route-details-full-page {
+/* Main Content */
+.route-details-page-container {
     display: flex;
+    height: 100vh;
 }
 
-.content {
+.route-details-main-content {
     flex-grow: 1;
-    margin-left: 250px;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
+    overflow-y: auto;
+    margin-left: 250px; /* Make space for the sidebar */
 }
 
-/* Title */
-.route-details-page-title {
-    size: 35px;
-    margin-top: 65px;
-    margin-bottom: 20px;
-    margin-left: 500px;
+.route-details-header {
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 70px;
 }
 
-.route-details-page-title h1 {
-    font-size: 24px;
+.route-details-header h1 {
+    font-size: 26px;
+    color: #34495e;
     font-weight: bold;
 }
 
-/* Search filters section */
-.route-details-search-container {
+/* Filters Section */
+.route-details-filters {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
     gap: 15px;
+    padding: 15px;
+    background: rgb(201, 239, 234);
+    border-radius: 8px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
-.route-details-search-input {
-    padding: 8px;
-    width: 200px;
-    border: 1px solid #ccc;
+.route-details-input {
+    padding: 12px;
+    border: 1px solid #bdc3c7;
     border-radius: 5px;
+    font-size: 14px;
+    width: 200px;
+    transition: 0.3s;
 }
 
+.route-details-input:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0px 0px 5px rgba(41, 128, 185, 0.5);
+}
+
+/* Search Button Styles */
 .route-details-search-button,
 .route-details-report-button,
 .route-details-make-route-button {
-    padding: 8px 15px;
-    background-color: #003f4f;
+    padding: 12px 20px;
+    background-color: #003f4f; /* Updated color */
     color: white;
     border: none;
     border-radius: 5px;
+    font-size: 14px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
 }
 
 .route-details-search-button:hover,
 .route-details-report-button:hover,
 .route-details-make-route-button:hover {
-    background-color: #0056b3;
+    background-color: #3498db;
 }
 
-/* Table styles */
+/* Table Section */
+.route-details-table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 250px);  /* Ensures table takes full width, excluding sidebar */
+    margin-left: 250px;  /* Leave space for sidebar */
+}
+
 .route-details-table {
-    width: 100%;
+    width: 1200px; /* Set a fixed width */
     border-collapse: collapse;
-    background-color: #a4d5de; /* Applied to the entire table */
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.route-details-table th {
+    background-color: #003f4f; /* Updated color */
+    color: white;
 }
 
 .route-details-table th,
 .route-details-table td {
     padding: 12px;
     text-align: left;
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
-.route-details-table th {
-    background-color: #003f4f;
-    color: white;
+/* Alternating Row Colors */
+.route-details-table tr:nth-child(odd) {
+    background-color:  #e6f7ff; /* Light gray for odd rows */
+}
+
+.route-details-table tr:nth-child(even) {
+    background-color: #cce7f0; /* White for even rows */
+}
+
+.route-details-table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+/* Eye Icon Button */
+.route-details-view-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.route-details-view-button:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .route-details-page-container {
+        flex-direction: column;
+    }
+
+    .route-details-filters {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .route-details-input {
+        width: 100%;
+    }
+
+    /* Adjust the table container for mobile */
+    .route-details-table-container {
+        margin-left: 0; /* Reset margin for mobile */
+        width: 100%; /* Take full width on small screens */
+    }
 }

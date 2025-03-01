@@ -61,7 +61,7 @@
 
 /* Table Styles */
 .stock-alert-table {
-  width: 100%;
+  width: 1200px;
   border-collapse: collapse;
   background: #a4d5de;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
