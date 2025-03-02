@@ -1,47 +1,48 @@
-.admin-layout {
+/* General Layout */
+.admin-layout-pending {
   display: flex;
 }
 
-.content {
+.content-pending {
   flex-grow: 1;
   padding: 20px;
   margin-left: 250px; /* Adjust this value based on the width of your sidebar */
 }
 
-.page-title {
-  font-size: 2.2rem;
-  font-weight: 600;
-  color: #333;
-  margin-top: 50px;
-  margin-bottom: 16px;
+.page-title-pending {
+  text-align: center;
+  font-size: 40px;
+  color: #003f4f;
+  margin-top: 95px;
+  margin-bottom: 40px;
+  font-weight: bold;
 }
 
-.search-bar {
+/* Search Bar */
+.search-bar-pending {
   display: flex;
-  gap: 15px;
+  gap: 10px;
+  justify-content: center;
   margin-bottom: 20px;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  background-color: rgb(201, 239, 234);
-  z-index: 1;
-  padding: 10px 0;
 }
 
-.search-bar input {
-  padding: 10px;
-  width: 250px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
+.search-bar-pending input {
+  padding: 8px;
+  border: 1px solid #0f0b21;
+  border-radius: 5px;
+  width: 200px;
 }
 
-.table-container {
+/* Table Container */
+.table-container-pending {
   max-height: 500px;
   overflow-y: auto;
-  margin-top: 20px;
+  margin-top: 0px;
+  padding-top: 60px; /* Space to prevent table content from being hidden by fixed elements */
 }
 
-.orders-table {
+/* Orders Table */
+.orders-table-pending {
   width: 100%;
   border-collapse: collapse;
   background: #a4d5de;
@@ -50,37 +51,41 @@
   table-layout: fixed;
 }
 
-.orders-table th, .orders-table td {
+.orders-table-pending th, .orders-table-pending td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: left;
 }
 
-.orders-table th {
+/* Fixed Table Header */
+.orders-table-pending th {
   background-color: #003f4f;
   color: white;
   position: sticky;
-  top: 0;
+  top: 0;  /* Stick the header to the top of the table */
   z-index: 1;
 }
 
-.orders-table tbody tr:nth-child(odd) {
+/* Styling for table rows */
+.orders-table-pending tbody tr:nth-child(odd) {
   background-color: #e6f7ff;
 }
 
-.orders-table tbody tr:nth-child(even) {
+.orders-table-pending tbody tr:nth-child(even) {
   background-color: #cce7f0;
 }
 
-.orders-table th:nth-child(1), .orders-table td:nth-child(1) {
+/* Column Width */
+.orders-table-pending th:nth-child(1), .orders-table-pending td:nth-child(1) {
   width: 10%;
 }
 
-.orders-table th:nth-child(2), .orders-table td:nth-child(2) {
+.orders-table-pending th:nth-child(2), .orders-table-pending td:nth-child(2) {
   width: 30%;
 }
 
-.action-buttons {
+/* Action Buttons */
+.action-buttons-pending {
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -97,17 +102,17 @@ button {
   display: inline-block;
 }
 
-button.view {
+button.view-pending {
   background-color: transparent;
   color: #3498db;
 }
 
-button.confirm {
+button.confirm-pending {
   background-color: transparent;
   color: #278a50;
 }
 
-button.delete {
+button.delete-pending {
   background-color: transparent;
   color: #e74c3c;
 }

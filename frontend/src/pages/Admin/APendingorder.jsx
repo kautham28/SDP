@@ -49,21 +49,21 @@ const APendingorder = () => {
   }, [searchPharmacyName, searchRepName, searchDate, orders]);
 
   return (
-    <div className="admin-layout">
+    <div className="admin-layout-pending">
       <ASidebar />
-      <div className="content">
+      <div className="content-pending">
         <ANavbar />
-        <div className="page-content">
-          <h1 className="page-title">Pending Orders</h1>
+        <div className="page-content-pending">
+          <h1 className="page-title-pending">Pending Orders</h1>
           
-          <div className="search-bar">
+          <div className="search-bar-pending">
             <input type="text" placeholder="Search by Pharmacy Name" onChange={handleSearchPharmacyNameChange} />
             <input type="text" placeholder="Search by Rep Name" onChange={handleSearchRepNameChange} />
             <input type="date" placeholder="Search by Date" onChange={handleSearchDateChange} />
           </div>
 
-          <div className="table-container">
-            <table className="orders-table">
+          <div className="table-container-pending">
+            <table className="orders-table-pending">
               <thead>
                 <tr>
                   <th>Order ID</th>
@@ -82,10 +82,10 @@ const APendingorder = () => {
                     <td>{order.rep_name}</td>
                     <td>${order.total_value}</td>
                     <td>{new Date(order.order_date).toLocaleDateString()}</td>
-                    <td className="action-buttons">
-                      <button className="view"><Eye size={20} /></button>
-                      <button className="confirm"><Check size={20} /></button>
-                      <button className="delete"><Trash2 size={20} /></button>
+                    <td className="action-buttons-pending">
+                      <button className="view-pending"><Eye size={20} /></button>
+                      <button className="confirm-pending"><Check size={20} /></button>
+                      <button className="delete-pending"><Trash2 size={20} /></button>
                     </td>
                   </tr>
                 ))}
