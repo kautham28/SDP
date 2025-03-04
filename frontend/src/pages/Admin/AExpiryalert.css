@@ -1,127 +1,137 @@
-/* Table Styles */
-.expiry-table {
-  width: 1200px;
-  border-collapse: collapse;
-  background: #a4d5de;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-top: 20px;
+/* Admin Layout */
+.admin-layout {
+  display: flex;
+  height: 100vh;
 }
 
-.expiry-table thead {
+.admin-content {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* Expiry Alert Section */
+.expiry-alert-content {
+  padding: 20px;
+}
+
+.expiry-alert-title {
+  text-align: center;
+  font-size: 40px;
+  color: #003f4f;
+  margin-top: 50px;
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+/* Search & Report Buttons */
+.expiry-alert-search-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.expiry-alert-search-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.expiry-alert-search-input {
+  padding: 8px;
+  border: 1px solid #0f0b21;
+  border-radius: 5px;
+  width: 200px;
+}
+
+.expiry-alert-search-button,
+.expiry-alert-report-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
   background-color: #003f4f;
   color: white;
 }
 
-.expiry-table th {
-  position: sticky;
-  top: 0;
-  background-color: #003f4f;
-  z-index: 10;
+.expiry-alert-search-button:hover,
+.expiry-alert-report-button:hover {
+  background-color: #1f077a;
+}
+
+/* Expiry Alert Table */
+.expiry-alert-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.expiry-alert-table th,
+.expiry-alert-table td {
   padding: 10px;
-}
-
-.expiry-table tbody tr:nth-child(odd) {
-  background-color: #e6f7ff;
-}
-
-.expiry-table tbody tr:nth-child(even) {
-  background-color: #cce7f0;
-}
-
-.expiry-table th,
-.expiry-table td {
-  padding: 10px;
-  text-align: left;
   border: 1px solid #ddd;
-  word-wrap: break-word;
-}
-
-/* Column Styling */
-.expiry-table td.days-to-expiry {
-  color: red;
-}
-
-.expiry-low-stock {
-  background-color: rgba(228, 99, 99, 0.7);
-}
-
-.expiry-high-stock {
-  background-color: #a4d5de;
-}
-
-/* Action Column */
-.expiry-table th:last-child,
-.expiry-table td:last-child {
+  white-space: nowrap;
   text-align: center;
 }
 
-.return-button {
+.expiry-alert-table th {
   background-color: #003f4f;
   color: white;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Make Medicine Name column wider */
+.expiry-alert-table th:nth-child(1),
+.expiry-alert-table td:nth-child(1) {
+  width: 20%; /* Adjust this percentage as per your preference */
+}
+
+.expiry-alert-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #003f4f;
+  color: white;
+  z-index: 2;
+}
+
+/* Alternating Row Colors */
+.expiry-alert-table tbody tr:nth-child(odd) {
+  background-color: #e6f7ff;
+}
+
+.expiry-alert-table tbody tr:nth-child(even) {
+  background-color: #cce7f0;
+}
+
+/* Expiry Date Alert */
+.expiry-alert-days-to-expiry {
+  color: red;
   font-weight: bold;
 }
 
-.return-button:hover {
-  background-color: #1f077a;
+/* Stock Level Colors */
+.expiry-alert-low-stock {
+  background-color: rgba(228, 99, 99, 0.7);
 }
 
-/* Scrollbar */
-.expiry-table-container::-webkit-scrollbar {
-  width: 5px;
-}
-
-.expiry-table-container::-webkit-scrollbar-thumb {
-  background-color: #003f4f;
-  border-radius: 4px;
-}
-
-.expiry-table-container::-webkit-scrollbar-track {
-  background-color: #f0f0f0;
-}
-/* Search Bar Styles */
-.expiry-search-input {
-  padding: 8px;
-  border: 1px solid #3010b1;
-  border-radius: 5px;
-  width: 200px;
-  font-size: 12px; /* Minimized font size */
-}
-
-/* Button Styles */
-.expiry-search-button,
-.expiry-report-button {
-  background-color: #003f4f;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
+/* Action Button */
+.expiry-alert-return-button {
+  background-color: #3498db; /* Blue background */
+  border-color: #3498db;
   cursor: pointer;
-  font-weight: bold;
-  font-size: 12px; /* Minimized font size */
-}
-
-.expiry-search-button:hover,
-.expiry-report-button:hover {
-  background-color: #1f077a;
-}
-
-/* Return Button Styles */
-.return-button {
-  background-color: #003f4f;
+  padding: 5px 5px;
   color: white;
-  padding: 6px 12px; /* Reduced padding */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  font-size: small;
   font-weight: bold;
-  font-size: 12px; /* Minimized font size */
+  border-radius: 5px;
 }
 
-.return-button:hover {
-  background-color: #1f077a;
+.expiry-alert-return-button:hover {
+  background-color: #003f4f; /* Darker blue on hover */
 }

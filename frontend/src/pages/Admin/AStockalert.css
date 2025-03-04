@@ -1,127 +1,128 @@
-/* Stock Alert Page Layout */
-.stock-alert-full-page {
+/* New Stock Alert Page Layout */
+.new-stock-alert-wrapper {
   display: flex;
   flex-direction: row;
   height: 100vh;
-  background-color: rgb(201, 239, 234);
+  background-color: #d3f3f1;
 }
 
-/* Page Title */
-.stock-alert-page-title {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #003f4f;
+/* New Page Heading */
+.new-stock-alert-heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #004c59;
   margin-top: 50px;
   text-align: center;
 }
 
 /* Search Section */
-.stock-alert-search-container {
+.new-stock-alert-search-section {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
-.stock-alert-search-input {
-  width: 220px;
-  padding: 10px;
-  border: 1px solid #003f4f;
-  border-radius: 5px;
-  font-size: 16px;
+.new-stock-alert-search-input {
+  width: 250px;
+  padding: 12px;
+  border: 2px solid #004c59;
+  border-radius: 8px;
+  font-size: 17px;
 }
 
-.stock-alert-search-button,
-.stock-alert-report-button {
-  padding: 12px 24px;
-  background-color: #003f4f;
+.new-stock-alert-search-btn,
+.new-stock-alert-report-btn {
+  padding: 14px 26px;
+  background-color: #004c59;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 17px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.stock-alert-search-button:hover,
-.stock-alert-report-button:hover {
-  background-color: #1f077a;
+.new-stock-alert-search-btn:hover,
+.new-stock-alert-report-btn:hover {
+  background-color: #1e4b79;
 }
 
 /* Table Container */
-.stock-alert-table-container {
-  max-height: 500px;
+.new-stock-alert-table-container {
+  max-height: 520px;
   overflow-y: auto;
   overflow-x: auto;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: rgb(201, 239, 234);
-  max-width: calc(100vw - 280px);
+  padding: 12px;
+  border-radius: 12px;
+  background-color: #d3f3f1;
+  max-width: calc(100vw - 300px);
 }
 
 /* Table Styles */
-.stock-alert-table {
-  width: 1200px;
+.new-stock-alert-table {
+  width: 100%;
   border-collapse: collapse;
-  background: #a4d5de;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-top: 20px;
+  background: #b7e3e3;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-top: 25px;
 }
 
-.stock-alert-table thead {
-  background-color: #003f4f;
+.new-stock-alert-table thead {
+  background-color: #004c59;
   color: white;
 }
 
-.stock-alert-table th {
+.new-stock-alert-table th {
   position: sticky;
   top: 0;
-  background-color: #003f4f;
+  background-color: #004c59;
   z-index: 10;
-  padding: 10px;
+  padding: 14px;
 }
 
-.stock-alert-table tbody tr:nth-child(odd) {
-  background-color: #e6f7ff;
+.new-stock-alert-table tbody tr:nth-child(odd) {
+  background-color: #e1f4f6;
 }
 
-.stock-alert-table tbody tr:nth-child(even) {
-  background-color: #cce7f0;
+.new-stock-alert-table tbody tr:nth-child(even) {
+  background-color: #c4e8ec;
 }
 
-.stock-alert-table th,
-.stock-alert-table td {
-  padding: 12px;
+.new-stock-alert-table th,
+.new-stock-alert-table td {
+  padding: 14px;
   text-align: left;
   border: 1px solid #ddd;
   word-wrap: break-word;
 }
 
-/* Column Styling */
-.stock-alert-table td.stock-low {
+/* Low Stock Column Styling */
+.new-stock-alert-low {
+  background-color: rgba(255, 99, 99, 0.8);
+}
+
+.new-stock-alert-high {
+  background-color: #b7e3e3;
+}
+
+/* Low Quantity Styling */
+.new-stock-alert-low-quantity {
   color: red;
   font-weight: bold;
 }
 
-.stock-alert-low-stock {
-  background-color: rgba(228, 99, 99, 0.7);
+/* Scrollbar Styling */
+.new-stock-alert-table-container::-webkit-scrollbar {
+  width: 6px;
 }
 
-.stock-alert-high-stock {
-  background-color: #a4d5de;
+.new-stock-alert-table-container::-webkit-scrollbar-thumb {
+  background-color: #004c59;
+  border-radius: 5px;
 }
 
-/* Scrollbar */
-.stock-alert-table-container::-webkit-scrollbar {
-  width: 5px;
-}
-
-.stock-alert-table-container::-webkit-scrollbar-thumb {
-  background-color: #003f4f;
-  border-radius: 4px;
-}
-
-.stock-alert-table-container::-webkit-scrollbar-track {
+.new-stock-alert-table-container::-webkit-scrollbar-track {
   background-color: #f0f0f0;
 }

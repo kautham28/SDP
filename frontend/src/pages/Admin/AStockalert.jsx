@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ASidebar from '../../components/Admin/ASidebar';
 import ANavbar from '../../components/Admin/ANavbar';
-import './AStockalert.css';
+import './AStockAlert.css';
 import axios from 'axios';
 
-const AStockAlert = () => {
+const AStockAlertNew = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [stockData, setStockData] = useState([]);
 
@@ -26,77 +26,77 @@ const AStockAlert = () => {
   };
 
   const handleSearch = () => {
-    // Logic to filter products based on search query (if applicable)
     console.log('Search clicked:', searchQuery);
   };
 
   const handleGenerateReport = () => {
-    // Logic to generate report
     console.log('Generate Report clicked');
   };
 
   return (
-    <div className="stock-alert-full-page">
+    <div className="new-stock-alert-wrapper">
       <ASidebar />
-      <div className="content">
+      <div className="new-stock-alert-content">
         <ANavbar />
-        <div className="stock-alert-page-title">
+        <div className="new-stock-alert-heading">
           <h1>Stock Alerts</h1>
         </div>
-        <div className="stock-alert-search-container">
+        <div className="new-stock-alert-search-section">
           <input
-            className="stock-alert-search-input"
+            className="new-stock-alert-search-input"
             type="text"
             placeholder="Search products..."
             value={searchQuery}
             onChange={handleSearchChange}
           />
           <button
-            className="stock-alert-search-button"
+            className="new-stock-alert-search-btn"
             onClick={handleSearch}
           >
             Search
           </button>
           <button
-            className="stock-alert-report-button"
+            className="new-stock-alert-report-btn"
             onClick={handleGenerateReport}
           >
             Generate Report
           </button>
         </div>
-        <table className="stock-alert-table">
-          <thead>
-            <tr>
-              <th>Medicine Name</th>
-              <th>Quantity</th>
-              <th>Batch No</th>
-              <th>Expiry Date</th>
-              <th>Stock</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stockData.map((product) => {
-              const isLowStock = product.Quantity < 100;
-              return (
-                <tr
-                  key={product.ProductID}
-                  className={isLowStock ? 'stock-alert-low-stock' : 'stock-alert-high-stock'}
-                >
-                  <td>{product.Name}</td>
-                  <td>{product.Quantity}</td>
-                  <td>{product.BatchNumber}</td>
-                  <td>{product.ExpiryDate}</td>
-                  <td className={isLowStock ? 'stock-alert-low-quantity' : ''}>
-                    {product.Quantity}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="new-stock-alert-table-container">
+          <table className="new-stock-alert-table">
+            <thead>
+              <tr>
+                <th>Medicine Name</th>
+                <th>Quantity</th>
+                <th>Batch No</th>
+                <th>Expiry Date</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stockData.map((product) => {
+                const isLowStock = product.Quantity < 100;
+                return (
+                  <tr
+                    key={product.ProductID}
+                    className={isLowStock ? 'new-stock-alert-low' : 'new-stock-alert-high'}
+                  >
+                    <td>{product.Name}</td>
+                    <td>{product.Quantity}</td>
+                    <td>{product.BatchNumber}</td>
+                    <td>{product.ExpiryDate}</td>
+                    <td className={isLowStock ? 'new-stock-alert-low-quantity' : ''}>
+                      {product.Quantity}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AStockAlert;
+export default AStockAlertNew;

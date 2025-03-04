@@ -199,3 +199,30 @@
   text-align: center; /* Keep text left-aligned for readability */
   white-space: normal; /* Allow text to wrap if needed */
 }
+.ap-action-button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 8px;
+  margin: 1px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ap-action-button:hover {
+  opacity: 0.8;
+}
+
+.ap-action-button-view {
+  color: #3498db; /* Green for view */
+}
+
+.ap-action-button-edit {
+  color: #278a50; /* Orange for edit */
+}
+
+.ap-action-button-delete {
+  color: #e74c3c; /* Red for delete */
+}

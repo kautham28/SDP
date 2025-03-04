@@ -228,16 +228,17 @@ const AProductlist = () => {
                       <td>${product.UnitPrice.toFixed(2)}</td>
                       <td>${(product.UnitPrice * product.Quantity).toFixed(2)}</td>
                       <td>
-                        <button className="ap-action-button" onClick={() => handleView(product)}>
-                          <Eye size={18} />
-                        </button>
-                        <button className="ap-action-button" onClick={() => handleEdit(product)}>
+                        <button className="ap-action-button ap-action-button-view" onClick={() => handleView(product)}>
+                         <Eye size={18} />
+                         </button>
+                         <button className="ap-action-button ap-action-button-edit" onClick={() => handleEdit(product)}>
                           <Edit size={18} />
-                        </button>
-                        <button className="ap-action-button" onClick={() => handleDelete(product.ProductID)}>
-                          <Trash size={18} />
-                        </button>
-                      </td>
+                         </button>
+                         <button className="ap-action-button ap-action-button-delete" onClick={() => handleDelete(product.ProductID)}>
+                        <Trash size={18} />
+                         </button>
+                        </td>
+
                     </tr>
                   ))}
                 </tbody>
