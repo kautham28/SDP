@@ -1,70 +1,53 @@
-/* Main Content */
+/* General Layout */
 .route-details-page-container {
     display: flex;
-    height: 100vh;
 }
 
 .route-details-main-content {
     flex-grow: 1;
-    display: flex;
-    flex-direction: column;
     padding: 20px;
-    overflow-y: auto;
-    margin-left: 250px; /* Make space for the sidebar */
+    margin-left: 250px; /* Adjust based on sidebar width */
 }
 
+/* Page Title (Fixed in Place) */
 .route-details-header {
     text-align: center;
-    margin-bottom: 10px;
-    margin-top: 70px;
-}
-
-.route-details-header h1 {
-    font-size: 26px;
-    color: #34495e;
+    font-size: 20px;
+    color: #003f4f;
+    margin-top: px;
+    margin-bottom: 20px;
     font-weight: bold;
+    position: relative; /* Ensure it does not move */
 }
 
 /* Filters Section */
 .route-details-filters {
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 15px;
-    background: rgb(201, 239, 234);
-    border-radius: 8px;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 20px;
-    flex-wrap: wrap;
+    position: relative; /* Prevents shifting */
 }
 
 .route-details-input {
-    padding: 12px;
-    border: 1px solid #bdc3c7;
+    padding: 8px;
+    border: 1px solid #0f0b21;
     border-radius: 5px;
-    font-size: 14px;
     width: 200px;
-    transition: 0.3s;
-}
-
-.route-details-input:focus {
-    outline: none;
-    border-color: #2980b9;
-    box-shadow: 0px 0px 5px rgba(41, 128, 185, 0.5);
 }
 
 /* Search Button Styles */
 .route-details-search-button,
 .route-details-report-button,
 .route-details-make-route-button {
-    padding: 12px 20px;
-    background-color: #003f4f; /* Updated color */
+    padding: 10px 15px;
+    background-color: #003f4f;
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-left: 10px;
 }
 
 .route-details-search-button:hover,
@@ -73,64 +56,90 @@
     background-color: #3498db;
 }
 
-/* Table Section */
+/* Table Container */
 .route-details-table-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: calc(100% - 250px);  /* Ensures table takes full width, excluding sidebar */
-    margin-left: 250px;  /* Leave space for sidebar */
-}
-
-.route-details-table {
-    width: 1200px; /* Set a fixed width */
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 500px;
+    min-height: 500px;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    overflow: hidden;
+    width: 100%;
 }
 
+/* Table Styles */
+.route-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #a4d5de;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    table-layout: fixed;
+}
+
+/* Fixed Table Header */
 .route-details-table th {
-    background-color: #003f4f; /* Updated color */
+    background-color: #003f4f;
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    text-align: center;
+    padding: 12px;
 }
 
 .route-details-table th,
 .route-details-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
 }
 
-/* Alternating Row Colors */
-.route-details-table tr:nth-child(odd) {
-    background-color:  #e6f7ff; /* Light gray for odd rows */
+/* Alternate Row Colors */
+.route-details-table tbody tr:nth-child(odd) {
+    background-color: #e6f7ff;
 }
 
-.route-details-table tr:nth-child(even) {
-    background-color: #cce7f0; /* White for even rows */
+.route-details-table tbody tr:nth-child(even) {
+    background-color: #cce7f0;
 }
 
-.route-details-table tr:hover {
-    background-color: #f1f1f1;
-    cursor: pointer;
+/* Action Buttons */
+.action-buttons-route {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
 
-/* Eye Icon Button */
-.route-details-view-button {
-    background: none;
+button {
+    padding: 0;
+    margin: 0;
+    background: transparent;
     border: none;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    transition: background-color 0.3s ease;
+    color: inherit;
+    font-size: 20px;
+    display: inline-block;
 }
 
-.route-details-view-button:hover {
-    background-color: #f1f1f1;
+button.view-route {
+    background-color: transparent;
+    color: #3498db;
+}
+
+button.confirm-route {
+    background-color: transparent;
+    color: #278a50;
+}
+
+button.delete-route {
+    background-color: transparent;
+    color: #e74c3c;
+}
+
+/* Hide Non-Matching Rows */
+.route-details-table tbody tr.hidden {
+    display: none;
 }
 
 /* Responsive Design */
@@ -148,9 +157,8 @@
         width: 100%;
     }
 
-    /* Adjust the table container for mobile */
     .route-details-table-container {
-        margin-left: 0; /* Reset margin for mobile */
-        width: 100%; /* Take full width on small screens */
+        width: 100%;
+        margin-left: 0;
     }
 }

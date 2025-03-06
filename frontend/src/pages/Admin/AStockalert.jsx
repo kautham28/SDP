@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import ASidebar from '../../components/Admin/ASidebar';
-import ANavbar from '../../components/Admin/ANavbar';
-import './AStockAlert.css';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import ASidebar from "../../components/Admin/ASidebar";
+import ANavbar from "../../components/Admin/ANavbar";
+import "./AStockAlert.css";
+import axios from "axios";
 
 const AStockAlertNew = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [stockData, setStockData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     const fetchLowStockProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/products/low-stock');
+        const response = await axios.get(
+          "http://localhost:5000/api/admin/products/low-stock"
+        );
         setStockData(response.data);
+        setFilteredData(response.data);
       } catch (error) {
-        console.error('Error fetching low stock products:', error);
+        console.error("Error fetching low stock products:", error);
       }
     };
 
@@ -23,14 +27,19 @@ const AStockAlertNew = () => {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-  };
-
-  const handleSearch = () => {
-    console.log('Search clicked:', searchQuery);
+    const filtered = stockData.filter((product) =>
+      product.Name.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+    setFilteredData(filtered);
   };
 
   const handleGenerateReport = () => {
-    console.log('Generate Report clicked');
+    console.log("Generate Report clicked");
+  };
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
@@ -50,12 +59,6 @@ const AStockAlertNew = () => {
             onChange={handleSearchChange}
           />
           <button
-            className="new-stock-alert-search-btn"
-            onClick={handleSearch}
-          >
-            Search
-          </button>
-          <button
             className="new-stock-alert-report-btn"
             onClick={handleGenerateReport}
           >
@@ -74,18 +77,18 @@ const AStockAlertNew = () => {
               </tr>
             </thead>
             <tbody>
-              {stockData.map((product) => {
+              {filteredData.map((product) => {
                 const isLowStock = product.Quantity < 100;
                 return (
                   <tr
                     key={product.ProductID}
-                    className={isLowStock ? 'new-stock-alert-low' : 'new-stock-alert-high'}
+                    className={isLowStock ? "new-stock-alert-low" : "new-stock-alert-high"}
                   >
                     <td>{product.Name}</td>
                     <td>{product.Quantity}</td>
                     <td>{product.BatchNumber}</td>
-                    <td>{product.ExpiryDate}</td>
-                    <td className={isLowStock ? 'new-stock-alert-low-quantity' : ''}>
+                    <td>{formatDate(product.ExpiryDate)}</td>
+                    <td className={isLowStock ? "new-stock-alert-low-quantity" : ""}>
                       {product.Quantity}
                     </td>
                   </tr>

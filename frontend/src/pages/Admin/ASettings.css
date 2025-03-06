@@ -1,0 +1,143 @@
+/* General Layout */
+.admin-settings-page-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .admin-settings-main-content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 250px; /* Adjust for the sidebar width */
+    margin-top: 70px; /* Prevent content from going under the navbar */
+    background-color: rgb(201, 239, 234); /* Light background for the main content */
+  }
+  
+  .admin-settings-profile-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    height: 80vh; /* Set the height to enable scroll */
+    overflow-y: auto; /* Enable vertical scroll */
+  }
+  
+  .admin-settings-title {
+    font-size: 32px;
+    color: #003f4f; /* Dark teal color */
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .admin-settings-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px 0;
+  }
+  
+  .admin-settings-profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+  }
+  
+  /* Input Fields */
+  .admin-settings-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+  }
+  
+  .admin-settings-input:focus {
+    border-color: #003f4f; /* Dark teal for focus */
+    outline: none;
+  }
+  
+  .admin-settings-name {
+    font-size: 24px;
+    color: #003f4f; /* Dark teal color */
+    font-weight: bold;
+  }
+  
+  .admin-settings-profile-container p {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  .admin-settings-profile-container p strong {
+    font-weight: bold;
+    color: #003f4f; /* Dark teal for labels */
+  }
+  
+  .admin-settings-edit-button {
+    background-color: #3498db; /* Blue button */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+    width: 200px;
+  }
+  
+  .admin-settings-edit-button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+  }
+  
+  /* Edit Mode */
+  .admin-settings-profile-container input[type="text"],
+  .admin-settings-profile-container input[type="email"] {
+    width: 80%;
+    max-width: 500px;
+  }
+  
+  .admin-settings-profile-container input[type="text"]:disabled,
+  .admin-settings-profile-container input[type="email"]:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .admin-settings-page-container {
+      flex-direction: column;
+    }
+  
+    .admin-settings-main-content {
+      margin-left: 0;
+      margin-top: 0;
+      padding: 10px;
+    }
+  
+    .admin-settings-profile-content {
+      padding: 20px;
+      width: 100%;
+    }
+  
+    .admin-settings-profile-container {
+      margin-top: 20px;
+    }
+  
+    .admin-settings-profile-picture {
+      width: 120px;
+      height: 120px;
+    }
+  
+    .admin-settings-edit-button {
+      width: 100%;
+    }
+  }
+  
