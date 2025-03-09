@@ -82,7 +82,7 @@ const APendingorder = () => {
                       <td>{order.orderId}</td>
                       <td>{order.pharmacy_name}</td>
                       <td>{order.rep_name}</td>
-                      <td>${order.total_value}</td>
+                      <td>{order.total_value}</td>
                       <td>{new Date(order.order_date).toLocaleDateString()}</td>
                       <td className="action-buttons-pending">
                         <button className="view-pending" aria-label="View Order">

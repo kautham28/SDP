@@ -57,8 +57,8 @@ const AProductlist = () => {
       product.BatchNumber,
       new Date(product.ExpiryDate).toLocaleDateString("en-GB"),
       product.Quantity,
-      `$${product.UnitPrice.toFixed(2)}`,
-      `$${(product.UnitPrice * product.Quantity).toFixed(2)}`, // Calculate total price dynamically
+      product.UnitPrice.toFixed(2),
+      (product.UnitPrice * product.Quantity).toFixed(2), // Calculate total price dynamically
     ]);
 
     doc.autoTable({
@@ -225,8 +225,8 @@ const AProductlist = () => {
                       <td>{product.BatchNumber}</td>
                       <td>{new Date(product.ExpiryDate).toLocaleDateString("en-GB")}</td>
                       <td>{product.Quantity}</td>
-                      <td>${product.UnitPrice.toFixed(2)}</td>
-                      <td>${(product.UnitPrice * product.Quantity).toFixed(2)}</td>
+                      <td>{product.UnitPrice.toFixed(2)}</td>
+                      <td>{(product.UnitPrice * product.Quantity).toFixed(2)}</td>
                       <td>
                         <button className="ap-action-button ap-action-button-view" onClick={() => handleView(product)}>
                          <Eye size={18} />
@@ -330,10 +330,10 @@ const AProductlist = () => {
               <strong>Quantity:</strong> {selectedProduct.Quantity}
             </p>
             <p>
-              <strong>Unit Price:</strong> ${selectedProduct.UnitPrice.toFixed(2)}
+              <strong>Unit Price:</strong> {selectedProduct.UnitPrice.toFixed(2)}
             </p>
             <p>
-              <strong>Total Price:</strong> ${selectedProduct.TotalPrice.toFixed(2)}
+              <strong>Total Price:</strong> {(selectedProduct.UnitPrice * selectedProduct.Quantity).toFixed(2)}
             </p>
             <button onClick={() => setShowViewPopup(false)}>Close</button>
           </div>
