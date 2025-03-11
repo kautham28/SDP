@@ -1,0 +1,79 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.dashboard-content {
+  display: flex;
+  flex: 1;
+}
+
+.dashboard-main {
+  flex-grow: 1;
+  padding: 20px;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Grid layout for 3 boxes in the first row and 2 centered in the second row */
+.dashboard-boxes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 80%;
+  margin-top: 20px;
+}
+
+/* Ensuring all boxes have the same size */
+.dashboard-box {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  font-size: 20px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.dashboard-box:hover {
+  transform: scale(1.05);
+}
+
+.dashboard-box h3 {
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+.dashboard-box p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Ensuring last two boxes are centered */
+.dashboard-boxes > :nth-child(4),
+.dashboard-boxes > :nth-child(5) {
+  grid-column: span 1;
+  justify-self: center;
+}
+
+/* Make it responsive */
+@media (max-width: 768px) {
+  .dashboard-boxes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .dashboard-boxes {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

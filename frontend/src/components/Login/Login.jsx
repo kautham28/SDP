@@ -27,7 +27,7 @@ const Login = () => {
         if (response.data.role === "Admin") {
           navigate("/admin-dashboard");
         } else if (response.data.role === "Manager") {
-          navigate("/manager-dashboard");
+          navigate("/manager/dashboard");
         } else {
           setError("Unauthorized access");
         }
