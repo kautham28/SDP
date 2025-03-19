@@ -1,0 +1,54 @@
+/* Make sure the whole page is covered */
+.rep-achievements-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; /* Prevents any unwanted scrolling */
+  }
+  
+  /* Content area (below navbar, beside sidebar) */
+  .rep-achievements-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden; /* Prevents whole page from scrolling */
+  }
+  
+  /* Main achievements container (fills available space) */
+  .rep-achievements-main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* Enables scrolling for overflowing content */
+    background-color: #f4f4f4; /* Light background */
+    height: calc(100vh - 60px); /* Adjust for navbar height */
+    box-sizing: border-box;
+  }
+  
+  /* Ensure Sidebar & Navbar are fixed */
+  .MNavbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    background: white;
+    z-index: 1000;
+  }
+  
+  .MSidebar {
+    position: fixed;
+    left: 0;
+    top: 60px; /* Below the navbar */
+    height: calc(100vh - 60px);
+    width: 250px; /* Adjust based on your sidebar width */
+    background: white;
+    z-index: 1000;
+  }
+  
+  /* Offset the main container so it doesn't overlap */
+  .rep-achievements-main {
+    margin-left: 250px; /* Same as sidebar width */
+    margin-top: 60px; /* Same as navbar height */
+    width: calc(100vw - 250px); /* Remaining width after sidebar */
+    height: calc(100vh - 60px); /* Remaining height after navbar */
+  }
+  

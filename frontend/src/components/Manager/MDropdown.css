@@ -1,0 +1,26 @@
+.m-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .m-dropdown-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .m-dropdown-select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: white;
+  }
+  
+  .m-dropdown-select:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  

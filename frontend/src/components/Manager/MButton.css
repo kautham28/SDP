@@ -1,0 +1,35 @@
+.m-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .m-button.primary {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .m-button.danger {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .m-button.outline {
+    background-color: transparent;
+    border: 2px solid #007bff;
+    color: #007bff;
+  }
+  
+  .m-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .m-button:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+  

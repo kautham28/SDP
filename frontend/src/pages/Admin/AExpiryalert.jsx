@@ -143,8 +143,8 @@ const AExpiryalert = () => {
                     <td>{item.BatchNumber}</td>
                     <td>{expiryDate}</td>
                     <td>{item.Quantity}</td>
-                    <td>${unitPrice}</td> {/* Display Unit Price */}
-                    <td>${totalValue.toFixed(2)}</td> {/* Display Total Value */}
+                    <td>{item.UnitPrice.toFixed(2)}</td> {/* Display Unit Price */}
+                    <td>{item.TotalPrice.toFixed(2)}</td> {/* Display Total Value */}
                     <td className="expiry-alert-days-to-expiry">{daysToExpiry}</td>
                     <td>
                       <button

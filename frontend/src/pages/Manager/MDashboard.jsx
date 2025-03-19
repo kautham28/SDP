@@ -2,9 +2,38 @@ import React from "react";
 import MNavbar from "../../components/Manager/MNavbar";
 import MSidebar from "../../components/Manager/MSidebar";
 import { Package, Box, Users, Pill, UserCheck } from "lucide-react";
+import { Bar, Line } from "react-chartjs-2";
+import "chart.js/auto";
 import "./MDashboard.css";
 
 const MDashboard = () => {
+  const barChartData = {
+    labels: ["January", "February", "March", "April", "May"],
+    datasets: [
+      {
+        label: "Monthly Sales",
+        data: [15000, 18000, 22000, 25000, 21000],
+        backgroundColor: "rgba(54, 162, 235, 0.5)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const lineChartData = {
+    labels: ["Rep 1", "Rep 2", "Rep 3", "Rep 4", "Rep 5"],
+    datasets: [
+      {
+        label: "Rep Sales",
+        data: [12000, 15000, 18000, 17000, 20000],
+        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+    ],
+  };
+
   return (
     <div className="dashboard-container">
       <MNavbar />
@@ -14,7 +43,6 @@ const MDashboard = () => {
           <h1>Manager Dashboard</h1>
           <p>Welcome to the Manager Dashboard. Here you can manage operations efficiently.</p>
 
-          {/* Statistics Boxes */}
           <div className="dashboard-boxes">
             <div className="dashboard-box">
               <Package size={50} />
@@ -44,6 +72,18 @@ const MDashboard = () => {
               <UserCheck size={50} />
               <h3>No. of Reps</h3>
               <p>35</p>
+            </div>
+          </div>
+
+          <div className="charts">
+            <div className="chart-container">
+              <h3>Last 5 Months Sales</h3>
+              <Bar data={barChartData} />
+            </div>
+
+            <div className="chart-container">
+              <h3>Rep Sales Comparison</h3>
+              <Line data={lineChartData} />
             </div>
           </div>
         </div>
