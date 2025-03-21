@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Eye, Check, Trash2 } from 'lucide-react';
 import ASidebar from '../../components/Admin/ASidebar';
 import ANavbar from '../../components/Admin/ANavbar';
-import "./APendingorder.css";
 import axios from 'axios';
+import "./APendingorder.css";
 
 const APendingorder = () => {
   const [searchPharmacyName, setSearchPharmacyName] = useState('');
@@ -11,6 +11,8 @@ const APendingorder = () => {
   const [searchDate, setSearchDate] = useState('');
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null); // Popup data
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -34,6 +36,17 @@ const APendingorder = () => {
     });
     setFilteredOrders(filtered);
   }, [searchPharmacyName, searchRepName, searchDate, orders]);
+
+  // Fetch order details when clicking the Eye button
+  const handleViewOrder = async (orderId) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/orders/details/${orderId}`);
+      setSelectedOrder(response.data); // Store order details in state
+      setShowPopup(true); // Show the popup
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+    }
+  };
 
   return (
     <div className="admin-layout-pending">
@@ -85,7 +98,11 @@ const APendingorder = () => {
                       <td>{order.total_value}</td>
                       <td>{new Date(order.order_date).toLocaleDateString()}</td>
                       <td className="action-buttons-pending">
-                        <button className="view-pending" aria-label="View Order">
+                        <button 
+                          className="view-pending" 
+                          aria-label="View Order"
+                          onClick={() => handleViewOrder(order.orderId)}
+                        >
                           <Eye size={20} />
                         </button>
                         <button className="confirm-pending" aria-label="Confirm Order">
@@ -106,6 +123,39 @@ const APendingorder = () => {
             </table>
           </div>
         </div>
+
+        {/* Popup for Order Details */}
+        {showPopup && selectedOrder && (
+          <div className="popup-overlay show">
+            <div className="popup-content large-popup">
+              <h2>Order Details</h2>
+              <p><strong>Order ID:</strong> {selectedOrder[0]?.orderId}</p>
+              <table className="order-details-table">
+                <thead>
+                  <tr>
+                    <th>Detail ID</th>
+                    <th>Product Name</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedOrder.map(detail => (
+                    <tr key={detail.detailId}>
+                      <td>{detail.detailId}</td>
+                      <td>{detail.product_name}</td>
+                      <td>{detail.unit_price}</td>
+                      <td>{detail.quantity}</td>
+                      <td>{detail.total_price}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button className="close-popup" onClick={() => setShowPopup(false)}>Close</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
