@@ -48,6 +48,40 @@ const APendingorder = () => {
     }
   };
 
+  // Handle Delete Order
+  const handleDeleteOrder = async (orderId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this order?');
+    
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(`http://localhost:5000/api/admin/pending-orders/${orderId}`);
+        console.log('Order deleted:', response.data);
+        // Remove the deleted order from the filteredOrders list
+        setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
+      } catch (error) {
+        console.error('Error deleting order:', error);
+      }
+    }
+  };
+
+  // Handle Confirm Order
+  const handleConfirmOrder = async (orderId) => {
+    const confirmOrder = window.confirm('Are you sure you want to confirm this order?');
+
+    if (confirmOrder) {
+      try {
+        // Make the API request to confirm the order
+        const response = await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`);
+        console.log('Order confirmed:', response.data);
+        
+        // Remove the confirmed order from the filtered list
+        setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
+      } catch (error) {
+        console.error('Error confirming order:', error);
+      }
+    }
+  };
+
   return (
     <div className="admin-layout-pending">
       <ASidebar />
@@ -105,10 +139,18 @@ const APendingorder = () => {
                         >
                           <Eye size={20} />
                         </button>
-                        <button className="confirm-pending" aria-label="Confirm Order">
+                        <button 
+                          className="confirm-pending" 
+                          aria-label="Confirm Order"
+                          onClick={() => handleConfirmOrder(order.orderId)} 
+                        >
                           <Check size={20} />
                         </button>
-                        <button className="delete-pending" aria-label="Delete Order">
+                        <button 
+                          className="delete-pending" 
+                          aria-label="Delete Order"
+                          onClick={() => handleDeleteOrder(order.orderId)} 
+                        >
                           <Trash2 size={20} />
                         </button>
                       </td>
