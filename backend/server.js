@@ -9,6 +9,7 @@ const pendingOrderRoutes = require("./routes/pendingOrderRoutes");
 const routeRoutes = require("./routes/routeRoutes"); // Import route routes
 const orderDetailsRoute = require('./routes/admin/details');
 const confirmedOrdersRoute = require('./routes/confirmedOrders');
+const routeDetails = require('./routes/routeDetails');
 
 const app = express();
 app.use(cors());
@@ -21,6 +22,7 @@ app.use("/api/admin", pendingOrderRoutes);
 app.use("/api", routeRoutes); // Mount route routes
 app.use('/api/orders', orderDetailsRoute);
 app.use('/api', confirmedOrdersRoute);
+app.use('/api', routeDetails);
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");
