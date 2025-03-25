@@ -185,6 +185,7 @@ button.delete-route {
     max-width: 800px;
     width: 100%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    overflow-y: auto;
   }
   
   /* Popup Heading */
@@ -194,7 +195,47 @@ button.delete-route {
     margin-bottom: 20px;
   }
   
-  /* Pharmacy Table Styling */
+  /* Input Fields */
+  .popup-content input[type="date"],
+  .popup-content input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .popup-content input[type="text"]:focus,
+  .popup-content input[type="date"]:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Pharmacy Checkbox List */
+  .pharmacy-checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    margin-top: 10px;
+  }
+  
+  .pharmacy-checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .pharmacy-checkbox-item input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .pharmacy-checkbox-item label {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  /* Pharmacy Table Styling (if needed) */
   .pharmacy-table {
     width: 100%;
     border-collapse: collapse;
@@ -237,5 +278,36 @@ button.delete-route {
   
   .close-button:hover {
     background-color: #e60000;
+  }
+  
+  /* Submit Button Styling */
+  .create-route-submit-button {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .create-route-submit-button:hover {
+    background-color: #218838;
+  }
+  
+  /* Scrollbar for pharmacy list */
+  .popup-content .pharmacy-checkbox-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .popup-content .pharmacy-checkbox-list::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+  }
+  
+  .popup-content .pharmacy-checkbox-list::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
   }
   

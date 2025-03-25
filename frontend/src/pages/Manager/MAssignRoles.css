@@ -1,103 +1,214 @@
 /* Assign Roles Page Container */
 .assign-roles-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    background-color: rgb(201, 239, 234);
-  }
-  
-  /* Content Layout */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color:  rgb(201, 239, 234); /* Updated background color */
+}
+
+/* Content Layout */
+.assign-roles-content {
+  display: flex;
+  height: calc(100vh - 60px); /* Adjusted height to prevent overlap */
+  width: calc(100vw - 250px); /* Leaves space for sidebar */
+  margin-left: 250px; /* Matches sidebar width */
+  margin-top: 60px; /* Matches navbar height */
+  overflow: auto;
+}
+
+/* Main Section */
+.assign-roles-main {
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* Page Title */
+.assign-roles-main h1 {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #003f4f; /* Updated title color */
+}
+
+/* Role Assignment Form */
+.assign-role-form {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+  background: rgba(0, 127, 161, 0.7); /* Updated background color */
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 80%;
+}
+
+/* Input Field */
+.assign-input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #003f4f; /* Updated border color */
+  border-radius: 5px;
+  outline: none;
+  width: 200px;
+}
+
+/* Assigned Users Table */
+.assign-role-table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.assign-role-table th, 
+.assign-role-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+/* Header Style */
+.assign-role-table th {
+  background-color: #003f4f; /* Updated header background color */
+  color: white;
+}
+
+/* Row Styling */
+.assign-role-table tr:nth-child(even) {
+  background-color: rgba(0, 127, 161, 0.3); /* Updated row color */
+}
+
+/* Responsive */
+@media (max-width: 900px) {
   .assign-roles-content {
-    display: flex;
-    height: calc(100vh - 60px); /* Adjusted height to prevent overlap */
-    width: calc(100vw - 250px); /* Leaves space for sidebar */
-    margin-left: 250px; /* Matches sidebar width */
-    margin-top: 60px; /* Matches navbar height */
-    overflow: auto;
-  }
-  
-  /* Main Section */
-  .assign-roles-main {
-    flex-grow: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-  }
-  
-  /* Page Title */
-  .assign-roles-main h1 {
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  /* Role Assignment Form */
-  .assign-role-form {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin: 20px 0;
-    background: rgba(119, 179, 192, 0.7);
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 80%;
-  }
-  
-  /* Input Field */
-  .assign-input {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    outline: none;
-    width: 200px;
-  }
-  
-  /* Assigned Users Table */
-  .assign-role-table {
-    width: 80%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .assign-role-table th, 
-  .assign-role-table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-  }
-  
-  .assign-role-table th {
-    background-color: rgb(119, 179, 192);
-    color: white;
-  }
-  
-  .assign-role-table tr:nth-child(even) {
-    background-color: rgba(119, 179, 192, 0.3);
-  }
-  
-  /* Responsive */
-  @media (max-width: 900px) {
-    .assign-roles-content {
       width: 100vw;
       margin-left: 0;
-    }
-  
-    .assign-role-form {
+  }
+
+  .assign-role-form {
       flex-direction: column;
       align-items: stretch;
       width: 100%;
-    }
-  
-    .assign-input, 
-    .assign-role-table {
-      width: 100%;
-    }
   }
-  
+
+  .assign-input, 
+  .assign-role-table {
+      width: 100%;
+  }
+}
+
+/* Modal Background */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 50%;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative; /* To make room for the close button */
+  text-align: justify; /* Justify text */
+}
+
+/* Close Button inside Modal Box */
+.close {
+  font-size: 18px;
+  background-color: #ff4c4c;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+.close:hover {
+  background-color: red;
+}
+
+/* Eye Icon Style */
+.eye-icon {
+  font-size: 20px;
+  cursor: pointer;
+  color: blue;
+}
+
+.eye-icon:hover {
+  color: green;
+}
+
+/* Table Styles */
+.assign-role-table th,
+.assign-role-table td {
+  padding: 8px;
+  text-align: left;
+}
+
+/* Add padding for table data */
+.assign-role-table td {
+  padding-left: 20px;
+}
+
+/* Justified text for user details in modal */
+.user-details p {
+  margin: 10px 0;
+  text-align: justify; /* Justify text */
+}
+/* Row Styling for Assign Role Table */
+.assign-role-table tr:nth-child(odd) {
+  background-color: hsla(200, 100%, 95%, 1); /* Light blue (hsla) */
+}
+
+.assign-role-table tr:nth-child(even) {
+  background-color: #cce7f0; /* Slightly darker light blue (hsla) */
+}
+
+.user-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.user-details-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.user-details-table td:first-child {
+  font-weight: bold;
+  background-color: #f5f5f5;
+}
+
+.modal-content {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+}
+
+.user-photo {
+  text-align: center;
+  margin-top: 15px;
+}

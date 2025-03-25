@@ -12,6 +12,12 @@ const ARouteDetails = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [pharmacyData, setPharmacyData] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [routeDetails, setRouteDetails] = useState({
+    routeDate: '',
+    repName: '',
+    majorArea: ''
+  });
+  const [selectedPharmacies, setSelectedPharmacies] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/routes')
@@ -44,6 +50,46 @@ const ARouteDetails = () => {
       .catch((error) => console.error('Error fetching pharmacy data:', error));
   };
 
+  // Function to handle the "Create Route" button click
+  // Removed the popup-related logic here
+  const handleCreateRouteClick = () => {
+    console.log("Create Route button clicked");  // You can replace this with your desired action
+  };
+
+  // Handle input changes for the new route form
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setRouteDetails((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+
+    if (name === 'majorArea' && value.length > 2) {
+      fetchPharmacyByMajorArea(value);
+    }
+  };
+
+  // Fetch pharmacies based on the major area typed
+  const fetchPharmacyByMajorArea = (majorArea) => {
+    fetch(`http://localhost:5000/api/pharmacies?area=${majorArea}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setPharmacyData(data); // List pharmacies matching the major area
+      })
+      .catch((error) => console.error('Error fetching pharmacies:', error));
+  };
+
+  // Handle checkbox change for selected pharmacies
+  const handlePharmacySelection = (pharmacyID) => {
+    setSelectedPharmacies((prevState) => {
+      if (prevState.includes(pharmacyID)) {
+        return prevState.filter((id) => id !== pharmacyID); // Deselect pharmacy
+      } else {
+        return [...prevState, pharmacyID]; // Select pharmacy
+      }
+    });
+  };
+
   return (
     <div className="route-details-page-container">
       <ASidebar />
@@ -73,7 +119,9 @@ const ARouteDetails = () => {
             value={dateQuery}
             onChange={(e) => setDateQuery(e.target.value)}
           />
-          <button className="route-details-make-route-button">Create Route</button>
+          <button className="route-details-make-route-button" onClick={handleCreateRouteClick}>
+            Create Route
+          </button>
           <button className="route-details-report-button">Generate Report</button>
         </div>
 
@@ -131,9 +179,9 @@ const ARouteDetails = () => {
                       <td>{pharmacy.PharmacyName}</td>
                       <td>{pharmacy.Address}</td>
                       <td>
-                        <a 
-                          href={pharmacy.GoogleMapLink} 
-                          target="_blank" 
+                        <a
+                          href={pharmacy.GoogleMapLink}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="pharmacy-location-link"
                         >

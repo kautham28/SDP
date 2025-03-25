@@ -1,0 +1,160 @@
+/* MOrders Layout */
+.orders-container {
+    display: flex;
+    height: 100vh;
+}
+
+.orders-content {
+    display: flex;
+    flex: 1;
+    padding-left: 250px; /* Adjust to accommodate the sidebar */
+}
+
+.orders-main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* Allows vertical scrolling if content overflows */
+}
+
+/* Title */
+.orders-main h1 {
+    text-align: center;
+    font-size: 40px;
+    color: #003f4f;
+    margin-top: 60px;
+    font-weight: bold;
+}
+
+.orders-main p {
+    text-align: center;
+    color: #003f4f;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* Filter Inputs */
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filters input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #003f4f;
+    border-radius: 5px;
+    width: 250px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.filters input:focus {
+    border-color: #007b8f;
+    box-shadow: 0 0 5px rgba(0, 123, 143, 0.5);
+}
+
+/* Scrollable Table Container */
+.orders-list {
+    overflow-x: auto;  /* Enable horizontal scrolling */
+    overflow-y: auto;  /* Enable vertical scrolling */
+    max-height: 75vh; /* Set max height so the table won't overflow the screen */
+    margin-top: 20px;
+}
+
+/* Table */
+.orders-list table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.orders-list th,
+.orders-list td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.orders-list th {
+    background-color: #003f4f;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Column Adjustments */
+.orders-list th:nth-child(1),
+.orders-list td:nth-child(1) {
+    width: 15%;
+}
+
+.orders-list th:nth-child(2),
+.orders-list td:nth-child(2) {
+    width: 20%;
+}
+
+.orders-list th:nth-child(3),
+.orders-list td:nth-child(3) {
+    width: 20%;
+}
+
+.orders-list th:nth-child(4),
+.orders-list td:nth-child(4) {
+    width: 15%;
+}
+
+.orders-list th:nth-child(5),
+.orders-list td:nth-child(5) {
+    width: 15%;
+}
+
+.orders-list th:nth-child(6),
+.orders-list td:nth-child(6) {
+    width: 15%;
+}
+
+/* Alternating Row Colors */
+.orders-list tbody tr:nth-child(odd) {
+    background-color: #e6f7ff;
+}
+
+.orders-list tbody tr:nth-child(even) {
+    background-color: #cce7f0;
+}
+
+/* Total Price Styling */
+.orders-list td:last-child {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    .orders-content {
+        padding-left: 0;
+        flex-direction: column;
+    }
+
+    .orders-main {
+        padding: 10px;
+    }
+
+    .orders-list th,
+    .orders-list td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .filters input {
+        width: 90%;
+    }
+}

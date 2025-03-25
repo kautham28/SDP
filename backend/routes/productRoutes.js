@@ -62,13 +62,32 @@ router.get("/expiring-soon", (req, res) => {
 });
 
 router.get("/low-stock", (req, res) => {
-  const sql = "SELECT * FROM products WHERE Quantity < 100";
+  const sql = "SELECT * FROM products WHERE Quantity < MinStock";
   db.query(sql, (err, results) => {
     if (err) {
-      console.error("Error fetching products:", err);
+      console.error("Error fetching low-stock products:", err);
       return res.status(500).json({ error: "Database query error" });
     }
     res.json(results);
+  });
+});
+
+
+router.get("/get-products-by-supplier", (req, res) => {
+  const supplierID = req.query.SupplierID;
+
+  if (!supplierID) {
+    return res.status(400).json({ error: "SupplierID is required" });
+  }
+
+  const sql = "SELECT Name, UnitPrice FROM products WHERE SupplierID = ?";
+  db.query(sql, [supplierID], (err, results) => {
+    if (err) {
+      console.error("Error fetching products for SupplierID:", err);
+      return res.status(500).json({ error: "Database query error" });
+    }
+
+    res.json(results); // Return the products as JSON
   });
 });
 

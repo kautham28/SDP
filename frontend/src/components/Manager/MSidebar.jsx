@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, List, Award, Users, Package, BarChart, Settings } from 'lucide-react';
+import { Home, List, Award, Users, Package, BarChart, Settings, ShoppingCart, Bell, Truck } from 'lucide-react'; // Added Truck icon
 import './MSidebar.css';
 
 const managerMenu = [
@@ -10,6 +10,9 @@ const managerMenu = [
   { name: 'Assign Roles', path: '/manager/assign-roles', icon: <Users size={20} /> },
   { name: 'Inventory', path: '/manager/inventory', icon: <Package size={20} /> },
   { name: 'Sales Reports', path: '/manager/sales-reports', icon: <BarChart size={20} /> },
+  { name: 'Make Purchase', path: '/manager/make-purchase', icon: <ShoppingCart size={20} /> },
+  { name: 'Stock Alert', path: '/manager/stock-alert', icon: <Bell size={20} /> },
+  { name: 'Supplier', path: '/manager/supplier', icon: <Truck size={20} /> }, // Added Supplier option
   { name: 'Settings', path: '/manager/settings', icon: <Settings size={20} /> }
 ];
 

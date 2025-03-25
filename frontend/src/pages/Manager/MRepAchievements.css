@@ -1,54 +1,182 @@
-/* Make sure the whole page is covered */
+/* Overall container for the page */
 .rep-achievements-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden; /* Prevents any unwanted scrolling */
+
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Prevents any unwanted scrolling */
+}
+
+/* Content area (below navbar, beside sidebar) */
+.rep-achievements-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* Prevents whole page from scrolling */
+}
+
+/* Main achievements container (fills available space) */
+.rep-achievements-main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto; /* Enables scrolling for overflowing content */
+  background-color:  rgb(201, 239, 234); /* Lighter background to match the color scheme */
+  height: calc(100vh - 60px); /* Adjust for navbar height */
+  box-sizing: border-box;
+}
+
+/* Adjust for navbar and sidebar */
+.MNavbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background: white;
+  z-index: 1000;
+}
+
+.MSidebar {
+  position: fixed;
+  left: 0;
+  top: 60px; /* Below the navbar */
+  height: calc(100vh - 60px);
+  width: 250px; /* Sidebar width */
+  background: white;
+  z-index: 1000;
+}
+
+/* Offset the main container to prevent overlapping */
+.rep-achievements-main {
+  margin-left: 250px; /* Same as sidebar width */
+  margin-top: 60px; /* Same as navbar height */
+  width: calc(100vw - 250px); /* Remaining width after sidebar */
+  height: calc(100vh - 60px); /* Remaining height after navbar */
+}
+
+/* Title styling */
+.rep-achievements-main h1 {
+  text-align: center;
+  font-size: 36px;
+  color: #003f4f; /* Match header color from previous code */
+  margin-top: 30px;
+  font-weight: bold;
+}
+
+/* Subheading */
+.rep-achievements-main p {
+  text-align: center;
+  color: #003f4f;
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+/* Container for representative achievement cards */
+.rep-achievements-list {
+  display: flex;
+  flex-direction: column; /* Stack cards vertically */
+  gap: 30px; /* Increased gap between rep achievements */
+  padding: 0 20px;
+}
+
+/* Individual rep achievement card */
+.rep-achievement-card {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd; /* Add a light border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow effect */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rep-achievement-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+/* Rep achievement card content */
+.rep-achievement-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.rep-achievement-card h3 {
+  font-size: 22px;
+  color: #003f4f;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.rep-achievement-card p {
+  font-size: 16px;
+  color: #7f8c8d;
+  margin-bottom: 20px;
+}
+
+/* Sales target progress bars (for graphs) */
+.sales-target-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sales-target-box {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 8px;
+  width: 100%; /* Make boxes full width to fit the container */
+}
+
+.sales-target-box h4 {
+  margin-bottom: 10px;
+  color: #003f4f;
+}
+
+.sales-target-box .progress-bar {
+  background-color: #e4e4e4;
+  border-radius: 8px;
+  height: 15px;
+  width: 100%;
+  position: relative;
+}
+
+.sales-target-box .progress {
+  height: 100%;
+  background-color: #27ae60;
+  border-radius: 8px;
+  position: absolute;
+  top: 0;
+}
+
+.sales-target-box .progress-text {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #fff;
+}
+
+/* Card Hover Effect */
+.rep-achievement-card:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design for small screens */
+@media (max-width: 768px) {
+  .rep-achievements-list {
+      gap: 20px;
   }
-  
-  /* Content area (below navbar, beside sidebar) */
-  .rep-achievements-content {
-    display: flex;
-    flex: 1;
-    overflow: hidden; /* Prevents whole page from scrolling */
-  }
-  
-  /* Main achievements container (fills available space) */
+
   .rep-achievements-main {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto; /* Enables scrolling for overflowing content */
-    background-color: #f4f4f4; /* Light background */
-    height: calc(100vh - 60px); /* Adjust for navbar height */
-    box-sizing: border-box;
+      padding: 10px;
   }
-  
-  /* Ensure Sidebar & Navbar are fixed */
-  .MNavbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    background: white;
-    z-index: 1000;
+
+  .rep-achievement-card {
+      padding: 15px;
   }
-  
-  .MSidebar {
-    position: fixed;
-    left: 0;
-    top: 60px; /* Below the navbar */
-    height: calc(100vh - 60px);
-    width: 250px; /* Adjust based on your sidebar width */
-    background: white;
-    z-index: 1000;
-  }
-  
-  /* Offset the main container so it doesn't overlap */
-  .rep-achievements-main {
-    margin-left: 250px; /* Same as sidebar width */
-    margin-top: 60px; /* Same as navbar height */
-    width: calc(100vw - 250px); /* Remaining width after sidebar */
-    height: calc(100vh - 60px); /* Remaining height after navbar */
-  }
-  
+}
