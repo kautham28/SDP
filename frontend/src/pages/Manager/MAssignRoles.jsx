@@ -12,6 +12,17 @@ const MAssignRoles = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [newUser, setNewUser] = useState({
+    username: "",
+    password: "",
+    role: "",
+    email: "",
+    phone_number: "",
+    address: "",
+    ic_number: "",
+    date_of_birth: "",
+  });
 
   // Fetch users from backend
   useEffect(() => {
@@ -46,6 +57,25 @@ const MAssignRoles = () => {
     setSelectedUser(null);
   };
 
+  // Handle opening the add new user modal
+  const handleAddUserModal = () => {
+    setShowAddUserModal(true);
+  };
+
+  // Handle closing the add new user modal
+  const handleCloseAddUserModal = () => {
+    setShowAddUserModal(false);
+  };
+
+  // Handle adding a new user
+  const handleAddNewUser = () => {
+    // You can handle API call here to add the new user
+    const newUserData = { ...newUser };
+    console.log(newUserData);
+    setAssignedUsers([...assignedUsers, newUserData]); // Just adding the new user to local state for now
+    setShowAddUserModal(false);
+  };
+
   return (
     <div className="assign-roles-container">
       <MNavbar />
@@ -55,35 +85,21 @@ const MAssignRoles = () => {
           <h1>Assign Roles</h1>
           <p>Assign roles to team members.</p>
 
-          {/* Add Role Section */}
-          <div className="assign-role-form">
-            <input
-              type="text"
-              placeholder="Enter Name"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              className="assign-input"
-            />
-            <MDropdown
-              options={["Admin", "Manager"]}
-              selectedValue={selectedRole}
-              onSelect={setSelectedRole}
-            />
-            <MButton
-              label="Assign Role"
-              onClick={handleAssignRole}
-              variant="primary"
-              disabled={!userName || !selectedRole}
-            />
-          </div>
+          {/* Add New User Button */}
+          <MButton
+            label="Add New User"
+            onClick={handleAddUserModal}
+            variant="primary"
+          />
 
           {/* Assigned Users Table */}
           <h3>Assigned Users</h3>
           <table className="assign-role-table">
             <thead>
               <tr>
-                <th>Name</th>
+                <th>Username</th>
                 <th>Role</th>
+                <th>Email</th>
                 <th>Phone Number</th>
                 <th>Action</th>
               </tr>
@@ -93,6 +109,7 @@ const MAssignRoles = () => {
                 <tr key={index}>
                   <td>{user.username}</td>
                   <td>{user.role || "Not Assigned"}</td>
+                  <td>{user.email}</td>
                   <td>{user.phone_number}</td>
                   <td>
                     <Eye
@@ -110,18 +127,12 @@ const MAssignRoles = () => {
           {showModal && selectedUser && (
             <div className="modal">
               <div className="modal-content">
-                {/* Close Button inside Modal Box */}
-                <button className="close" onClick={handleCloseModal}>
-                  X
-                </button>
-
+                <button className="close" onClick={handleCloseModal}>X</button>
                 <h2>User Details</h2>
-
-                {/* Table for User Details */}
                 <table className="user-details-table">
                   <tbody>
                     <tr>
-                      <td><strong>Name:</strong></td>
+                      <td><strong>Username:</strong></td>
                       <td>{selectedUser.username}</td>
                     </tr>
                     <tr>
@@ -150,8 +161,6 @@ const MAssignRoles = () => {
                     </tr>
                   </tbody>
                 </table>
-
-                {/* Display User Photo */}
                 {selectedUser.photo && (
                   <div className="user-photo">
                     <strong>Photo:</strong>
@@ -162,6 +171,75 @@ const MAssignRoles = () => {
                     />
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Modal for Adding New User */}
+          {showAddUserModal && (
+            <div className="modal">
+              <div className="modal-content">
+                <button className="close" onClick={handleCloseAddUserModal}>X</button>
+                <h2>Add New User</h2>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={newUser.username}
+                  onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                  className="input-field"
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  className="input-field"
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  className="input-field"
+                />
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  value={newUser.phone_number}
+                  onChange={(e) => setNewUser({ ...newUser, phone_number: e.target.value })}
+                  className="input-field"
+                />
+                <input
+                  type="text"
+                  placeholder="Address"
+                  value={newUser.address}
+                  onChange={(e) => setNewUser({ ...newUser, address: e.target.value })}
+                  className="input-field"
+                />
+                <input
+                  type="text"
+                  placeholder="IC Number"
+                  value={newUser.ic_number}
+                  onChange={(e) => setNewUser({ ...newUser, ic_number: e.target.value })}
+                  className="input-field"
+                />
+                <input
+                  type="date"
+                  placeholder="Date of Birth"
+                  value={newUser.date_of_birth}
+                  onChange={(e) => setNewUser({ ...newUser, date_of_birth: e.target.value })}
+                  className="input-field"
+                />
+                <MDropdown
+                  options={["Admin", "Manager"]}
+                  selectedValue={newUser.role}
+                  onSelect={(role) => setNewUser({ ...newUser, role })}
+                />
+                <MButton
+                  label="Add User"
+                  onClick={handleAddNewUser}
+                  variant="primary"
+                />
               </div>
             </div>
           )}

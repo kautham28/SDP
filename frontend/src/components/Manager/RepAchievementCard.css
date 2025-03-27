@@ -10,10 +10,11 @@
   flex: 1;
   width: 45%; /* Reduced width for better alignment */
   max-width: 380px;
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb); /* Subtle gradient */
+  background: #ffffff; /* Changed to solid white background */
+  border: 2px solid #071730; /* Added border for distinction */
   padding: 15px;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 60x rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -41,3 +42,14 @@
     max-width: 450px;
   }
 }
+.rep-card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  background-color: rgba(79, 184, 207, 0.7);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+

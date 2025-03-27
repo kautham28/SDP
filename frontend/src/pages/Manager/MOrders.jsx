@@ -45,7 +45,6 @@ const MOrders = () => {
         <MSidebar />
         <div className="orders-main">
           <h1>Orders</h1>
-          <p>Manage and track orders.</p>
 
           {/* Filter Inputs */}
           <div className="filters">

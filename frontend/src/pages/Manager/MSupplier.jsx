@@ -33,7 +33,7 @@ const MSupplier = () => {
         <MSidebar />
         <div className="supplier-main">
           <h1>Supplier Management</h1>
-          <p>Manage and view supplier details.</p>
+          
 
           {/* Supplier Table */}
           <table className="supplier-table">

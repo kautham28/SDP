@@ -22,7 +22,16 @@ import MSalesReports from "./pages/Manager/MSalesReports";
 import MSettings from "./pages/Manager/MSettings";
 import MMakePurchase from "./pages/Manager/MMakePurchase";
 import MStockAlert from "./pages/Manager/MStockAlert";
-import MSupplier from "./pages/Manager/MSupplier"; // Added Supplier page
+import MSupplier from "./pages/Manager/MSupplier"; 
+
+// Rep Imports
+import RDashboard from "./pages/Rep/RDashboard"; 
+import RMakeOrder from "./pages/Rep/RMakeOrder";
+import RInventory from "./pages/Rep/RInventory";
+import RRouteDetails from "./pages/Rep/RRouteDetails";
+import RCustomerDetails from "./pages/Rep/RCustomerDetails";
+import RAchievements from "./pages/Rep/RAchievements";
+import RSettings from "./pages/Rep/RSettings";
 
 function App() {
   return (
@@ -52,7 +61,16 @@ function App() {
         <Route path="/manager/settings" element={<MSettings />} />
         <Route path="/manager/make-purchase" element={<MMakePurchase />} />
         <Route path="/manager/stock-alert" element={<MStockAlert />} />
-        <Route path="/manager/supplier" element={<MSupplier />} /> {/* Added Supplier route */}
+        <Route path="/manager/supplier" element={<MSupplier />} />
+
+        {/* Rep Routes */}
+        <Route path="/rep/dashboard" element={<RDashboard />} />
+        <Route path="/rep/make-order" element={<RMakeOrder />} />
+        <Route path="/rep/inventory" element={<RInventory />} />
+        <Route path="/rep/route-details" element={<RRouteDetails />} />
+        <Route path="/rep/customer-details" element={<RCustomerDetails />} />
+        <Route path="/rep/achievements" element={<RAchievements />} />
+        <Route path="/rep/settings" element={<RSettings />} />
       </Routes>
     </Router>
   );

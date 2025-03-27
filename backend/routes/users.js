@@ -27,4 +27,26 @@ router.get("/:id", (req, res) => {
     });
 });
 
+// Add a new user
+router.post("/add-user", (req, res) => {
+    const { username, password, role, email, phone_number, address, ic_number, date_of_birth } = req.body;
+
+    // Validation (check if all required fields are provided)
+    if (!username || !password || !role || !email || !phone_number || !address || !ic_number || !date_of_birth) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // SQL query to insert a new user into the database
+    const sql = "INSERT INTO users (username, password, role, email, phone_number, address, ic_number, date_of_birth) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    db.query(sql, [username, password, role, email, phone_number, address, ic_number, date_of_birth], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        // Respond with success message and the newly added user's data
+        res.status(201).json({ message: "User created successfully", userId: result.insertId });
+    });
+});
+
 module.exports = router;

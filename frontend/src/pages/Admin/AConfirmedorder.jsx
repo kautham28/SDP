@@ -81,7 +81,7 @@ const AConfirmedorder = () => {
                                         <TableCell>{order.OrderID}</TableCell>
                                         <TableCell>{order.PharmacyName}</TableCell>
                                         <TableCell>{order.RepName}</TableCell>
-                                        <TableCell>${order.TotalValue.toFixed(2)}</TableCell>
+                                        <TableCell>{order.TotalValue.toFixed(2)}</TableCell>
                                         <TableCell>{formatDate(order.OrderDate)}</TableCell>
                                         <TableCell>{formatDate(order.ConfirmedDate)}</TableCell>
                                         <TableCell>

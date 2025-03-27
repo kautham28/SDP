@@ -28,6 +28,8 @@ const Login = () => {
           navigate("/admin-dashboard");
         } else if (response.data.role === "Manager") {
           navigate("/manager/dashboard");
+        } else if (response.data.role === "Rep") {
+          navigate("/rep/dashboard");
         } else {
           setError("Unauthorized access");
         }
@@ -46,7 +48,7 @@ const Login = () => {
         </p>
         <p className="quote-writer">- Hippocrates</p>
         <p className="quote-meaning">
-        This quote highlights the deep connection between medicine and compassion. It suggests that true medical practice is not just about knowledge and treatment but also about empathy and care for people. A great healthcare provider not only heals physically but also supports patients emotionally and mentally.
+          This quote highlights the deep connection between medicine and compassion. It suggests that true medical practice is not just about knowledge and treatment but also about empathy and care for people. A great healthcare provider not only heals physically but also supports patients emotionally and mentally.
         </p>
       </div>
 
