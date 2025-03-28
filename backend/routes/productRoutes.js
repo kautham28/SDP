@@ -15,6 +15,29 @@ router.get("/", (req, res) => {
   });
 });
 
+// Route to fetch report page data
+router.get("/report", (req, res) => {
+  const sql = `
+    SELECT 
+      ProductID, 
+      Name AS MedicineName, 
+      GenericName, 
+      ExpiryDate, 
+      UnitPrice, 
+      Quantity, 
+      TotalPrice 
+    FROM products
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching report data:", err);
+      return res.status(500).json({ error: "Database query error" });
+    }
+    res.json(results);
+  });
+});
+
 // Route to add a new product
 router.post("/", (req, res) => {
   const newProduct = req.body;
@@ -72,7 +95,6 @@ router.get("/low-stock", (req, res) => {
   });
 });
 
-
 router.get("/get-products-by-supplier", (req, res) => {
   const supplierID = req.query.SupplierID;
 
@@ -90,6 +112,5 @@ router.get("/get-products-by-supplier", (req, res) => {
     res.json(results); // Return the products as JSON
   });
 });
-
 
 module.exports = router;

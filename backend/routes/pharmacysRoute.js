@@ -31,4 +31,22 @@ router.get('/area', (req, res) => {
   });
 });
 
+// Fetch all pharmacy details from the database
+router.get('/all-pharmacies', (req, res) => {
+  const query = `
+    SELECT PharmacyID, PharmacyName, OwnerName, Area, OwnerEmail, OwnerContact, PharmacyLocation, LocationLink
+    FROM pharmacies
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching pharmacies:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    // Send back all pharmacy details as JSON
+    res.json(results);
+  });
+});
+
 module.exports = router;
