@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db.js");
+const authMiddleware = require('../middleware/authMiddleware');
 
 // Fetch all users
 router.get("/", (req, res) => {
@@ -48,5 +49,45 @@ router.post("/add-user", (req, res) => {
         res.status(201).json({ message: "User created successfully", userId: result.insertId });
     });
 });
+
+router.put('/users/update/:id', authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const { username, email, phone_number, address, ic_number, date_of_birth } = req.body;
+    
+    console.log('Update attempt for ID:', id, req.body);
+
+    // Validation: Make sure required fields are present
+    if (!username || !email || !phone_number || !address || !ic_number || !date_of_birth) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // SQL query to update the user in the database
+    const sql = `
+        UPDATE users 
+        SET username = ?, email = ?, phone_number = ?, address = ?, ic_number = ?, date_of_birth = ?
+        WHERE id = ?
+    `;
+
+    db.query(sql, [username, email, phone_number, address, ic_number, date_of_birth, id], (err, result) => {
+        if (err) {
+            console.log('SQL Error:', err);
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({ message: "User updated successfully" });
+    });
+});
+
+
+
+
+
+
+
+
 
 module.exports = router;

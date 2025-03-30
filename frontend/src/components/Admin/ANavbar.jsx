@@ -1,13 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Bell, Moon, Sun } from 'lucide-react'; // Import Lucide icons
 import './ANavbar.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
+  const [username, setUsername] = useState("Admin"); // Default text
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = sessionStorage.getItem("token"); // Get token from sessionStorage
+
+      if (!token) {
+        console.error("No token found! Redirecting to login...");
+        navigate('/login');
+        return;
+      }
+
+      try {
+        // Requesting user data from the backend
+        const response = await axios.get("http://localhost:5000/users", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token in Authorization header
+          },
+        });
+
+        // Assuming the backend returns a list of users, we filter to find the logged-in user
+        const loggedInUser = response.data.find(user => user.id === parseInt(sessionStorage.getItem("userID")));
+
+        if (loggedInUser) {
+          setUsername(loggedInUser.username); // Set username of the logged-in user
+        } else {
+          console.error("User not found!");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error.response?.data || error.message);
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   const handleLogout = () => {
+    sessionStorage.clear(); // Clear session storage
     navigate('/login');
   };
 
@@ -22,7 +59,7 @@ const Navbar = () => {
         <h1>Admin Panel</h1>
       </div>
       <div className="navbar-right">
-        <span>Welcome, Admin</span>
+        <span>Welcome, {username}</span>
         <button className="icon-button">
           <Bell size={20} />
         </button>

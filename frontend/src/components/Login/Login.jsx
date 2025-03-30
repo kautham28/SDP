@@ -12,29 +12,47 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error message
+    setError("");
 
     try {
-      const response = await axios.post("http://localhost:5000/api/login", {
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
         username,
         password,
       });
 
-      if (response.status === 200) {
-        sessionStorage.setItem("token", response.data.token);
-        sessionStorage.setItem("role", response.data.role);
+      console.log("Full Response:", response);
 
-        if (response.data.role === "Admin") {
+      if (response.status === 200) {
+        const { token, userID, role } = response.data;
+
+        if (!token || !userID || !role) {
+          console.error("Missing token or role in response", response.data);
+          setError("Invalid response from server.");
+          return;
+        }
+
+        // Store login data in sessionStorage
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("userID", userID);
+        sessionStorage.setItem("role", role);
+        sessionStorage.setItem("isLoggedIn", true);
+
+        // Redirect based on role
+        if (role === "Admin") {
+          console.log("Navigating to Admin Dashboard");
           navigate("/admin-dashboard");
-        } else if (response.data.role === "Manager") {
+        } else if (role === "Manager") {
+          console.log("Navigating to Manager Dashboard");
           navigate("/manager/dashboard");
-        } else if (response.data.role === "Rep") {
+        } else if (role === "Rep") {
+          console.log("Navigating to Rep Dashboard");
           navigate("/rep/dashboard");
         } else {
           setError("Unauthorized access");
         }
       }
     } catch (err) {
+      console.error("Login Error:", err.response ? err.response.data : err.message);
       setError("Login failed! Please check your username and password.");
     }
   };
@@ -48,7 +66,7 @@ const Login = () => {
         </p>
         <p className="quote-writer">- Hippocrates</p>
         <p className="quote-meaning">
-          This quote highlights the deep connection between medicine and compassion. It suggests that true medical practice is not just about knowledge and treatment but also about empathy and care for people. A great healthcare provider not only heals physically but also supports patients emotionally and mentally.
+          This quote highlights the deep connection between medicine and compassion. It suggests that true medical practice is not just about knowledge and treatment but also about empathy and care for people.
         </p>
       </div>
 
