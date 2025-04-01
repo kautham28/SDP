@@ -1,0 +1,79 @@
+/* General container styling */
+.dashboard-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+  }
+  
+  .dashboard-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f4f4f4;
+  }
+  
+  /* Heading styling */
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Achievements Section */
+  .achievements-data {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .achievement-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .achievement-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* Confirmed Orders Section */
+  .confirmed-orders-data {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px; /* Ensures it appears under achievements */
+  }
+  
+  /* Confirmed Orders Table */
+  .confirmed-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .confirmed-orders-table th,
+  .confirmed-orders-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .confirmed-orders-table th {
+    background-color: #f8f8f8;
+  }
+  
+  .confirmed-orders-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Error and Loading Messages */
+  .error-message {
+    color: red;
+    text-align: center;
+  }
+  
+  p {
+    text-align: center;
+  }
+  

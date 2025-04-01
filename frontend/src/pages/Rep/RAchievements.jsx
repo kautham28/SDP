@@ -1,17 +1,113 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import RNavbar from "../../components/Rep/RNavbar";
 import RSidebar from "../../components/Rep/RSidebar";
 import './RAchievements.css';
 
 const RAchievements = () => {
+  const [achievements, setAchievements] = useState([]);
+  const [confirmedOrders, setConfirmedOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = sessionStorage.getItem('token');
+      const repID = sessionStorage.getItem('userID');
+      
+      if (!token || !repID) {
+        console.error('No token or RepID found! Redirecting to login...');
+        window.location.href = '/login';
+        return;
+      }
+      
+      try {
+        // Fetch achievements
+        const achievementsResponse = await axios.get(`http://localhost:5000/api/achievements/${repID}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setAchievements(achievementsResponse.data);
+
+        // Fetch confirmed orders for the rep
+        const confirmedOrdersResponse = await axios.get(`http://localhost:5000/api/confirmed-orders/${repID}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setConfirmedOrders(confirmedOrdersResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="dashboard-container">
       <RNavbar />
-      <RSidebar />
       <div className="dashboard-content">
         <h1>Rep Achievements</h1>
-        <p>View achievements and performance.</p>
+        {loading ? (
+          <p>Loading data...</p>
+        ) : error ? (
+          <p className="error-message">{error}</p>
+        ) : (
+          <>
+            {/* Achievements Data */}
+            <div className="achievements-data">
+              {achievements.length === 0 ? (
+                <p>No achievements found.</p>
+              ) : (
+                <div>
+                  <h2>Achievements</h2>
+                  {achievements.map((ach, index) => (
+                    <div key={index} className="achievement-item">
+                      <p><strong>Month:</strong> {ach.Month}</p>
+                      <p><strong>Year:</strong> {ach.Year}</p>
+                      <p><strong>Target:</strong> {ach.Target}</p>
+                      <p><strong>Total Sales:</strong> {ach.TotalSales}</p>
+                      <p><strong>Percentage:</strong> {ach.percentage}%</p>
+                      <p><strong>Last Updated:</strong> {new Date(ach.LastUpdated).toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Confirmed Orders Table */}
+            <div className="confirmed-orders-data">
+              <h2>Confirmed Orders</h2>
+              {confirmedOrders.length === 0 ? (
+                <p>No confirmed orders found.</p>
+              ) : (
+                <table className="confirmed-orders-table">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Customer Name</th>
+                      <th>Amount</th>
+                      <th>Confirmed Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {confirmedOrders.map((order, index) => (
+                      <tr key={index}>
+                        <td>{order.OrderID}</td>
+                        <td>{order.PharmacyName}</td>
+                        <td>{order.TotalValue}</td>
+                        <td>{new Date(order.ConfirmedDate).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </>
+        )}
       </div>
+      <RSidebar />
     </div>
   );
 };

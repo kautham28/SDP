@@ -1,72 +1,93 @@
-import React, { useState, useEffect } from 'react';
-import RNavbar from "../../components/Rep/RNavbar";
-import RSidebar from "../../components/Rep/RSidebar";
+import React, { useEffect, useState } from 'react';
+import RSidebar from '../../components/Rep/RSidebar';
+import RNavbar from '../../components/Rep/RNavbar';
+import axios from 'axios';
 import './RCustomerDetails.css';
 
+// Custom Components
+const Input = ({ type, placeholder, className, onChange }) => (
+  <input type={type} placeholder={placeholder} className={`custom-input ${className}`} onChange={onChange} />
+);
+const Table = ({ children }) => <table className="custom-table">{children}</table>;
+const TableHead = ({ children }) => <thead className="table-head">{children}</thead>;
+const TableRow = ({ children }) => <tr className="table-row">{children}</tr>;
+const TableHeader = ({ children }) => <th className="table-header">{children}</th>;
+const TableBody = ({ children }) => <tbody className="table-body">{children}</tbody>;
+const TableCell = ({ children }) => <td className="table-cell">{children}</td>;
+
 const RCustomerDetails = () => {
-  const [pharmacies, setPharmacies] = useState([]); // State to store pharmacies data
-  const [loading, setLoading] = useState(true); // State for loading status
-  const [error, setError] = useState(null); // State for handling errors
+  const [pharmacies, setPharmacies] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    // Fetching data from the API
-    const fetchPharmacies = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/pharmacies/all-pharmacies');
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data = await response.json();
-        setPharmacies(data); // Setting the fetched data to state
-      } catch (error) {
-        setError(error.message); // If error occurs, set error message to state
-      } finally {
-        setLoading(false); // Set loading to false once data is fetched or error occurs
-      }
-    };
+    // Fetch confirmed orders from backend
+    axios.get('http://localhost:5000/api/pharmacies/all-pharmacies')
+      .then(response => {
+        setPharmacies(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the pharmacies!", error);
+      });
+  }, []);
 
-    fetchPharmacies(); // Call the function to fetch data
-  }, []); // Empty dependency array means this effect runs only once, when the component mounts
-
-  if (loading) {
-    return <div>Loading...</div>; // Loading state message
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>; // Error message
-  }
+  // Filtered pharmacies based on search input
+  const filteredPharmacies = pharmacies.filter(pharmacy =>
+    pharmacy.PharmacyName.toLowerCase().includes(search.toLowerCase()) ||
+    pharmacy.OwnerName.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="dashboard-container">
-      <RNavbar />
+    <div className="rep-layout">
       <RSidebar />
-      <div className="dashboard-content">
-        <h1>Customer Details</h1>
-        <p>Manage customer information.</p>
+      <div className="content">
+        <RNavbar />
+        <div className="page-content">
+          <h1 className="page-title">Customer Details</h1>
 
-        <h2>Pharmacies List</h2>
-        <table className="pharmacies-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Phone</th> {/* Add other columns based on your data */}
-            </tr>
-          </thead>
-          <tbody>
-            {pharmacies.map((pharmacy) => (
-              <tr key={pharmacy.PharmacyID}>
-                <td>{pharmacy.PharmacyName}</td> {/* Assuming 'id' is a property in your data */}
-                <td>{pharmacy.OwnerName}</td> {/* Assuming 'name' is a property in your data */}
-                <td>{pharmacy.OwnerEmail}</td> {/* Assuming 'address' is a property in your data */}
-                <td>{pharmacy.OwnerContact}</td> {/* Add any other properties as needed */}
-                <td>{pharmacy.PharmacyLocation}</td> {/* Add any other properties as needed */}
-                <td>{pharmacy.LocationLink}</td> {/* Add any other properties as needed */}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          {/* Search Filters */}
+          <div className="search-filters">
+            <Input type="text" placeholder="Search by Pharmacy Name or Owner Name" className="search-input" onChange={(e) => setSearch(e.target.value)} />
+          </div>
+
+          {/* Pharmacies Table */}
+          <div className="table-container">
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeader>Pharmacy Name</TableHeader>
+                  <TableHeader>Owner Name</TableHeader>
+                  <TableHeader>Owner Email</TableHeader>
+                  <TableHeader>Owner Contact</TableHeader>
+                  <TableHeader>Actions</TableHeader>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredPharmacies.map((pharmacy) => (
+                  <TableRow key={pharmacy.PharmacyID}>
+                    <TableCell>{pharmacy.PharmacyName}</TableCell>
+                    <TableCell>{pharmacy.OwnerName}</TableCell>
+                    <TableCell>{pharmacy.OwnerEmail}</TableCell>
+                    <TableCell>{pharmacy.OwnerContact}</TableCell>
+                    <TableCell>
+                      {pharmacy.LocationLink ? (
+                        <a
+                          href={pharmacy.LocationLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="action-button"
+                        >
+                          View Location
+                        </a>
+                      ) : (
+                        <span className="no-location">No Location</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
     </div>
   );

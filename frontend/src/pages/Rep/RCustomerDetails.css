@@ -1,0 +1,146 @@
+/* General Layout */
+.rep-layout {
+    display: flex;
+  }
+  
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 250px; /* Adjust based on sidebar width */
+  }
+  
+  /* Page Title (Fixed in Place) */
+  .page-title {
+    text-align: center;
+    font-size: 40px;
+    color: #003f4f;
+    margin-top: 70px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    position: relative; /* Ensure it does not move */
+  }
+  
+  /* Search Filters */
+  .search-filters {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative; /* Prevents shifting */
+  }
+  
+  .search-input {
+    padding: 8px;
+    border: 1px solid #0f0b21;
+    border-radius: 5px;
+    width: 250px;
+  }
+  
+  /* Table Container */
+  .table-container {
+    max-height: 500px;
+    min-height: 500px;
+    overflow-y: auto;
+    position: relative; /* Keep height fixed */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  /* Pharmacies Table */
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #a4d5de;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    table-layout: fixed;
+  }
+  
+  /* Fixed Table Header */
+  .table-head th {
+    background-color: #003f4f;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2; /* Ensures it stays above content */
+    text-align: center;
+    padding: 12px;
+  }
+  
+  /* Table Rows */
+  .custom-table th,
+  .custom-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  /* Alternate Row Colors */
+  .custom-table tbody tr:nth-child(odd) {
+    background-color: #e6f7ff;
+  }
+  
+  .custom-table tbody tr:nth-child(even) {
+    background-color: #cce7f0;
+  }
+  
+  /* Column Width */
+  .custom-table th:nth-child(1),
+  .custom-table td:nth-child(1) {
+    width: 20%; /* Adjusted width for Pharmacy Name */
+  }
+  
+  .custom-table th:nth-child(2),
+  .custom-table td:nth-child(2) {
+    width: 20%; /* Adjusted width for Owner Name */
+  }
+  
+  .custom-table th:nth-child(3),
+  .custom-table td:nth-child(3) {
+    width: 15%;
+  }
+  
+  .custom-table th:nth-child(4),
+  .custom-table td:nth-child(4) {
+    width: 15%;
+  }
+  
+  .custom-table th:nth-child(5),
+  .custom-table td:nth-child(5) {
+    width: 10%; /* Adjusted width for Actions */
+  }
+  
+  /* Action Button */
+  .action-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    color: #3498db;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .action-button:hover {
+    text-decoration: underline;
+  }
+  
+  /* Hide Non-Matching Rows (Without Affecting Layout) */
+  .custom-table tbody tr.hidden {
+    display: none;
+  }
+  
+  /* Custom Button */
+  .custom-button {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .custom-button:hover {
+    background-color: #2980b9;
+  }
