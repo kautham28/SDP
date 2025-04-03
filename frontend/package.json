@@ -11,6 +11,8 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.14.1",
+    "@cloudinary/url-gen": "^1.21.0",
     "axios": "^1.8.1",
     "chart.js": "^4.4.7",
     "jspdf": "^3.0.0",

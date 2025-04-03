@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const cloudinary = require("../config/cloudinary");
 const path = require("path");
 const mysql = require("mysql");
 const db = require("../config/db"); // Import database connection
@@ -9,10 +10,10 @@ const router = express.Router();
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, "uploads/"); // Temporary storage location before uploading to Cloudinary
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, Date.now() + path.extname(file.originalname)); // Ensure unique file names
   },
 });
 
@@ -53,98 +54,6 @@ router.get("/report", (req, res) => {
   });
 });
 
-// Route to add a new product with image upload
-router.post("/", upload.single("Image"), (req, res) => {
-  const {
-    Name,
-    BatchNumber,
-    ExpiryDate,
-    Quantity,
-    UnitPrice,
-    SupplierName,
-    DeliveryDate,
-    SupplierEmail,
-    MinStock,
-    SupplierID,
-    GenericName,
-  } = req.body;
-  const ImagePath = req.file ? `/uploads/${req.file.filename}` : null;
-
-  if (!Name || !BatchNumber || !ExpiryDate || !Quantity || !UnitPrice) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
-  const sql = `INSERT INTO products (Name, BatchNumber, ExpiryDate, Quantity, UnitPrice, SupplierName, DeliveryDate, SupplierEmail, MinStock, SupplierID, GenericName, ImagePath) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-  db.query(
-    sql,
-    [
-      Name,
-      BatchNumber,
-      ExpiryDate,
-      Quantity,
-      UnitPrice,
-      SupplierName,
-      DeliveryDate,
-      SupplierEmail,
-      MinStock,
-      SupplierID,
-      GenericName,
-      ImagePath,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error("Error adding product:", err);
-        return res.status(500).json({ error: "Database error" });
-      }
-      res.status(201).json({ message: "Product added successfully", productID: result.insertId });
-    }
-  );
-});
-
-// Route to update a product with image upload
-router.put("/:id", upload.single("Image"), (req, res) => {
-  const productID = req.params.id;
-  const {
-    Name,
-    BatchNumber,
-    ExpiryDate,
-    Quantity,
-    UnitPrice,
-    SupplierName,
-    DeliveryDate,
-    SupplierEmail,
-    MinStock,
-    SupplierID,
-    GenericName,
-  } = req.body;
-  const ImagePath = req.file ? `/uploads/${req.file.filename}` : null;
-
-  const updatedProduct = {
-    Name,
-    BatchNumber,
-    ExpiryDate,
-    Quantity,
-    UnitPrice,
-    SupplierName,
-    DeliveryDate,
-    SupplierEmail,
-    MinStock,
-    SupplierID,
-    GenericName,
-    ImagePath,
-  };
-
-  updateProduct(productID, updatedProduct, (err, result) => {
-    if (err) {
-      console.error("Error updating product:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-    res.status(200).json(result);
-  });
-});
-
 // Route to delete a product
 router.delete("/:id", (req, res) => {
   const productID = req.params.id;
@@ -180,6 +89,7 @@ router.get("/low-stock", (req, res) => {
   });
 });
 
+// Get products by supplier
 router.get("/get-products-by-supplier", (req, res) => {
   const supplierID = req.query.SupplierID;
 
@@ -197,5 +107,99 @@ router.get("/get-products-by-supplier", (req, res) => {
     res.json(results); // Return the products as JSON
   });
 });
+
+// Route to add a new product with Cloudinary image upload
+router.post("/", upload.single("Image"), (req, res) => {
+  const {
+    Name,
+    BatchNumber,
+    ExpiryDate,
+    Quantity,
+    UnitPrice,
+    SupplierName,
+    DeliveryDate,
+    SupplierEmail,
+    MinStock,
+    SupplierID,
+    GenericName,
+  } = req.body;
+
+  if (!Name || !BatchNumber || !ExpiryDate || !Quantity || !UnitPrice) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  // Upload the image to Cloudinary
+  if (req.file) {
+    cloudinary.uploader.upload(req.file.path, (error, result) => {
+      if (error) {
+        console.error("Error uploading image to Cloudinary:", error);
+        return res.status(500).json({ error: "Image upload failed" });
+      }
+
+      // Get the Cloudinary image URL
+      const imageUrl = result.secure_url;
+
+      // Save product details along with the image URL in the database
+      const sql = `INSERT INTO products (Name, BatchNumber, ExpiryDate, Quantity, UnitPrice, SupplierName, DeliveryDate, SupplierEmail, MinStock, SupplierID, GenericName, ImagePath) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+      db.query(
+        sql,
+        [
+          Name,
+          BatchNumber,
+          ExpiryDate,
+          Quantity,
+          UnitPrice,
+          SupplierName,
+          DeliveryDate,
+          SupplierEmail,
+          MinStock,
+          SupplierID,
+          GenericName,
+          imageUrl, // Save Cloudinary URL in the ImagePath column
+        ],
+        (err, result) => {
+          if (err) {
+            console.error("Error adding product:", err);
+            return res.status(500).json({ error: "Database error" });
+          }
+          res.status(201).json({ message: "Product added successfully", productID: result.insertId });
+        }
+      );
+    });
+  } else {
+    // If no image is uploaded, set ImagePath to null
+    const sql = `INSERT INTO products (Name, BatchNumber, ExpiryDate, Quantity, UnitPrice, SupplierName, DeliveryDate, SupplierEmail, MinStock, SupplierID, GenericName, ImagePath) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    db.query(
+      sql,
+      [
+        Name,
+        BatchNumber,
+        ExpiryDate,
+        Quantity,
+        UnitPrice,
+        SupplierName,
+        DeliveryDate,
+        SupplierEmail,
+        MinStock,
+        SupplierID,
+        GenericName,
+        null, // No image uploaded, ImagePath is null
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("Error adding product:", err);
+          return res.status(500).json({ error: "Database error" });
+        }
+        res.status(201).json({ message: "Product added successfully", productID: result.insertId });
+      }
+    );
+  }
+});
+
+
 
 module.exports = router;
