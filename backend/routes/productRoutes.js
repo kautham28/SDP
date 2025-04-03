@@ -1,7 +1,22 @@
 const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const mysql = require("mysql");
 const db = require("../config/db"); // Import database connection
 const { addProduct, updateProduct, deleteProduct } = require("../models/Product"); // Import functions
 const router = express.Router();
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // Get all products
 router.get("/", (req, res) => {
@@ -38,23 +53,92 @@ router.get("/report", (req, res) => {
   });
 });
 
-// Route to add a new product
-router.post("/", (req, res) => {
-  const newProduct = req.body;
-  addProduct(newProduct, (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
+// Route to add a new product with image upload
+router.post("/", upload.single("Image"), (req, res) => {
+  const {
+    Name,
+    BatchNumber,
+    ExpiryDate,
+    Quantity,
+    UnitPrice,
+    SupplierName,
+    DeliveryDate,
+    SupplierEmail,
+    MinStock,
+    SupplierID,
+    GenericName,
+  } = req.body;
+  const ImagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  if (!Name || !BatchNumber || !ExpiryDate || !Quantity || !UnitPrice) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const sql = `INSERT INTO products (Name, BatchNumber, ExpiryDate, Quantity, UnitPrice, SupplierName, DeliveryDate, SupplierEmail, MinStock, SupplierID, GenericName, ImagePath) 
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  db.query(
+    sql,
+    [
+      Name,
+      BatchNumber,
+      ExpiryDate,
+      Quantity,
+      UnitPrice,
+      SupplierName,
+      DeliveryDate,
+      SupplierEmail,
+      MinStock,
+      SupplierID,
+      GenericName,
+      ImagePath,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error("Error adding product:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      res.status(201).json({ message: "Product added successfully", productID: result.insertId });
     }
-    res.status(201).json(result);
-  });
+  );
 });
 
-// Route to update a product
-router.put("/:id", (req, res) => {
+// Route to update a product with image upload
+router.put("/:id", upload.single("Image"), (req, res) => {
   const productID = req.params.id;
-  const updatedProduct = req.body;
+  const {
+    Name,
+    BatchNumber,
+    ExpiryDate,
+    Quantity,
+    UnitPrice,
+    SupplierName,
+    DeliveryDate,
+    SupplierEmail,
+    MinStock,
+    SupplierID,
+    GenericName,
+  } = req.body;
+  const ImagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  const updatedProduct = {
+    Name,
+    BatchNumber,
+    ExpiryDate,
+    Quantity,
+    UnitPrice,
+    SupplierName,
+    DeliveryDate,
+    SupplierEmail,
+    MinStock,
+    SupplierID,
+    GenericName,
+    ImagePath,
+  };
+
   updateProduct(productID, updatedProduct, (err, result) => {
     if (err) {
+      console.error("Error updating product:", err);
       return res.status(500).json({ error: "Database error" });
     }
     res.status(200).json(result);
@@ -66,6 +150,7 @@ router.delete("/:id", (req, res) => {
   const productID = req.params.id;
   deleteProduct(productID, (err, result) => {
     if (err) {
+      console.error("Error deleting product:", err);
       return res.status(500).json({ error: "Database error" });
     }
     res.status(200).json(result);

@@ -24,6 +24,13 @@ const AProductlist = () => {
     ExpiryDate: "",
     Quantity: "",
     UnitPrice: "",
+    SupplierName: "",
+    DeliveryDate: "",
+    SupplierEmail: "",
+    MinStock: 0,
+    SupplierID: "",
+    GenericName: "",
+    Image: null,
   });
 
   useEffect(() => {
@@ -89,20 +96,37 @@ const AProductlist = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    setNewProduct({ ...newProduct, Image: e.target.files[0] });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const totalPrice = parseFloat(newProduct.UnitPrice) * parseInt(newProduct.Quantity);
-
-    const productData = {
-      ...newProduct,
-      TotalPrice: totalPrice,
-    };
+    const formData = new FormData();
+    formData.append("Name", newProduct.Name);
+    formData.append("BatchNumber", newProduct.BatchNumber);
+    formData.append("ExpiryDate", newProduct.ExpiryDate);
+    formData.append("Quantity", newProduct.Quantity);
+    formData.append("UnitPrice", newProduct.UnitPrice);
+    formData.append("SupplierName", newProduct.SupplierName);
+    formData.append("DeliveryDate", newProduct.DeliveryDate);
+    formData.append("SupplierEmail", newProduct.SupplierEmail);
+    formData.append("MinStock", newProduct.MinStock);
+    formData.append("SupplierID", newProduct.SupplierID);
+    formData.append("GenericName", newProduct.GenericName);
+    if (newProduct.Image) {
+      formData.append("Image", newProduct.Image);
+    }
 
     if (editMode && selectedProduct) {
       // Update product logic
       axios
-        .put(`http://localhost:5000/api/admin/products/${selectedProduct.ProductID}`, productData)
+        .put(`http://localhost:5000/api/admin/products/${selectedProduct.ProductID}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .then(() => {
           setShowPopup(false);
           fetchProducts(); // Re-fetch products after update
@@ -114,7 +138,11 @@ const AProductlist = () => {
     } else {
       // Add new product logic
       axios
-        .post("http://localhost:5000/api/admin/products", productData)
+        .post("http://localhost:5000/api/admin/products", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .then(() => {
           setShowPopup(false);
           fetchProducts(); // Re-fetch products after adding new one
@@ -135,6 +163,12 @@ const AProductlist = () => {
       ExpiryDate: product.ExpiryDate,
       Quantity: product.Quantity,
       UnitPrice: product.UnitPrice,
+      SupplierName: product.SupplierName,
+      DeliveryDate: product.DeliveryDate,
+      SupplierEmail: product.SupplierEmail,
+      MinStock: product.MinStock,
+      SupplierID: product.SupplierID,
+      GenericName: product.GenericName,
     });
     setShowPopup(true);
   };
@@ -214,6 +248,7 @@ const AProductlist = () => {
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Total Price</th>
+                    
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -227,18 +262,18 @@ const AProductlist = () => {
                       <td>{product.Quantity}</td>
                       <td>{product.UnitPrice.toFixed(2)}</td>
                       <td>{(product.UnitPrice * product.Quantity).toFixed(2)}</td>
+                      
                       <td>
                         <button className="ap-action-button ap-action-button-view" onClick={() => handleView(product)}>
-                         <Eye size={18} />
-                         </button>
-                         <button className="ap-action-button ap-action-button-edit" onClick={() => handleEdit(product)}>
+                          <Eye size={18} />
+                        </button>
+                        <button className="ap-action-button ap-action-button-edit" onClick={() => handleEdit(product)}>
                           <Edit size={18} />
-                         </button>
-                         <button className="ap-action-button ap-action-button-delete" onClick={() => handleDelete(product.ProductID)}>
-                        <Trash size={18} />
-                         </button>
-                        </td>
-
+                        </button>
+                        <button className="ap-action-button ap-action-button-delete" onClick={() => handleDelete(product.ProductID)}>
+                          <Trash size={18} />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -293,6 +328,54 @@ const AProductlist = () => {
                 required
                 placeholder="Unit Price"
               />
+              <input
+                type="text"
+                name="SupplierName"
+                value={newProduct.SupplierName}
+                onChange={handleInputChange}
+                placeholder="Supplier Name"
+              />
+              <input
+                type="date"
+                name="DeliveryDate"
+                value={newProduct.DeliveryDate}
+                onChange={handleInputChange}
+                placeholder="Delivery Date"
+              />
+              <input
+                type="email"
+                name="SupplierEmail"
+                value={newProduct.SupplierEmail}
+                onChange={handleInputChange}
+                placeholder="Supplier Email"
+              />
+              <input
+                type="number"
+                name="MinStock"
+                value={newProduct.MinStock}
+                onChange={handleInputChange}
+                placeholder="Minimum Stock"
+              />
+              <input
+                type="text"
+                name="SupplierID"
+                value={newProduct.SupplierID}
+                onChange={handleInputChange}
+                placeholder="Supplier ID"
+              />
+              <input
+                type="text"
+                name="GenericName"
+                value={newProduct.GenericName}
+                onChange={handleInputChange}
+                placeholder="Generic Name"
+              />
+              <input
+                type="file"
+                name="Image"
+                onChange={handleImageChange}
+                accept="image/*"
+              />
               <button type="submit">{editMode ? "Update" : "Submit"}</button>
               <button type="button" onClick={() => setShowPopup(false)}>
                 Cancel
@@ -334,6 +417,30 @@ const AProductlist = () => {
             </p>
             <p>
               <strong>Total Price:</strong> {(selectedProduct.UnitPrice * selectedProduct.Quantity).toFixed(2)}
+            </p>
+            <p>
+              <strong>Supplier Name:</strong> {selectedProduct.SupplierName}
+            </p>
+            <p>
+              <strong>Delivery Date:</strong> {selectedProduct.DeliveryDate ? new Date(selectedProduct.DeliveryDate).toLocaleDateString("en-GB") : ""}
+            </p>
+            <p>
+              <strong>Supplier Email:</strong> {selectedProduct.SupplierEmail}
+            </p>
+            <p>
+              <strong>Minimum Stock:</strong> {selectedProduct.MinStock}
+            </p>
+            <p>
+              <strong>Supplier ID:</strong> {selectedProduct.SupplierID}
+            </p>
+            <p>
+              <strong>Generic Name:</strong> {selectedProduct.GenericName}
+            </p>
+            <p>
+              <strong>Image:</strong>
+              {selectedProduct.ImagePath && (
+                <img src={selectedProduct.ImagePath} alt={selectedProduct.Name} style={{ width: '100px', height: '100px' }} />
+              )}
             </p>
             <button onClick={() => setShowViewPopup(false)}>Close</button>
           </div>
