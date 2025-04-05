@@ -4,7 +4,7 @@ import Navbar from "../../components/Admin/ANavbar";
 import { Package, ClipboardList, ShoppingBag, Users } from "lucide-react";
 import { Bar, Line } from "react-chartjs-2";
 import "chart.js/auto";
-import "./AdminDashboard.css";
+import "../Admin/Admindashboard.css"; // Updated CSS file name
 
 const AdminDashboard = () => {
   const barChartData = {
@@ -35,43 +35,43 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard-container">
       <Navbar />
-      <div className="dashboard-content">
+      <div className="admin-dashboard-content">
         <Sidebar />
-        <main className="main-content">
-          <h2 className="dashboard-title">Dashboard</h2>
+        <main className="admin-dashboard-main">
+          <h2 className="admin-dashboard-title">Dashboard</h2>
 
-          <div className="cards">
-            <div className="card">
-              <Package className="card-icon" size={50} strokeWidth={1.5} />
+          <div className="admin-dashboard-cards">
+            <div className="admin-dashboard-card">
+              <Package className="admin-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Balance Stock</h3>
               <p>120,000,000</p>
             </div>
-            <div className="card">
-              <ClipboardList className="card-icon" size={50} strokeWidth={1.5} />
+            <div className="admin-dashboard-card">
+              <ClipboardList className="admin-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Pending Orders</h3>
               <p>5,000,000</p>
             </div>
-            <div className="card">
-              <ShoppingBag className="card-icon" size={50} strokeWidth={1.5} />
+            <div className="admin-dashboard-card">
+              <ShoppingBag className="admin-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Total Sales</h3>
               <p>20,850,000</p>
             </div>
-            <div className="card">
-              <Users className="card-icon" size={50} strokeWidth={1.5} />
+            <div className="admin-dashboard-card">
+              <Users className="admin-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Number of Reps</h3>
               <p>50</p>
             </div>
           </div>
 
-          <div className="charts">
-            <div className="chart-container">
+          <div className="admin-dashboard-charts">
+            <div className="admin-dashboard-chart-container">
               <h3>Last 5 Months Sales</h3>
               <Bar data={barChartData} />
             </div>
 
-            <div className="chart-container">
+            <div className="admin-dashboard-chart-container">
               <h3>Rep Sales Comparison</h3>
               <Line data={lineChartData} />
             </div>

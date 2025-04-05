@@ -6,6 +6,8 @@ import ASidebar from "../../components/Admin/ASidebar";
 import ANavbar from "../../components/Admin/ANavbar";
 import { Trash, Eye, Edit } from "lucide-react";
 import "./AProductlist.css";
+import Swal from "sweetalert2"; // Import SweetAlert2
+
 
 const AProductlist = () => {
   const [products, setProducts] = useState([]);
@@ -179,20 +181,38 @@ const AProductlist = () => {
   };
 
   const handleDelete = (productId) => {
-    axios
-      .delete(`http://localhost:5000/api/admin/products/${productId}`)
-      .then(() => {
-        fetchProducts(); // Re-fetch products after delete
-        setShowSuccessPopup(true);
-      })
-      .catch((error) => {
-        console.error("Error deleting product:", error);
-      });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`http://localhost:5000/api/admin/products/${productId}`)
+          .then(() => {
+            fetchProducts(); // Re-fetch products after delete
+            setShowSuccessPopup(true);
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your product has been deleted.",
+              icon: "success",
+            });
+          })
+          .catch((error) => {
+            console.error("Error deleting product:", error);
+          });
+      }
+    });
   };
-
+  
   const handleSuccessPopupClose = () => {
     setShowSuccessPopup(false);
   };
+  
 
   return (
     <div className="ap-dashboard-container">
@@ -248,7 +268,6 @@ const AProductlist = () => {
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Total Price</th>
-                    
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -262,7 +281,6 @@ const AProductlist = () => {
                       <td>{product.Quantity}</td>
                       <td>{product.UnitPrice.toFixed(2)}</td>
                       <td>{(product.UnitPrice * product.Quantity).toFixed(2)}</td>
-                      
                       <td>
                         <button className="ap-action-button ap-action-button-view" onClick={() => handleView(product)}>
                           <Eye size={18} />
@@ -283,103 +301,113 @@ const AProductlist = () => {
         </div>
       </div>
 
-      {/* Popup Modals */}
       {showPopup && (
         <div className="ap-popup-overlay">
           <div className="ap-popup-container">
             <h3>{editMode ? "Edit Product" : "Add New Product"}</h3>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="Name"
-                value={newProduct.Name}
-                onChange={handleInputChange}
-                required
-                placeholder="Product Name"
-              />
-              <input
-                type="text"
-                name="BatchNumber"
-                value={newProduct.BatchNumber}
-                onChange={handleInputChange}
-                required
-                placeholder="Batch Number"
-              />
-              <input
-                type="date"
-                name="ExpiryDate"
-                value={newProduct.ExpiryDate}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="number"
-                name="Quantity"
-                value={newProduct.Quantity}
-                onChange={handleInputChange}
-                required
-                placeholder="Quantity"
-              />
-              <input
-                type="number"
-                name="UnitPrice"
-                value={newProduct.UnitPrice}
-                onChange={handleInputChange}
-                required
-                placeholder="Unit Price"
-              />
-              <input
-                type="text"
-                name="SupplierName"
-                value={newProduct.SupplierName}
-                onChange={handleInputChange}
-                placeholder="Supplier Name"
-              />
-              <input
-                type="date"
-                name="DeliveryDate"
-                value={newProduct.DeliveryDate}
-                onChange={handleInputChange}
-                placeholder="Delivery Date"
-              />
-              <input
-                type="email"
-                name="SupplierEmail"
-                value={newProduct.SupplierEmail}
-                onChange={handleInputChange}
-                placeholder="Supplier Email"
-              />
-              <input
-                type="number"
-                name="MinStock"
-                value={newProduct.MinStock}
-                onChange={handleInputChange}
-                placeholder="Minimum Stock"
-              />
-              <input
-                type="text"
-                name="SupplierID"
-                value={newProduct.SupplierID}
-                onChange={handleInputChange}
-                placeholder="Supplier ID"
-              />
-              <input
-                type="text"
-                name="GenericName"
-                value={newProduct.GenericName}
-                onChange={handleInputChange}
-                placeholder="Generic Name"
-              />
-              <input
-                type="file"
-                name="Image"
-                onChange={handleImageChange}
-                accept="image/*"
-              />
-              <button type="submit">{editMode ? "Update" : "Submit"}</button>
-              <button type="button" onClick={() => setShowPopup(false)}>
-                Cancel
-              </button>
+            <form onSubmit={handleSubmit} className="ap-popup-form">
+              {/* Left Column */}
+              <div>
+                <input
+                  type="text"
+                  name="Name"
+                  value={newProduct.Name}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Product Name"
+                />
+                <input
+                  type="text"
+                  name="GenericName"
+                  value={newProduct.GenericName}
+                  onChange={handleInputChange}
+                  placeholder="Generic Name"
+                />
+                <input
+                  type="text"
+                  name="BatchNumber"
+                  value={newProduct.BatchNumber}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Batch Number"
+                />
+                <input
+                  type="date"
+                  name="ExpiryDate"
+                  value={newProduct.ExpiryDate}
+                  onChange={handleInputChange}
+                  required
+                />
+                <input
+                  type="number"
+                  name="Quantity"
+                  value={newProduct.Quantity}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Quantity"
+                />
+                <input
+                  type="number"
+                  name="UnitPrice"
+                  value={newProduct.UnitPrice}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Unit Price"
+                />
+              </div>
+
+              {/* Right Column */}
+              <div>
+                <input
+                  type="text"
+                  name="SupplierName"
+                  value={newProduct.SupplierName}
+                  onChange={handleInputChange}
+                  placeholder="Supplier Name"
+                />
+                <input
+                  type="date"
+                  name="DeliveryDate"
+                  value={newProduct.DeliveryDate}
+                  onChange={handleInputChange}
+                  placeholder="Delivery Date"
+                />
+                <input
+                  type="email"
+                  name="SupplierEmail"
+                  value={newProduct.SupplierEmail}
+                  onChange={handleInputChange}
+                  placeholder="Supplier Email"
+                />
+                <input
+                  type="number"
+                  name="MinStock"
+                  value={newProduct.MinStock}
+                  onChange={handleInputChange}
+                  placeholder="Minimum Stock"
+                />
+                <input
+                  type="text"
+                  name="SupplierID"
+                  value={newProduct.SupplierID}
+                  onChange={handleInputChange}
+                  placeholder="Supplier ID"
+                />
+                <input
+                  type="file"
+                  name="Image"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="ap-popup-buttons">
+                <button type="submit">{editMode ? "Update" : "Submit"}</button>
+                <button type="button" onClick={() => setShowPopup(false)}>
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -400,48 +428,72 @@ const AProductlist = () => {
         <div className="ap-popup-overlay">
           <div className="ap-popup-container">
             <h3>Product Details</h3>
-            <p>
-              <strong>Name:</strong> {selectedProduct.Name}
-            </p>
-            <p>
-              <strong>Batch Number:</strong> {selectedProduct.BatchNumber}
-            </p>
-            <p>
-              <strong>Expiry Date:</strong> {new Date(selectedProduct.ExpiryDate).toLocaleDateString("en-GB")}
-            </p>
-            <p>
-              <strong>Quantity:</strong> {selectedProduct.Quantity}
-            </p>
-            <p>
-              <strong>Unit Price:</strong> {selectedProduct.UnitPrice.toFixed(2)}
-            </p>
-            <p>
-              <strong>Total Price:</strong> {(selectedProduct.UnitPrice * selectedProduct.Quantity).toFixed(2)}
-            </p>
-            <p>
-              <strong>Supplier Name:</strong> {selectedProduct.SupplierName}
-            </p>
-            <p>
-              <strong>Delivery Date:</strong> {selectedProduct.DeliveryDate ? new Date(selectedProduct.DeliveryDate).toLocaleDateString("en-GB") : ""}
-            </p>
-            <p>
-              <strong>Supplier Email:</strong> {selectedProduct.SupplierEmail}
-            </p>
-            <p>
-              <strong>Minimum Stock:</strong> {selectedProduct.MinStock}
-            </p>
-            <p>
-              <strong>Supplier ID:</strong> {selectedProduct.SupplierID}
-            </p>
-            <p>
-              <strong>Generic Name:</strong> {selectedProduct.GenericName}
-            </p>
-            <p>
-              <strong>Image:</strong>
-              {selectedProduct.ImagePath && (
-                <img src={selectedProduct.ImagePath} alt={selectedProduct.Name} style={{ width: '100px', height: '100px' }} />
-              )}
-            </p>
+            <table className="ap-product-details-table">
+              <thead>
+                <tr>
+                  <th>Detail</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Name</td>
+                  <td>{selectedProduct.Name}</td>
+                </tr>
+                <tr>
+                  <td>Batch Number</td>
+                  <td>{selectedProduct.BatchNumber}</td>
+                </tr>
+                <tr>
+                  <td>Expiry Date</td>
+                  <td>{new Date(selectedProduct.ExpiryDate).toLocaleDateString("en-GB")}</td>
+                </tr>
+                <tr>
+                  <td>Quantity</td>
+                  <td>{selectedProduct.Quantity}</td>
+                </tr>
+                <tr>
+                  <td>Unit Price</td>
+                  <td>{selectedProduct.UnitPrice.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td>Total Price</td>
+                  <td>{(selectedProduct.UnitPrice * selectedProduct.Quantity).toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td>Supplier Name</td>
+                  <td>{selectedProduct.SupplierName}</td>
+                </tr>
+                <tr>
+                  <td>Delivery Date</td>
+                  <td>{selectedProduct.DeliveryDate ? new Date(selectedProduct.DeliveryDate).toLocaleDateString("en-GB") : ""}</td>
+                </tr>
+                <tr>
+                  <td>Supplier Email</td>
+                  <td>{selectedProduct.SupplierEmail}</td>
+                </tr>
+                <tr>
+                  <td>Minimum Stock</td>
+                  <td>{selectedProduct.MinStock}</td>
+                </tr>
+                <tr>
+                  <td>Supplier ID</td>
+                  <td>{selectedProduct.SupplierID}</td>
+                </tr>
+                <tr>
+                  <td>Generic Name</td>
+                  <td>{selectedProduct.GenericName}</td>
+                </tr>
+                <tr>
+                  <td>Image</td>
+                  <td>
+                    {selectedProduct.ImagePath && (
+                      <img src={selectedProduct.ImagePath} alt={selectedProduct.Name} style={{ width: '100px', height: '100px' }} />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             <button onClick={() => setShowViewPopup(false)}>Close</button>
           </div>
         </div>

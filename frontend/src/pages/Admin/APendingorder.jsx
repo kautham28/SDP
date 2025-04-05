@@ -4,6 +4,7 @@ import ASidebar from '../../components/Admin/ASidebar';
 import ANavbar from '../../components/Admin/ANavbar';
 import axios from 'axios';
 import "./APendingorder.css";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const APendingorder = () => {
   const [searchPharmacyName, setSearchPharmacyName] = useState('');
@@ -50,25 +51,56 @@ const APendingorder = () => {
 
   // Handle Delete Order
   const handleDeleteOrder = async (orderId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this order?');
-    
-    if (confirmDelete) {
-      try {
-        const response = await axios.delete(`http://localhost:5000/api/admin/pending-orders/${orderId}`);
-        console.log('Order deleted:', response.data);
-        // Remove the deleted order from the filteredOrders list
-        setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
-      } catch (error) {
-        console.error('Error deleting order:', error);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`http://localhost:5000/api/admin/pending-orders/${orderId}`);
+          console.log('Order deleted:', response.data);
+          
+          // Remove the deleted order from the filteredOrders list
+          setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
+  
+          // Show success message after deleting the order
+          Swal.fire({
+            title: "Deleted!",
+            text: "The order has been deleted.",
+            icon: "success",
+          });
+        } catch (error) {
+          console.error('Error deleting order:', error);
+  
+          // Show error message if there's an issue
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error deleting the order.",
+            icon: "error",
+          });
+        }
       }
-    }
+    });
   };
+  
 
   // Handle Confirm Order
-  const handleConfirmOrder = async (orderId) => {
-    const confirmOrder = window.confirm('Are you sure you want to confirm this order?');
-
-    if (confirmOrder) {
+const handleConfirmOrder = async (orderId) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Do you want to confirm this order?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, confirm it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
       try {
         // Make the API request to confirm the order
         const response = await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`);
@@ -76,11 +108,25 @@ const APendingorder = () => {
         
         // Remove the confirmed order from the filtered list
         setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
+
+        // Show success message after confirming the order
+        Swal.fire({
+          title: "Confirmed!",
+          text: "The order has been confirmed.",
+          icon: "success",
+        });
       } catch (error) {
         console.error('Error confirming order:', error);
+        Swal.fire({
+          title: "Error!",
+          text: "There was an error confirming the order.",
+          icon: "error",
+        });
       }
     }
-  };
+  });
+};
+
 
   return (
     <div className="admin-layout-pending">
@@ -105,6 +151,7 @@ const APendingorder = () => {
             />
             <input 
               type="date" 
+              placeholder="Search by Order Date" 
               value={searchDate} 
               onChange={(e) => setSearchDate(e.target.value)} 
             />

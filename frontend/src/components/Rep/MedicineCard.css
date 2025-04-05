@@ -1,0 +1,80 @@
+.medicine-card {
+    background-color: #f9f9ff;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 16px;
+    width: 250px;
+    margin: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+  }
+  
+  .medicine-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Improved shadow effect on hover */
+  }
+  
+  .medicine-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    /* Fallback color if no image is available */
+  }
+  
+  .medicine-placeholder {
+    width: 100%;
+    height: 180px;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-style: italic;
+    color: #888;
+  }
+  
+  .medicine-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #4a148c;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  
+  .generic-name,
+  .price,
+  .expiry,
+  .quantity {
+    font-size: 1rem;
+    margin: 4px 0;
+    color: #555;
+  }
+  
+  .add-button {
+    background-color: #7b1fa2;
+    color: rgb(159, 40, 40);
+    border: none;
+    padding: 10px 15px;
+    margin-top: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .add-button:hover {
+    background-color: #4a0072;
+    transform: scale(1.05); /* Slightly enlarge the button on hover */
+  }
+  
+  .add-button:active {
+    transform: scale(1); /* Ensures button returns to normal size after click */
+  }
+  
+  .medicine-info {
+    margin-top: 12px;
+  }
+  

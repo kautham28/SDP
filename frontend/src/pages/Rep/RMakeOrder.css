@@ -1,0 +1,153 @@
+/* Styling for the dashboard content */
+body {
+    background-color: rgb(201, 239, 234); /* Light background for the main content */
+
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; 
+    padding: 20px;
+    background-color: rgb(201, 239, 234); /* Light background for the main content */
+  }
+.dashboard-content {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; 
+    padding: 20px;
+    background-color: rgb(201, 239, 234); /* Light background for the main content */
+
+    
+  }
+  
+  /* Center the "Make Order" heading */
+  .heading-container {
+    text-align: center; /* Centers the heading */
+    margin-bottom: 20px;
+    margin-left: 100px; 
+    margin-top: 50px;/* Space between heading and pharmacy dropdown */
+  }
+  
+  /* Style for the pharmacy select dropdown */
+  .pharmacy-select {
+    align-self: flex-start; 
+    text-align: center; /* Centers the dropdown */
+    margin-bottom: 30px; 
+    margin-left: 150px;/* Add some space below the dropdown */
+  }
+  
+  .pharmacy-select label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .pharmacy-select select {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Updated medicine-grid to keep it below the pharmacy select */
+  .medicine-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 items per row */
+    gap: 20px; /* Adjusted gap between cards */
+    margin-top: 20px; /* Adds some space from the bottom of the select box */
+    margin-right: auto; /* Center the grid horizontally */
+    margin-left: auto; /* Center the grid horizontally */
+    width: 100%; /* Ensures it takes the full width of the container */
+    max-width: 1200px; /* Optional: Limit the grid's maximum width */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+  
+/* Add styles for the View Cart button */
+.view-cart-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .view-cart-button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Add styles for the popup */
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+  }
+  
+  .popup-content input {
+    padding: 8px;
+    margin: 10px 0;
+    width: 50px;
+  }
+  
+  .popup-content button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+  }
+  
+  .popup-content button:hover {
+    background-color: #45a049;
+  }
+  
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+  
+  .popup-content {
+    text-align: center;
+  }
+  
+  .popup input {
+    width: 50px;
+    padding: 5px;
+    margin: 10px 0;
+  }
+  
+  .popup-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .popup-buttons button {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
