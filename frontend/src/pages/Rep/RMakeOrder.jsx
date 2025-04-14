@@ -1,130 +1,267 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useState, useEffect } from 'react';
+import './RMakeOrder.css';
 import RNavbar from "../../components/Rep/RNavbar";
 import RSidebar from "../../components/Rep/RSidebar";
-import MedicineCard from "../../components/Rep/MedicineCard";
-import "./RMakeOrder.css";
-import axios from "axios";
+import { ShoppingCart, Pencil, Trash2 } from 'lucide-react';
 
 const RMakeOrder = () => {
-  const [medicines, setMedicines] = useState([]);
+  const [products, setProducts] = useState([]);
   const [pharmacies, setPharmacies] = useState([]);
-  const [selectedPharmacy, setSelectedPharmacy] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useState([]);
-  const [cartVisible, setCartVisible] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedMedicine, setSelectedMedicine] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const navigate = useNavigate(); // Hook for navigation
+  const [repName, setRepName] = useState('');
+  const [repID, setRepID] = useState('');
+  const [selectedPharmacy, setSelectedPharmacy] = useState('');
+  const [cartItems, setCartItems] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editedQty, setEditedQty] = useState(1);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/admin/products")
-      .then((response) => {
-        setMedicines(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-        setLoading(false);
-      });
+    fetch('http://localhost:5000/api/pharmacies/all-pharmacies')
+      .then(res => res.json())
+      .then(data => setPharmacies(data));
+
+    fetch('http://localhost:5000/api/admin/products')
+      .then(res => res.json())
+      .then(data => setProducts(data));
+
+    const fetchRepData = async () => {
+      const token = sessionStorage.getItem("token");
+      const userID = sessionStorage.getItem("userID");
+
+      if (!token || !userID) return;
+
+      try {
+        const response = await fetch("http://localhost:5000/users", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+        const loggedInUser = data.find(user => user.id === parseInt(userID));
+
+        if (loggedInUser) {
+          setRepName(loggedInUser.username);
+          setRepID(loggedInUser.id);
+        }
+      } catch (error) {
+        console.error("Failed to fetch rep data:", error);
+      }
+    };
+
+    fetchRepData();
   }, []);
 
-  useEffect(() => {
-    axios.get("http://localhost:5000/api/pharmacies/all-pharmacies")
-      .then((response) => {
-        setPharmacies(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching pharmacies:", error);
+  const handlePharmacyChange = (pharmacyId) => {
+    setSelectedPharmacy(pharmacyId);
+  };
+
+  const addToCart = (product) => {
+    const qtyInput = document.getElementById(`qty-${product.ProductID}`);
+    const quantity = parseInt(qtyInput.value);
+
+    if (!selectedPharmacy) {
+      alert("Please select a pharmacy first.");
+      return;
+    }
+
+    if (!quantity || quantity <= 0 || quantity > product.Quantity) {
+      alert("Invalid quantity.");
+      return;
+    }
+
+    const newItem = {
+      productId: product.ProductID,
+      productName: product.Name,
+      quantity: quantity,
+      price: product.UnitPrice,
+      totalPrice: product.UnitPrice * quantity
+    };
+
+    setCartItems([...cartItems, newItem]);
+    alert(`${quantity} of ${product.Name} added to cart.`);
+  };
+
+  const deleteCartItem = (index) => {
+    const updatedCart = [...cartItems];
+    updatedCart.splice(index, 1);
+    setCartItems(updatedCart);
+  };
+
+  const startEdit = (index, currentQty) => {
+    setEditingIndex(index);
+    setEditedQty(currentQty);
+  };
+
+  const saveEdit = (index) => {
+    const updatedCart = [...cartItems];
+    const product = updatedCart[index];
+
+    if (editedQty <= 0) {
+      alert("Quantity must be greater than 0");
+      return;
+    }
+
+    product.quantity = editedQty;
+    product.totalPrice = product.price * editedQty;
+
+    updatedCart[index] = product;
+    setCartItems(updatedCart);
+    setEditingIndex(null);
+  };
+
+  const confirmOrder = async () => {
+    if (cartItems.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    const cartData = {
+      pharmacyId: selectedPharmacy,
+      pharmacyName: pharmacies.find(p => p.PharmacyID === selectedPharmacy)?.PharmacyName,
+      repId: repID,
+      repName: repName,
+      items: cartItems
+    };
+
+    try {
+      const response = await fetch("http://localhost:5000/cart/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cartData),
       });
-  }, []);
 
-  // Show the popup when 'Add to Cart' is clicked
-  const handleOpenPopup = (medicine) => {
-    setSelectedMedicine(medicine);
-    setShowPopup(true);
-  };
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(`Failed to confirm order: ${errorMessage}`);
+      }
 
-  // Close the popup
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    setQuantity(1);
-  };
-
-  // Handle adding the selected medicine to cart
-  const handleConfirmAddToCart = () => {
-    if (!selectedMedicine) return;
-
-    const updatedCart = [...cart, { ...selectedMedicine, quantity }];
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Save to local storage
-
-    handleClosePopup(); // Close popup after adding to cart
-    navigate("/rep/view-cart"); // Redirect to View Cart page
+      const result = await response.json();
+      alert(`Order confirmed! Cart ID: ${result.cartId}, Total Value: ${result.totalValue}`);
+      setCartItems([]);
+    } catch (error) {
+      console.error("Error:", error.message);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   return (
-    <div className="dashboard-container">
-      <RNavbar />
+    <div className="rmakeorder-wrapper">
       <RSidebar />
-      <div className="dashboard-content">
-        <div className="heading-container">
-          <h1>Make Order</h1>
-        </div>
+      <div className="rmakeorder-main">
+        <RNavbar />
 
-        <div className="pharmacy-select">
-          <label htmlFor="pharmacy">Select Pharmacy: </label>
-          <select
-            id="pharmacy"
-            name="pharmacy"
-            value={selectedPharmacy}
-            onChange={(e) => setSelectedPharmacy(e.target.value)}
-          >
-            <option value="">Select a Pharmacy</option>
-            {pharmacies.map((pharmacy) => (
-              <option key={pharmacy.PharmacyID} value={pharmacy.PharmacyID}>
-                {pharmacy.PharmacyName}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className="order-container">
+          <div className="order-form">
+            <div className="form-row">
+              <label>Pharmacy:</label>
+              <select onChange={e => handlePharmacyChange(e.target.value)} value={selectedPharmacy}>
+                <option value="">Select Pharmacy</option>
+                {pharmacies.map(p => (
+                  <option key={p.PharmacyID} value={p.PharmacyID}>
+                    {p.PharmacyName}
+                  </option>
+                ))}
+              </select>
 
-        <div className="view-cart-button">
-          <button onClick={() => navigate("/rep/view-cart")}>
-            View Cart
-          </button>
-        </div>
+              <label>Rep Name:</label>
+              <input type="text" value={repName} readOnly />
 
-        <div className="medicine-grid">
-          {loading ? (
-            <p>Loading medicines...</p>
-          ) : (
-            medicines.map((med, index) => (
-              <MedicineCard key={index} medicine={med} onAddToCart={() => handleOpenPopup(med)} />
-            ))
-          )}
-        </div>
+              <label>Rep ID:</label>
+              <input type="number" value={repID} readOnly />
+            </div>
+          </div>
 
-        {/* Popup for Quantity Selection */}
-        {showPopup && (
-          <div className="popup">
-            <div className="popup-content">
-              <h2>{selectedMedicine?.name}</h2>
-              <label>Enter Quantity:</label>
-              <input
-                type="number"
-                min="1"
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-              />
-              <div className="popup-buttons">
-                <button onClick={handleConfirmAddToCart}>Confirm</button>
-                <button onClick={handleClosePopup}>Cancel</button>
+          <div className="order-content">
+            <div className="product-section">
+              <h2>Products</h2>
+              <div className="product-list scroll-view">
+                {products.map(product => (
+                  <div className="product-card" key={product.ProductID}>
+                    <img src={product.ImagePath} alt={product.Name} className="product-image" />
+                    <strong>{product.Name}</strong>
+                    <div className="product-details">
+                      <p>Expiry: {new Date(product.ExpiryDate).toLocaleDateString()}</p>
+                      <p>Rs: {product.UnitPrice}</p>
+                    </div>
+                    <div className="product-actions">
+                      <p><strong>Stock:</strong> {product.Quantity}</p>
+                      <input
+                        type="number"
+                        id={`qty-${product.ProductID}`}
+                        defaultValue={1}
+                        min={1}
+                        max={product.Quantity}
+                      />
+                      <button onClick={() => addToCart(product)}>
+                        <ShoppingCart size={24} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        )}
+
+          {cartItems.length > 0 && (
+            <div className="cart-summary">
+              <h3>Cart Summary</h3>
+              <div className="cart-table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cartItems.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.productName}</td>
+                        <td>
+                          {editingIndex === index ? (
+                            <input
+                              type="number"
+                              min={1}
+                              value={editedQty}
+                              onChange={(e) => setEditedQty(parseInt(e.target.value))}
+                            />
+                          ) : (
+                            item.quantity
+                          )}
+                        </td>
+                        <td>Rs. {item.price}</td>
+                        <td>Rs. {item.totalPrice}</td>
+                        <td>
+                          {editingIndex === index ? (
+                            <button onClick={() => saveEdit(index)}>Save</button>
+                          ) : (
+                            <button onClick={() => startEdit(index, item.quantity)}>
+                              <Pencil size={18} />
+                            </button>
+                          )}
+                          <button onClick={() => deleteCartItem(index)}>
+                            <Trash2 size={18} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="cart-total">
+                <p><strong>Total:</strong> Rs. {cartItems.reduce((total, item) => total + item.totalPrice, 0)}</p>
+              </div>
+
+              <button className="confirm-btn" onClick={confirmOrder}>Confirm Order</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

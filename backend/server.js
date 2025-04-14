@@ -15,6 +15,8 @@ const userRoutes = require("./routes/users");
 const supplierRoutes = require("./routes/supplierRoutes");
 const achievementRoutes = require("./routes/achievements"); // Added achievements route
 const uploadRoutes = require('./routes/uploadRoutes');  // Import the upload routes
+const cartRoutes = require("./routes/cartRoutes");
+
 
 const app = express();
 app.use(cors());
@@ -36,6 +38,7 @@ app.use("/api/achievements", achievementRoutes); // Mount achievements route
 
 // Image upload route
 app.use("/api/upload", uploadRoutes); // Mount the image upload route
+app.use("/cart", cartRoutes);
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

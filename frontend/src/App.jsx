@@ -32,7 +32,7 @@ import RRouteDetails from "./pages/Rep/RRouteDetails";
 import RCustomerDetails from "./pages/Rep/RCustomerDetails";
 import RAchievements from "./pages/Rep/RAchievements";
 import RSettings from "./pages/Rep/RSettings";
-import ViewCart from "./pages/Rep/ViewCart";
+import RCart from "./pages/Rep/RCart";
 
 function App() {
   return (
@@ -72,7 +72,7 @@ function App() {
         <Route path="/rep/customer-details" element={<RCustomerDetails />} />
         <Route path="/rep/achievements" element={<RAchievements />} />
         <Route path="/rep/settings" element={<RSettings />} />
-        <Route path="/rep/view-cart" element={<ViewCart />} />
+        <Route path="/rep/cart" element={<RCart />} />
       </Routes>
     </Router>
   );

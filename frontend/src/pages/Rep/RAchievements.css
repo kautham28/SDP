@@ -1,79 +1,107 @@
-/* General container styling */
-.dashboard-container {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
+.rach-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.rach-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: rgb(201, 239, 234);
+  margin-top: 80px;
+  box-sizing: border-box;
+  width: 100%;
+  margin-left: 200px;
+}
+
+.rach-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.rach-subtitle {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.rach-status-msg {
+  text-align: center;
+}
+
+.rach-error-msg {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}
+
+.rach-achievements {
+  margin-bottom: 30px;
+}
+
+.rach-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rach-box,
+.rach-chart {
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: rgba(119, 179, 192, 0.7);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  width: 550px;
+}
+
+.rach-box p {
+  margin: 10px 0;
+}
+
+.rach-chart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .rach-row {
+    flex-direction: column;
   }
-  
-  .dashboard-content {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background-color: #f4f4f4;
-  }
-  
-  /* Heading styling */
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  /* Achievements Section */
-  .achievements-data {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-  
-  .achievement-item {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .achievement-item:last-child {
-    border-bottom: none;
-  }
-  
-  /* Confirmed Orders Section */
-  .confirmed-orders-data {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 20px; /* Ensures it appears under achievements */
-  }
-  
-  /* Confirmed Orders Table */
-  .confirmed-orders-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  .confirmed-orders-table th,
-  .confirmed-orders-table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .confirmed-orders-table th {
-    background-color: #f8f8f8;
-  }
-  
-  .confirmed-orders-table tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Error and Loading Messages */
-  .error-message {
-    color: red;
-    text-align: center;
-  }
-  
-  p {
-    text-align: center;
-  }
-  
+}
+
+.rach-orders {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.rach-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.rach-table th,
+.rach-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.rach-table th {
+  background-color: #333;
+  color: white;
+}
+
+.rach-table tr:hover {
+  background-color: #f1f1f1;
+}
