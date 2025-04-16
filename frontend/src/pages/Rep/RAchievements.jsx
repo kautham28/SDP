@@ -93,7 +93,14 @@ const RAchievements = () => {
                                 cy="50%"
                                 innerRadius={0}
                                 outerRadius={100}
-                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                label={({ name, percent }) => {
+                                  const color = name === 'Achieved' ? 'green' : 'red';
+                                  return (
+                                    <tspan fill={color}>
+                                      {name}: {(percent * 100).toFixed(0)}%
+                                    </tspan>
+                                  );
+                                }}
                               >
                                 {pieData.map((entry, idx) => (
                                   <Cell
