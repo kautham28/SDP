@@ -115,30 +115,40 @@ const RMakeOrder = () => {
       return;
     }
 
-    const cartData = {
-      pharmacyId: selectedPharmacy,
-      pharmacyName: pharmacies.find(p => p.PharmacyID === selectedPharmacy)?.PharmacyName,
-      repId: repID,
-      repName: repName,
-      items: cartItems
+    const pharmacyName = pharmacies.find(p => p.PharmacyID === selectedPharmacy)?.PharmacyName;
+    const totalValue = cartItems.reduce((total, item) => total + item.totalPrice, 0);
+    const today = new Date().toISOString().split("T")[0];
+
+    const orderData = {
+      pharmacy_name: pharmacyName,
+      rep_name: repName,
+      total_value: totalValue,
+      order_date: today,
+      userID: repID.toString(),
+      products: cartItems.map(item => ({
+        product_name: item.productName,
+        unit_price: item.price,
+        quantity: item.quantity,
+        total_price: item.totalPrice
+      }))
     };
 
     try {
-      const response = await fetch("http://localhost:5000/cart/create", {
+      const response = await fetch("http://localhost:5000/api/admin/confirm-order", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(cartData),
+        body: JSON.stringify(orderData)
       });
 
       if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Failed to confirm order: ${errorMessage}`);
+        const errorText = await response.text();
+        throw new Error(`Failed to confirm order: ${errorText}`);
       }
 
       const result = await response.json();
-      alert(`Order confirmed! Cart ID: ${result.cartId}, Total Value: ${result.totalValue}`);
+      alert(`Order confirmed! Order ID: ${result.orderId}, Total Value: ${result.totalValue}`);
       setCartItems([]);
     } catch (error) {
       console.error("Error:", error.message);
