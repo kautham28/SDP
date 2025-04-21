@@ -54,17 +54,7 @@ router.get("/report", (req, res) => {
   });
 });
 
-// Route to delete a product
-router.delete("/:id", (req, res) => {
-  const productID = req.params.id;
-  deleteProduct(productID, (err, result) => {
-    if (err) {
-      console.error("Error deleting product:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-    res.status(200).json(result);
-  });
-});
+
 
 // Get products expiring within 60 days
 router.get("/expiring-soon", (req, res) => {
@@ -200,6 +190,103 @@ router.post("/", upload.single("Image"), (req, res) => {
   }
 });
 
+// Route to update an existing product
+router.put("/:id", upload.single("Image"), (req, res) => {
+  const {
+    Name,
+    BatchNumber,
+    ExpiryDate,
+    Quantity,
+    UnitPrice,
+    SupplierName,
+    DeliveryDate,
+    SupplierEmail,
+    MinStock,
+    SupplierID,
+    GenericName,
+  } = req.body;
+
+  const productId = req.params.id;
+
+  if (!Name || !BatchNumber || !ExpiryDate || !Quantity || !UnitPrice) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const updateProduct = (imagePath) => {
+    const sql = `UPDATE products SET 
+      Name = ?, BatchNumber = ?, ExpiryDate = ?, Quantity = ?, UnitPrice = ?, 
+      SupplierName = ?, DeliveryDate = ?, SupplierEmail = ?, MinStock = ?, 
+      SupplierID = ?, GenericName = ?, ImagePath = ?
+      WHERE ProductID = ?`;
+
+    db.query(
+      sql,
+      [
+        Name,
+        BatchNumber,
+        ExpiryDate,
+        Quantity,
+        UnitPrice,
+        SupplierName,
+        DeliveryDate,
+        SupplierEmail,
+        MinStock,
+        SupplierID,
+        GenericName,
+        imagePath,
+        productId,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("Error updating product:", err);
+          return res.status(500).json({ error: "Database error" });
+        }
+        res.status(200).json({ message: "Product updated successfully" });
+      }
+    );
+  };
+
+  // If there's a new image to upload
+  if (req.file) {
+    cloudinary.uploader.upload(req.file.path, (error, result) => {
+      if (error) {
+        console.error("Cloudinary upload error:", error);
+        return res.status(500).json({ error: "Image upload failed" });
+      }
+      updateProduct(result.secure_url); // Update with new image URL
+    });
+  } else {
+    // No image uploaded - keep the existing one
+    // First fetch the current image path
+    db.query("SELECT ImagePath FROM products WHERE ProductID = ?", [productId], (err, rows) => {
+      if (err) {
+        console.error("Error fetching product:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      const currentImagePath = rows[0]?.ImagePath || null;
+      updateProduct(currentImagePath);
+    });
+  }
+});
+
+
+// Route to delete a product by ID
+router.delete("/:id", (req, res) => {
+  const productId = req.params.id;
+
+  const sql = "DELETE FROM products WHERE ProductID = ?";
+
+  db.query(sql, [productId], (err, result) => {
+    if (err) {
+      console.error("Error deleting product:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.status(200).json({ message: "Product deleted successfully" });
+  });
+});
 
 
 module.exports = router;

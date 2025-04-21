@@ -88,12 +88,14 @@ h2 {
 }
 
 .product-card {
-  background: rgb(167, 198, 224);
+  background:rgb(150, 210, 205);
+  border: 2px solid #003f4f; /* Added border */
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
   text-align: center;
 }
+
 
 .product-image {
   width: 100%;
