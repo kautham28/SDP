@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import jsPDF from "jspdf"; // Import jsPDF
-import "jspdf-autotable"; // Import jsPDF autoTable plugin
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import ASidebar from "../../components/Admin/ASidebar";
 import ANavbar from "../../components/Admin/ANavbar";
 import { Trash, Eye, Edit } from "lucide-react";
 import "./AProductlist.css";
-import Swal from "sweetalert2"; // Import SweetAlert2
-
+import Swal from "sweetalert2";
 
 const AProductlist = () => {
   const [products, setProducts] = useState([]);
@@ -67,7 +66,7 @@ const AProductlist = () => {
       new Date(product.ExpiryDate).toLocaleDateString("en-GB"),
       product.Quantity,
       product.UnitPrice.toFixed(2),
-      (product.UnitPrice * product.Quantity).toFixed(2), // Calculate total price dynamically
+      (product.UnitPrice * product.Quantity).toFixed(2),
     ]);
 
     doc.autoTable({
@@ -105,55 +104,81 @@ const AProductlist = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!newProduct.Name || !newProduct.BatchNumber || !newProduct.ExpiryDate || 
+        !newProduct.Quantity || !newProduct.UnitPrice) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please fill all required fields (Name, Batch Number, Expiry Date, Quantity, Unit Price)',
+        icon: 'error'
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append("Name", newProduct.Name);
     formData.append("BatchNumber", newProduct.BatchNumber);
     formData.append("ExpiryDate", newProduct.ExpiryDate);
-    formData.append("Quantity", newProduct.Quantity);
-    formData.append("UnitPrice", newProduct.UnitPrice);
-    formData.append("SupplierName", newProduct.SupplierName);
-    formData.append("DeliveryDate", newProduct.DeliveryDate);
-    formData.append("SupplierEmail", newProduct.SupplierEmail);
-    formData.append("MinStock", newProduct.MinStock);
-    formData.append("SupplierID", newProduct.SupplierID);
-    formData.append("GenericName", newProduct.GenericName);
+    formData.append("Quantity", newProduct.Quantity.toString());
+    formData.append("UnitPrice", newProduct.UnitPrice.toString());
+    formData.append("SupplierName", newProduct.SupplierName || "");
+    formData.append("DeliveryDate", newProduct.DeliveryDate || "");
+    formData.append("SupplierEmail", newProduct.SupplierEmail || "");
+    formData.append("MinStock", newProduct.MinStock.toString());
+    formData.append("SupplierID", newProduct.SupplierID || "");
+    formData.append("GenericName", newProduct.GenericName || "");
     if (newProduct.Image) {
       formData.append("Image", newProduct.Image);
     }
 
-    if (editMode && selectedProduct) {
-      // Update product logic
-      axios
-        .put(`http://localhost:5000/api/admin/products/${selectedProduct.ProductID}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+    const apiCall = editMode && selectedProduct
+      ? axios.put(`http://localhost:5000/api/admin/products/${selectedProduct.ProductID}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
         })
-        .then(() => {
-          setShowPopup(false);
-          fetchProducts(); // Re-fetch products after update
-          setShowSuccessPopup(true);
-        })
-        .catch((error) => {
-          console.error("Error updating product:", error);
+      : axios.post("http://localhost:5000/api/admin/products", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
         });
-    } else {
-      // Add new product logic
-      axios
-        .post("http://localhost:5000/api/admin/products", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then(() => {
+
+    apiCall
+      .then(response => {
+        if (response.data && response.data.success) {
+          Swal.fire({
+            title: 'Success!',
+            text: `Product ${editMode ? 'updated' : 'added'} successfully`,
+            icon: 'success'
+          });
           setShowPopup(false);
-          fetchProducts(); // Re-fetch products after adding new one
-          setShowSuccessPopup(true);
-        })
-        .catch((error) => {
-          console.error("Error adding new product:", error);
+          fetchProducts();
+          setNewProduct({
+            Name: "",
+            BatchNumber: "",
+            ExpiryDate: "",
+            Quantity: "",
+            UnitPrice: "",
+            SupplierName: "",
+            DeliveryDate: "",
+            SupplierEmail: "",
+            MinStock: 0,
+            SupplierID: "",
+            GenericName: "",
+            Image: null,
+          });
+          setEditMode(false);
+          setSelectedProduct(null);
+        } else {
+          throw new Error(response.data?.message || 'Operation failed');
+        }
+      })
+      .catch(error => {
+        console.error("API Error:", error);
+        const errorMessage = error.response?.data?.message || 
+                           error.message || 
+                           'Failed to process request';
+        Swal.fire({
+          title: 'Error!',
+          text: errorMessage,
+          icon: 'error'
         });
-    }
+      });
   };
 
   const handleEdit = (product) => {
@@ -171,6 +196,7 @@ const AProductlist = () => {
       MinStock: product.MinStock,
       SupplierID: product.SupplierID,
       GenericName: product.GenericName,
+      Image: null,
     });
     setShowPopup(true);
   };
@@ -194,7 +220,7 @@ const AProductlist = () => {
         axios
           .delete(`http://localhost:5000/api/admin/products/${productId}`)
           .then(() => {
-            fetchProducts(); // Re-fetch products after delete
+            fetchProducts();
             setShowSuccessPopup(true);
             Swal.fire({
               title: "Deleted!",
@@ -212,7 +238,6 @@ const AProductlist = () => {
   const handleSuccessPopupClose = () => {
     setShowSuccessPopup(false);
   };
-  
 
   return (
     <div className="ap-dashboard-container">
@@ -306,7 +331,6 @@ const AProductlist = () => {
           <div className="ap-popup-container">
             <h3>{editMode ? "Edit Product" : "Add New Product"}</h3>
             <form onSubmit={handleSubmit} className="ap-popup-form">
-              {/* Left Column */}
               <div>
                 <input
                   type="text"
@@ -314,7 +338,7 @@ const AProductlist = () => {
                   value={newProduct.Name}
                   onChange={handleInputChange}
                   required
-                  placeholder="Product Name"
+                  placeholder="Product Name*"
                 />
                 <input
                   type="text"
@@ -329,7 +353,7 @@ const AProductlist = () => {
                   value={newProduct.BatchNumber}
                   onChange={handleInputChange}
                   required
-                  placeholder="Batch Number"
+                  placeholder="Batch Number*"
                 />
                 <input
                   type="date"
@@ -344,7 +368,8 @@ const AProductlist = () => {
                   value={newProduct.Quantity}
                   onChange={handleInputChange}
                   required
-                  placeholder="Quantity"
+                  placeholder="Quantity*"
+                  min="1"
                 />
                 <input
                   type="number"
@@ -352,11 +377,12 @@ const AProductlist = () => {
                   value={newProduct.UnitPrice}
                   onChange={handleInputChange}
                   required
-                  placeholder="Unit Price"
+                  placeholder="Unit Price*"
+                  min="0"
+                  step="0.01"
                 />
               </div>
 
-              {/* Right Column */}
               <div>
                 <input
                   type="text"
@@ -385,6 +411,7 @@ const AProductlist = () => {
                   value={newProduct.MinStock}
                   onChange={handleInputChange}
                   placeholder="Minimum Stock"
+                  min="0"
                 />
                 <input
                   type="text"
@@ -399,12 +426,39 @@ const AProductlist = () => {
                   onChange={handleImageChange}
                   accept="image/*"
                 />
+                {newProduct.Image && (
+                  <div className="image-preview">
+                    <p>Selected: {newProduct.Image.name}</p>
+                  </div>
+                )}
               </div>
 
-              {/* Buttons */}
               <div className="ap-popup-buttons">
-                <button type="submit">{editMode ? "Update" : "Submit"}</button>
-                <button type="button" onClick={() => setShowPopup(false)}>
+                <button type="submit" className="submit-btn">
+                  {editMode ? "Update" : "Submit"}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowPopup(false);
+                    setNewProduct({
+                      Name: "",
+                      BatchNumber: "",
+                      ExpiryDate: "",
+                      Quantity: "",
+                      UnitPrice: "",
+                      SupplierName: "",
+                      DeliveryDate: "",
+                      SupplierEmail: "",
+                      MinStock: 0,
+                      SupplierID: "",
+                      GenericName: "",
+                      Image: null,
+                    });
+                    setEditMode(false);
+                  }}
+                  className="cancel-btn"
+                >
                   Cancel
                 </button>
               </div>
@@ -413,17 +467,15 @@ const AProductlist = () => {
         </div>
       )}
 
-      {/* Success Popup */}
       {showSuccessPopup && (
         <div className="ap-popup-overlay">
           <div className="ap-popup-container">
-            <h3>Product {editMode ? "Updated" : "Added"} Successfully</h3>
+            <h3>Operation Successful</h3>
             <button onClick={handleSuccessPopupClose}>OK</button>
           </div>
         </div>
       )}
 
-      {/* View Product Popup */}
       {showViewPopup && selectedProduct && (
         <div className="ap-popup-overlay">
           <div className="ap-popup-container">

@@ -10,9 +10,9 @@ function generateNextOrderId(lastId) {
   return 'O' + numeric.toString().padStart(4, '0');
 }
 
-// Fetch all pending orders
+// Fetch all pending orders with status 'pending'
 router.get('/pending-orders', (req, res) => {
-  const query = 'SELECT * FROM pending_orders';
+  const query = "SELECT * FROM pending_orders WHERE status = 'pending'";
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching data:', err);
@@ -21,6 +21,7 @@ router.get('/pending-orders', (req, res) => {
     res.json(results);
   });
 });
+
 
 // Confirm order with product details
 router.post('/confirm-order', (req, res) => {
@@ -109,10 +110,10 @@ router.delete('/pending-orders/:orderId', (req, res) => {
   });
 });
 
-// Confirm a pending order (move to confirmed_order)
 router.put('/pending-orders/confirm/:orderId', (req, res) => {
   const { orderId } = req.params;
 
+  // 1. Insert into confirmed_order
   const insertQuery = `
     INSERT INTO confirmed_order (OrderID, PharmacyName, RepName, TotalValue, OrderDate, ConfirmedDate)
     SELECT orderId, pharmacy_name, rep_name, total_value, order_date, CURDATE()
@@ -129,15 +130,18 @@ router.put('/pending-orders/confirm/:orderId', (req, res) => {
       return res.status(404).send('Order not found in pending orders');
     }
 
-    // Delete from pending_orders after confirmation
-    const deleteQuery = 'DELETE FROM pending_orders WHERE orderId = ?';
-    db.query(deleteQuery, [orderId], (err, deleteResult) => {
+    // 2. Update the status to 'confirmed'
+    const updateStatusQuery = `
+      UPDATE pending_orders SET status = 'confirmed' WHERE orderId = ?
+    `;
+
+    db.query(updateStatusQuery, [orderId], (err, updateResult) => {
       if (err) {
-        console.error('Error deleting confirmed order from pending_orders:', err);
+        console.error('Error updating order status:', err);
         return res.status(500).send('Server error');
       }
 
-      res.status(200).send('Order confirmed and moved to confirmed orders');
+      res.status(200).send('Order confirmed, inserted into confirmed orders, and marked as confirmed in pending orders');
     });
   });
 });
