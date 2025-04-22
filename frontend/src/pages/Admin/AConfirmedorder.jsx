@@ -24,9 +24,10 @@ const TableCell = ({ children }) => <td className="table-cell">{children}</td>;
 const AConfirmedorder = () => {
     const [orders, setOrders] = useState([]);
     const [search, setSearch] = useState('');
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
-        // Fetch confirmed orders from backend
         axios.get('http://localhost:5000/api/confirmed-orders')
             .then(response => {
                 setOrders(response.data);
@@ -36,13 +37,21 @@ const AConfirmedorder = () => {
             });
     }, []);
 
-    // Format date function
     const formatDate = (date) => {
         const d = new Date(date);
-        return d.toLocaleDateString(); // Will return date in MM/DD/YYYY format
+        return d.toLocaleDateString();
     };
 
-    // Filtered orders based on search input
+    const handleViewOrder = async (orderId) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/orders/details/${orderId}`);
+            setSelectedOrder(response.data);
+            setShowPopup(true);
+        } catch (error) {
+            console.error('Error fetching order details:', error);
+        }
+    };
+
     const filteredOrders = orders.filter(order =>
         order.RepName.toLowerCase().includes(search.toLowerCase()) ||
         order.PharmacyName.toLowerCase().includes(search.toLowerCase())
@@ -56,7 +65,7 @@ const AConfirmedorder = () => {
                 <div className="page-content">
                     <h1 className="page-title">Confirmed Orders</h1>
 
-                    {/* Search Filters */}
+                    {/* Search Filter */}
                     <div className="search-filters">
                         <Input type="text" placeholder="Search by Rep Name or Pharmacy Name" className="search-input" onChange={(e) => setSearch(e.target.value)} />
                     </div>
@@ -85,7 +94,7 @@ const AConfirmedorder = () => {
                                         <TableCell>{formatDate(order.OrderDate)}</TableCell>
                                         <TableCell>{formatDate(order.ConfirmedDate)}</TableCell>
                                         <TableCell>
-                                            <Button className="action-button">
+                                            <Button className="action-button" onClick={() => handleViewOrder(order.OrderID)}>
                                                 <Eye size={20} />
                                             </Button>
                                         </TableCell>
@@ -94,6 +103,39 @@ const AConfirmedorder = () => {
                             </TableBody>
                         </Table>
                     </div>
+
+                    {/* Popup for Order Details */}
+                    {showPopup && selectedOrder && (
+                        <div className="popup-overlay show">
+                            <div className="popup-content large-popup">
+                                <h2>Order Details</h2>
+                                <p><strong>Order ID:</strong> {selectedOrder[0]?.orderId}</p>
+                                <table className="order-details-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Detail ID</th>
+                                            <th>Product Name</th>
+                                            <th>Unit Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {selectedOrder.map(detail => (
+                                            <tr key={detail.detailId}>
+                                                <td>{detail.detailId}</td>
+                                                <td>{detail.product_name}</td>
+                                                <td>{detail.unit_price}</td>
+                                                <td>{detail.quantity}</td>
+                                                <td>{detail.total_price}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <button className="close-popup" onClick={() => setShowPopup(false)}>Close</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
