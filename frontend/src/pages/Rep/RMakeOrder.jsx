@@ -41,7 +41,7 @@ const RMakeOrder = () => {
 
         if (loggedInUser) {
           setRepName(loggedInUser.username);
-          setRepID(loggedInUser.id);
+          setRepID(loggedInUser.id.toString()); // Ensure repID is stored as string
         }
       } catch (error) {
         console.error("Failed to fetch rep data:", error);
@@ -115,6 +115,11 @@ const RMakeOrder = () => {
       return;
     }
 
+    if (!repID) {
+      alert("Representative ID not found. Please refresh the page.");
+      return;
+    }
+
     const pharmacyName = pharmacies.find(p => p.PharmacyID === selectedPharmacy)?.PharmacyName;
     const totalValue = cartItems.reduce((total, item) => total + item.totalPrice, 0);
     const today = new Date().toISOString().split("T")[0];
@@ -124,7 +129,7 @@ const RMakeOrder = () => {
       rep_name: repName,
       total_value: totalValue,
       order_date: today,
-      userID: repID.toString(),
+      userID: repID, // Using the repID that was fetched from token
       products: cartItems.map(item => ({
         product_name: item.productName,
         unit_price: item.price,
@@ -179,7 +184,7 @@ const RMakeOrder = () => {
               <input type="text" value={repName} readOnly />
 
               <label>Rep ID:</label>
-              <input type="number" value={repID} readOnly />
+              <input type="text" value={repID} readOnly />
             </div>
           </div>
 

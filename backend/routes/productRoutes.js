@@ -19,15 +19,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Get all products
+// Get all non-expired products
 router.get("/", (req, res) => {
-  const sql = "SELECT * FROM products"; // Fetch all products from the database
+  const sql = "SELECT * FROM products WHERE ExpiryDate > CURDATE()"; // Only products with future expiry
   db.query(sql, (err, results) => {
     if (err) {
       console.error("Error fetching products:", err);
       return res.status(500).json({ error: "Database query error" });
     }
-    res.json(results); // Send product data as JSON
+    res.json(results); // Send non-expired product data as JSON
   });
 });
 

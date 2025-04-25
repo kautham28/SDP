@@ -110,13 +110,14 @@ router.delete('/pending-orders/:orderId', (req, res) => {
   });
 });
 
+// Updated route to preserve UserID when confirming an order
 router.put('/pending-orders/confirm/:orderId', (req, res) => {
   const { orderId } = req.params;
 
-  // 1. Insert into confirmed_order
+  // 1. Insert into confirmed_order (including UserID)
   const insertQuery = `
-    INSERT INTO confirmed_order (OrderID, PharmacyName, RepName, TotalValue, OrderDate, ConfirmedDate)
-    SELECT orderId, pharmacy_name, rep_name, total_value, order_date, CURDATE()
+    INSERT INTO confirmed_order (OrderID, PharmacyName, RepName, TotalValue, OrderDate, ConfirmedDate, UserID)
+    SELECT orderId, pharmacy_name, rep_name, total_value, order_date, CURDATE(), UserID
     FROM pending_orders WHERE orderId = ?
   `;
 
