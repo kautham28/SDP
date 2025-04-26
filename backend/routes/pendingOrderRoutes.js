@@ -23,7 +23,7 @@ router.get('/pending-orders', (req, res) => {
 });
 
 
-// Confirm order with product details
+// Confirm order with product details and reduce product quantity
 router.post('/confirm-order', (req, res) => {
   const { pharmacy_name, rep_name, total_value, order_date, userID, products } = req.body;
 
@@ -45,7 +45,7 @@ router.post('/confirm-order', (req, res) => {
       const lastOrderId = result.length > 0 ? result[0].orderId : null;
       const newOrderId = generateNextOrderId(lastOrderId);
 
-      // Step 2: Insert into pending_orders (auto-increment orderId)
+      // Step 2: Insert into pending_orders
       const pendingOrderQuery = `
         INSERT INTO pending_orders (orderId, pharmacy_name, rep_name, total_value, order_date, UserID)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -57,7 +57,7 @@ router.post('/confirm-order', (req, res) => {
           return db.rollback(() => res.status(500).send('Error inserting pending order'));
         }
 
-        // Step 3: Insert into order_details (auto-increment detailId)
+        // Step 3: Insert into order_details
         const detailQuery = `
           INSERT INTO order_details (orderId, product_name, unit_price, quantity, total_price)
           VALUES ?
@@ -77,36 +77,116 @@ router.post('/confirm-order', (req, res) => {
             return db.rollback(() => res.status(500).send('Error inserting order details'));
           }
 
-          db.commit(err => {
-            if (err) {
-              console.error('Commit error:', err);
-              return db.rollback(() => res.status(500).send('Error committing transaction'));
-            }
-
-            res.status(200).json({ message: 'Order confirmed successfully', orderId: newOrderId });
+          // Step 4: Reduce product quantity in products table
+          const updateStockTasks = products.map(prod => {
+            return new Promise((resolve, reject) => {
+              const updateQuery = `
+                UPDATE products
+                SET Quantity = Quantity - ?
+                WHERE Name = ?
+              `;
+              db.query(updateQuery, [prod.quantity, prod.product_name], (err, result) => {
+                if (err) {
+                  return reject(err);
+                }
+                resolve();
+              });
+            });
           });
+
+          // Step 5: Commit after all updates
+          Promise.all(updateStockTasks)
+            .then(() => {
+              db.commit(err => {
+                if (err) {
+                  console.error('Commit error:', err);
+                  return db.rollback(() => res.status(500).send('Error committing transaction'));
+                }
+                res.status(200).json({ message: 'Order confirmed and stock updated', orderId: newOrderId });
+              });
+            })
+            .catch(err => {
+              console.error('Error updating product stock:', err);
+              db.rollback(() => res.status(500).send('Error updating product stock'));
+            });
         });
       });
     });
   });
 });
 
-// Delete pending order by ID
+
 router.delete('/pending-orders/:orderId', (req, res) => {
   const { orderId } = req.params;
-  const query = 'DELETE FROM pending_orders WHERE orderId = ?';
 
-  db.query(query, [orderId], (err, result) => {
+  db.beginTransaction(err => {
     if (err) {
-      console.error('Error deleting order:', err);
-      return res.status(500).send('Server error');
+      console.error('Transaction start error:', err);
+      return res.status(500).send('Transaction error');
     }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).send('Order not found');
-    }
+    // Step 1: Get order details
+    const getDetailsQuery = `SELECT product_name, quantity FROM order_details WHERE orderId = ?`;
+    db.query(getDetailsQuery, [orderId], (err, orderDetails) => {
+      if (err) {
+        console.error('Error fetching order details:', err);
+        return db.rollback(() => res.status(500).send('Error fetching order details'));
+      }
 
-    res.status(200).send('Order deleted successfully');
+      // Step 2: Restore product quantities
+      const restoreTasks = orderDetails.map(detail => {
+        return new Promise((resolve, reject) => {
+          const updateQuery = `
+            UPDATE products
+            SET Quantity = Quantity + ?
+            WHERE Name = ?
+          `;
+          db.query(updateQuery, [detail.quantity, detail.product_name], (err, result) => {
+            if (err) return reject(err);
+            resolve();
+          });
+        });
+      });
+
+      // Step 3: Proceed after restoring stock
+      Promise.all(restoreTasks)
+        .then(() => {
+          // Step 4: Delete order details
+          const deleteDetailsQuery = `DELETE FROM order_details WHERE orderId = ?`;
+          db.query(deleteDetailsQuery, [orderId], (err, result) => {
+            if (err) {
+              console.error('Error deleting order details:', err);
+              return db.rollback(() => res.status(500).send('Error deleting order details'));
+            }
+
+            // Step 5: Delete the pending order
+            const deleteOrderQuery = `DELETE FROM pending_orders WHERE orderId = ?`;
+            db.query(deleteOrderQuery, [orderId], (err, result) => {
+              if (err) {
+                console.error('Error deleting order:', err);
+                return db.rollback(() => res.status(500).send('Error deleting order'));
+              }
+
+              if (result.affectedRows === 0) {
+                return db.rollback(() => res.status(404).send('Order not found'));
+              }
+
+              db.commit(err => {
+                if (err) {
+                  console.error('Commit error:', err);
+                  return db.rollback(() => res.status(500).send('Commit error'));
+                }
+
+                res.status(200).send('Order deleted and stock restored successfully');
+              });
+            });
+          });
+        })
+        .catch(err => {
+          console.error('Error restoring stock:', err);
+          db.rollback(() => res.status(500).send('Error restoring stock'));
+        });
+    });
   });
 });
 

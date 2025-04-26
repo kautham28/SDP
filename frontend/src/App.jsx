@@ -20,7 +20,7 @@ import MAssignRoles from "./pages/Manager/MAssignRoles";
 import MInventory from "./pages/Manager/MInventory";
 import MSalesReports from "./pages/Manager/MSalesReports";
 import MSettings from "./pages/Manager/MSettings";
-import MMakePurchase from "./pages/Manager/MMakePurchase";
+import TopSellingProductsPage from "./pages/Manager/TopSellingProductsPage";
 import MStockAlert from "./pages/Manager/MStockAlert";
 import MSupplier from "./pages/Manager/MSupplier"; 
 
@@ -60,7 +60,7 @@ function App() {
         <Route path="/manager/inventory" element={<MInventory />} />
         <Route path="/manager/sales-reports" element={<MSalesReports />} />
         <Route path="/manager/settings" element={<MSettings />} />
-        <Route path="/manager/make-purchase" element={<MMakePurchase />} />
+        <Route path="/manager/make-purchase" element={<TopSellingProductsPage/>} />
         <Route path="/manager/stock-alert" element={<MStockAlert />} />
         <Route path="/manager/supplier" element={<MSupplier />} />
 
