@@ -1,313 +1,519 @@
 /* General Layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-y: auto; /* Enable vertical scrolling for the entire page */
+}
+
 .route-details-page-container {
-    display: flex;
+  display: flex;
+  min-height: 100vh; /* Ensure container takes at least full viewport height */
 }
 
 .route-details-main-content {
-    flex-grow: 1;
-    padding: 20px;
-    margin-left: 250px; /* Adjust based on sidebar width */
+  flex-grow: 1;
+  padding: 20px;
+  margin-left: 250px; /* Adjust based on sidebar width */
 }
 
 /* Page Title (Fixed in Place) */
 .route-details-header {
-    text-align: center;
-    font-size: 20px;
-    color: #003f4f;
-    margin-top: px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    position: relative; /* Ensure it does not move */
+  text-align: center;
+  font-size: 20px;
+  color: #003f4f;
+  margin-top: 200px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  position: relative; /* Ensure it does not move */
 }
 
 /* Filters Section */
 .route-details-filters {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    position: relative; /* Prevents shifting */
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  position: relative; /* Prevents shifting */
+  margin-top: 250px; /* Adjusted to prevent overlap with header */
 }
 
 .route-details-input {
-    padding: 8px;
-    border: 1px solid #0f0b21;
-    border-radius: 5px;
-    width: 200px;
+  padding: 8px;
+  border: 1px solid #0f0b21;
+  border-radius: 5px;
+  width: 200px;
 }
 
 /* Search Button Styles */
 .route-details-search-button,
 .route-details-report-button,
 .route-details-make-route-button {
-    padding: 10px 15px;
-    background-color: #003f4f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  padding: 10px 15px;
+  background-color: #003f4f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .route-details-search-button:hover,
 .route-details-report-button:hover,
 .route-details-make-route-button:hover {
-    background-color: #3498db;
+  background-color: #3498db;
 }
 
-/* Table Container */
+/* Table Container - No longer has max-height to allow full page scrolling */
 .route-details-table-container {
-    max-height: 500px;
-    min-height: 500px;
-    overflow-y: auto;
-    position: relative;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 100%;
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  /* Removed max-height and overflow-y to allow natural flow */
 }
 
 /* Table Styles */
 .route-details-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #a4d5de;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  background: #a4d5de;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  table-layout: fixed;
 }
 
 /* Fixed Table Header */
 .route-details-table th {
-    background-color: #003f4f;
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    text-align: center;
-    padding: 12px;
+  background-color: #003f4f;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  text-align: center;
+  padding: 12px;
 }
 
 .route-details-table th,
 .route-details-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
 }
 
 /* Alternate Row Colors */
 .route-details-table tbody tr:nth-child(odd) {
-    background-color: #e6f7ff;
+  background-color: #e6f7ff;
 }
 
 .route-details-table tbody tr:nth-child(even) {
-    background-color: #cce7f0;
+  background-color: #cce7f0;
 }
 
 /* Action Buttons */
 .action-buttons-route {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
 button {
-    padding: 0;
-    margin: 0;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: inherit;
-    font-size: 20px;
-    display: inline-block;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 20px;
+  display: inline-block;
 }
 
 button.view-route {
-    background-color: transparent;
-    color: #3498db;
+  background-color: transparent;
+  color: #3498db;
 }
 
 button.confirm-route {
-    background-color: transparent;
-    color: #278a50;
+  background-color: transparent;
+  color: #278a50;
 }
 
 button.delete-route {
-    background-color: transparent;
-    color: #e74c3c;
+  background-color: transparent;
+  color: #e74c3c;
 }
 
 /* Hide Non-Matching Rows */
 .route-details-table tbody tr.hidden {
-    display: none;
+  display: none;
 }
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-    .route-details-page-container {
-        flex-direction: column;
-    }
+  .route-details-page-container {
+      flex-direction: column;
+  }
 
-    .route-details-filters {
-        flex-direction: column;
-        gap: 10px;
-    }
+  .route-details-filters {
+      flex-direction: column;
+      gap: 10px;
+  }
 
-    .route-details-input {
-        width: 100%;
-    }
+  .route-details-input {
+      width: 100%;
+  }
 
-    .route-details-table-container {
-        width: 100%;
-        margin-left: 0;
-    }
+  .route-details-table-container {
+      width: 100%;
+      margin-left: 0;
+  }
 }
 
 /* Popup Overlay */
 .popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensures the popup appears above other elements */
-  }
-  
-  /* Popup Content Box */
-  .popup-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    max-width: 800px;
-    width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
-    overflow-y: auto;
-  }
-  
-  /* Popup Heading */
-  .popup-content h2 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  /* Input Fields */
-  .popup-content input[type="date"],
-  .popup-content input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  .popup-content input[type="text"]:focus,
-  .popup-content input[type="date"]:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  
-  /* Pharmacy Checkbox List */
-  .pharmacy-checkbox-list {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 15px;
-    margin-top: 10px;
-  }
-  
-  .pharmacy-checkbox-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  
-  .pharmacy-checkbox-item input[type="checkbox"] {
-    margin-right: 10px;
-  }
-  
-  .pharmacy-checkbox-item label {
-    font-size: 14px;
-    color: #333;
-  }
-  
-  /* Pharmacy Table Styling (if needed) */
-  .pharmacy-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .pharmacy-table th,
-  .pharmacy-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .pharmacy-table th {
-    background-color: #f2f2f2;
-    font-weight: 600;
-  }
-  
-  /* Link to View Location */
-  .pharmacy-location-link {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .pharmacy-location-link:hover {
-    text-decoration: underline;
-  }
-  
-  /* Close Button Styling */
-  .close-button {
-    background-color: #ff4b5c;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .close-button:hover {
-    background-color: #e60000;
-  }
-  
-  /* Submit Button Styling */
-  .create-route-submit-button {
-    background-color: #28a745;
-    color: white;
-    padding: 12px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 20px;
-  }
-  
-  .create-route-submit-button:hover {
-    background-color: #218838;
-  }
-  
-  /* Scrollbar for pharmacy list */
-  .popup-content .pharmacy-checkbox-list::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .popup-content .pharmacy-checkbox-list::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 10px;
-  }
-  
-  .popup-content .pharmacy-checkbox-list::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensures the popup appears above other elements */
+}
+
+/* Popup Content Box */
+.popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+  overflow-y: auto;
+  max-height: 90vh; /* Ensure popup doesn't exceed viewport height */
+}
+
+/* Popup Heading */
+.popup-content h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Input Fields */
+.popup-content input[type="date"],
+.popup-content input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.popup-content input[type="text"]:focus,
+.popup-content input[type="date"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Pharmacy Checkbox List */
+.pharmacy-checkbox-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+
+.pharmacy-checkbox-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pharmacy-checkbox-item input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.pharmacy-checkbox-item label {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Pharmacy Table Styling (if needed) */
+.pharmacy-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.pharmacy-table th,
+.pharmacy-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.pharmacy-table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+}
+
+/* Link to View Location */
+.pharmacy-location-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.pharmacy-location-link:hover {
+  text-decoration: underline;
+}
+
+/* Close Button Styling */
+.close-button {
+  background-color: #ff4b5c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.close-button:hover {
+  background-color: #e60000;
+}
+
+/* Submit Button Styling */
+.create-route-submit-button {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.create-route-submit-button:hover {
+  background-color: #218838;
+}
+
+/* Scrollbar for pharmacy list */
+.popup-content .pharmacy-checkbox-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.popup-content .pharmacy-checkbox-list::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.popup-content .pharmacy-checkbox-list::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* Scrollbar styling for entire page */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #003f4f;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3498db;
+}
+
+/* Popup styling */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.create-route-popup {
+  width: 90%;
+  max-width: 900px;
+}
+
+/* Form styling */
+.create-route-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Pharmacy sections */
+.pharmacy-selection-section {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.pharmacy-list, .selected-pharmacy-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+.pharmacy-item, .selected-pharmacy-item {
+  padding: 8px;
+  border-bottom: 1px solid #f5f5f5;
+  display: flex;
+  align-items: center;
+}
+
+.selected-pharmacy-item {
+  justify-content: space-between;
+}
+
+.remove-pharmacy-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Button styling */
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submit-button {
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  border: 1px solid #d9d9d9;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-pharmacy-button {
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Dropdown styling */
+.select-dropdown {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.readonly-input {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.pharmacy-dropdown-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 15px;
+}
+
+.pharmacy-dropdown-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.pharmacy-details-preview {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+/* Disabled button styling */
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Better spacing */
+.pharmacy-dropdown-selection, .add-custom-pharmacy, .selected-pharmacies {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.selected-pharmacy-item strong {
+  color: #1890ff;
+}

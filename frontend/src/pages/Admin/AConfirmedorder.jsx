@@ -24,7 +24,10 @@ const TableCell = ({ children }) => <td className="table-cell">{children}</td>;
 
 const AConfirmedorder = () => {
     const [orders, setOrders] = useState([]);
-    const [search, setSearch] = useState('');
+    const [pharmacySearch, setPharmacySearch] = useState('');
+    const [repSearch, setRepSearch] = useState('');
+    const [orderDateSearch, setOrderDateSearch] = useState('');
+    const [confirmedDateSearch, setConfirmedDateSearch] = useState('');
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
     const printRef = useRef();
@@ -67,8 +70,7 @@ const AConfirmedorder = () => {
                 <p><strong>RAM Medical</strong></p>
                 <br/>
                 ${printContents}
-                <p><strong>......................</strong></p>
-                <p><strong>Checked by</strong></p>
+               
             </body>
             </html>
         `);
@@ -78,8 +80,10 @@ const AConfirmedorder = () => {
     };
 
     const filteredOrders = orders.filter(order =>
-        order.RepName.toLowerCase().includes(search.toLowerCase()) ||
-        order.PharmacyName.toLowerCase().includes(search.toLowerCase())
+        order.PharmacyName.toLowerCase().includes(pharmacySearch.toLowerCase()) &&
+        order.RepName.toLowerCase().includes(repSearch.toLowerCase()) &&
+        order.OrderDate.includes(orderDateSearch) &&
+        order.ConfirmedDate.includes(confirmedDateSearch)
     );
 
     return (
@@ -93,8 +97,23 @@ const AConfirmedorder = () => {
                     <div className="search-filters">
                         <Input
                             type="text"
-                            placeholder="Search by Rep Name or Pharmacy Name"
-                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search by Pharmacy Name"
+                            onChange={(e) => setPharmacySearch(e.target.value)}
+                        />
+                        <Input
+                            type="text"
+                            placeholder="Search by Rep Name"
+                            onChange={(e) => setRepSearch(e.target.value)}
+                        />
+                        <Input
+                            type="text"
+                            placeholder="Search by Order Date (YYYY-MM-DD)"
+                            onChange={(e) => setOrderDateSearch(e.target.value)}
+                        />
+                        <Input
+                            type="text"
+                            placeholder="Search by Confirmed Date (YYYY-MM-DD)"
+                            onChange={(e) => setConfirmedDateSearch(e.target.value)}
                         />
                     </div>
 

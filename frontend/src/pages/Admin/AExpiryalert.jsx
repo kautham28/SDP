@@ -49,13 +49,25 @@ const AExpiryalert = () => {
     setFilteredProducts(filteredData);
   };
 
-  const handleReturn = (productId) => {
-    console.log("Return product with ID:", productId);
-    // You can add logic for returning the product here
+  const handleReturn = async (productId) => {
+    const confirmReturn = window.confirm("Are you sure you want to return this product?");
+    if (!confirmReturn) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/products/${productId}`);
+
+      // After successful delete, remove product from state
+      setProducts((prevProducts) => prevProducts.filter((item) => item.ID !== productId));
+      setFilteredProducts((prevFiltered) => prevFiltered.filter((item) => item.ID !== productId));
+
+      console.log("Product returned and deleted successfully.");
+    } catch (error) {
+      console.error("Error returning (deleting) product:", error);
+    }
   };
 
   return (
-    <div className="admin-layout">
+    <div className="admin-layout" style={{ overflowY: "auto", maxHeight: "100vh" }}>
       <ASidebar />
       <div className="admin-content">
         <ANavbar />

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import ASidebar from "../../components/Admin/ASidebar";
 import ANavbar from "../../components/Admin/ANavbar";
 import { Trash, Eye, Edit } from "lucide-react";
@@ -52,33 +50,80 @@ const AProductlist = () => {
   };
 
   const generateReport = () => {
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-    doc.text("Product Report", 14, 22);
-
-    const headers = ["Product ID", "Name", "Batch Number", "Expiry Date", "Quantity", "Unit Price", "Total Price"];
-
-    const data = filteredProducts.map((product) => [
-      product.ProductID,
-      product.Name,
-      product.BatchNumber,
-      new Date(product.ExpiryDate).toLocaleDateString("en-GB"),
-      product.Quantity,
-      product.UnitPrice.toFixed(2),
-      (product.UnitPrice * product.Quantity).toFixed(2),
-    ]);
-
-    doc.autoTable({
-      head: [headers],
-      body: data,
-      startY: 30,
-      theme: 'grid',
-      headStyles: { fillColor: [0, 0, 0] },
-      margin: { top: 30, left: 14, right: 14 },
+    // Create a new window for printing
+    const printWindow = window.open('', '', 'width=800,height=600');
+    
+    // Format date for display
+    const formatDate = (dateString) => {
+      return new Date(dateString).toLocaleDateString("en-GB");
+    };
+    
+    // Build the HTML table with product data
+    let tableRows = '';
+    filteredProducts.forEach(product => {
+      tableRows += `
+        <tr>
+          <td>${product.ProductID}</td>
+          <td>${product.Name}</td>
+          <td>${product.BatchNumber}</td>
+          <td>${formatDate(product.ExpiryDate)}</td>
+          <td>${product.Quantity}</td>
+          <td>${product.UnitPrice.toFixed(2)}</td>
+          <td>${(product.UnitPrice * product.Quantity).toFixed(2)}</td>
+        </tr>
+      `;
     });
-
-    doc.save("product_report.pdf");
+    
+    // Write the complete HTML content to the new window
+    printWindow.document.write(`
+      <html>
+      <head>
+        <title>Product Report</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h2 { color: #003f4f; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+          th { background-color: #f2f2f2; }
+          .header { margin-bottom: 20px; }
+          .footer { margin-top: 30px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <p><strong>RAM Medical</strong></p>
+          <h2>Product Report</h2>
+        </div>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Name</th>
+              <th>Batch Number</th>
+              <th>Expiry Date</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Total Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+        
+        <div class="footer">
+          <p><strong>......................</strong></p>
+          <p><strong>Checked by</strong></p>
+        </div>
+      </body>
+      </html>
+    `);
+    
+    // Close the document stream and trigger print
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
   };
 
   const filteredProducts = products.filter((product) => {

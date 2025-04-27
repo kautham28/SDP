@@ -4,7 +4,7 @@ import ASidebar from '../../components/Admin/ASidebar';
 import ANavbar from '../../components/Admin/ANavbar';
 import axios from 'axios';
 import "./APendingorder.css";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 const APendingorder = () => {
   const [searchPharmacyName, setSearchPharmacyName] = useState('');
@@ -12,7 +12,7 @@ const APendingorder = () => {
   const [searchDate, setSearchDate] = useState('');
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null); // Popup data
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
@@ -32,24 +32,23 @@ const APendingorder = () => {
     const filtered = orders.filter(order => {
       const matchesPharmacyName = order.pharmacy_name.toLowerCase().includes(searchPharmacyName.toLowerCase());
       const matchesRepName = order.rep_name.toLowerCase().includes(searchRepName.toLowerCase());
-      const matchesOrderDate = searchDate ? new Date(order.order_date).toISOString().split('T')[0] === searchDate : true;
+      const orderDateFormatted = new Date(order.order_date).toISOString().split('T')[0]; // format as yyyy-mm-dd
+      const matchesOrderDate = orderDateFormatted.includes(searchDate);
       return matchesPharmacyName && matchesRepName && matchesOrderDate;
     });
     setFilteredOrders(filtered);
   }, [searchPharmacyName, searchRepName, searchDate, orders]);
 
-  // Fetch order details when clicking the Eye button
   const handleViewOrder = async (orderId) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/orders/details/${orderId}`);
-      setSelectedOrder(response.data); // Store order details in state
-      setShowPopup(true); // Show the popup
+      setSelectedOrder(response.data);
+      setShowPopup(true);
     } catch (error) {
       console.error('Error fetching order details:', error);
     }
   };
 
-  // Handle Delete Order
   const handleDeleteOrder = async (orderId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -64,11 +63,9 @@ const APendingorder = () => {
         try {
           const response = await axios.delete(`http://localhost:5000/api/admin/pending-orders/${orderId}`);
           console.log('Order deleted:', response.data);
-          
-          // Remove the deleted order from the filteredOrders list
+
           setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
-  
-          // Show success message after deleting the order
+
           Swal.fire({
             title: "Deleted!",
             text: "The order has been deleted.",
@@ -76,8 +73,6 @@ const APendingorder = () => {
           });
         } catch (error) {
           console.error('Error deleting order:', error);
-  
-          // Show error message if there's an issue
           Swal.fire({
             title: "Error!",
             text: "There was an error deleting the order.",
@@ -87,46 +82,40 @@ const APendingorder = () => {
       }
     });
   };
-  
 
-  // Handle Confirm Order
-const handleConfirmOrder = async (orderId) => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "Do you want to confirm this order?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, confirm it!",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        // Make the API request to confirm the order
-        const response = await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`);
-        console.log('Order confirmed:', response.data);
-        
-        // Remove the confirmed order from the filtered list
-        setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
+  const handleConfirmOrder = async (orderId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to confirm this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, confirm it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`);
+          console.log('Order confirmed:', response.data);
 
-        // Show success message after confirming the order
-        Swal.fire({
-          title: "Confirmed!",
-          text: "The order has been confirmed.",
-          icon: "success",
-        });
-      } catch (error) {
-        console.error('Error confirming order:', error);
-        Swal.fire({
-          title: "Error!",
-          text: "There was an error confirming the order.",
-          icon: "error",
-        });
+          setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
+
+          Swal.fire({
+            title: "Confirmed!",
+            text: "The order has been confirmed.",
+            icon: "success",
+          });
+        } catch (error) {
+          console.error('Error confirming order:', error);
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error confirming the order.",
+            icon: "error",
+          });
+        }
       }
-    }
-  });
-};
-
+    });
+  };
 
   return (
     <div className="admin-layout-pending">
@@ -135,7 +124,7 @@ const handleConfirmOrder = async (orderId) => {
         <ANavbar />
         <div className="page-content-pending">
           <h1 className="page-title-pending">Pending Orders</h1>
-          
+
           <div className="search-bar-pending">
             <input 
               type="text" 
@@ -150,8 +139,8 @@ const handleConfirmOrder = async (orderId) => {
               onChange={(e) => setSearchRepName(e.target.value)} 
             />
             <input 
-              type="date" 
-              placeholder="Search by Order Date" 
+              type="text" 
+              placeholder="Search by Order Date (e.g., 2024-04)" 
               value={searchDate} 
               onChange={(e) => setSearchDate(e.target.value)} 
             />

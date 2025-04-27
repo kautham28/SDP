@@ -2,6 +2,7 @@
 .admin-layout {
   display: flex;
   height: 100vh;
+  overflow: hidden; /* Prevent double scrollbars */
 }
 
 .admin-content {
@@ -10,13 +11,26 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 /* Expiry Alert Section */
 .expiry-alert-content {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
+/* Scrollable Table Wrapper */
+.expiry-alert-table-wrapper {
+  max-height: 500px; /* Adjust table visible height */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Expiry Alert Title */
 .expiry-alert-title {
   text-align: center;
   font-size: 40px;
@@ -29,6 +43,7 @@
 /* Search & Report Buttons */
 .expiry-alert-search-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
   margin-bottom: 20px;
@@ -89,7 +104,7 @@
 /* Make Medicine Name column wider */
 .expiry-alert-table th:nth-child(1),
 .expiry-alert-table td:nth-child(1) {
-  width: 20%; /* Adjust this percentage as per your preference */
+  width: 20%;
 }
 
 .expiry-alert-table thead {
@@ -122,7 +137,7 @@
 
 /* Action Button */
 .expiry-alert-return-button {
-  background-color: #3498db; /* Blue background */
+  background-color: #3498db;
   border-color: #3498db;
   cursor: pointer;
   padding: 5px 5px;
@@ -133,5 +148,5 @@
 }
 
 .expiry-alert-return-button:hover {
-  background-color: #003f4f; /* Darker blue on hover */
+  background-color: #003f4f;
 }
