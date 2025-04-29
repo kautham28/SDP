@@ -11,28 +11,46 @@ const APendingorder = () => {
   const [searchRepName, setSearchRepName] = useState('');
   const [searchDate, setSearchDate] = useState('');
   const [orders, setOrders] = useState([]);
+  const [pharmacies, setPharmacies] = useState([]);
+  const [users, setUsers] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/pending-orders');
-        setOrders(response.data);
-        setFilteredOrders(response.data);
+        const [ordersResponse, pharmaciesResponse, usersResponse] = await Promise.all([
+          axios.get('http://localhost:5000/api/admin/pending-orders'),
+          axios.get('http://localhost:5000/api/pharmacies/all-pharmacies'),
+          axios.get('http://localhost:5000/users')
+        ]);
+        
+        setOrders(ordersResponse.data);
+        setFilteredOrders(ordersResponse.data);
+        setPharmacies(pharmaciesResponse.data);
+        setUsers(usersResponse.data);
       } catch (error) {
-        console.error('Error fetching orders:', error);
+        console.error('Error fetching data:', error);
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to load data. Please try again later.",
+          icon: "error",
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchOrders();
+    fetchData();
   }, []);
 
   useEffect(() => {
     const filtered = orders.filter(order => {
       const matchesPharmacyName = order.pharmacy_name.toLowerCase().includes(searchPharmacyName.toLowerCase());
       const matchesRepName = order.rep_name.toLowerCase().includes(searchRepName.toLowerCase());
-      const orderDateFormatted = new Date(order.order_date).toISOString().split('T')[0]; // format as yyyy-mm-dd
+      const orderDateFormatted = new Date(order.order_date).toISOString().split('T')[0];
       const matchesOrderDate = orderDateFormatted.includes(searchDate);
       return matchesPharmacyName && matchesRepName && matchesOrderDate;
     });
@@ -46,6 +64,11 @@ const APendingorder = () => {
       setShowPopup(true);
     } catch (error) {
       console.error('Error fetching order details:', error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to load order details. Please try again.",
+        icon: "error",
+      });
     }
   };
 
@@ -61,11 +84,8 @@ const APendingorder = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:5000/api/admin/pending-orders/${orderId}`);
-          console.log('Order deleted:', response.data);
-
+          await axios.delete(`http://localhost:5000/api/admin/pending-orders/${orderId}`);
           setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
-
           Swal.fire({
             title: "Deleted!",
             text: "The order has been deleted.",
@@ -75,7 +95,7 @@ const APendingorder = () => {
           console.error('Error deleting order:', error);
           Swal.fire({
             title: "Error!",
-            text: "There was an error deleting the order.",
+            text: "Failed to delete the order. Please try again.",
             icon: "error",
           });
         }
@@ -94,24 +114,83 @@ const APendingorder = () => {
       confirmButtonText: "Yes, confirm it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setIsLoading(true);
         try {
-          const response = await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`);
-          console.log('Order confirmed:', response.data);
+          const orderDetailsResponse = await axios.get(`http://localhost:5000/api/orders/details/${orderId}`);
+          const orderDetails = orderDetailsResponse.data;
+          
+          const order = filteredOrders.find(o => o.orderId === orderId);
+          if (!order) {
+            throw new Error('Order not found in the current list');
+          }
+          
+          // Pharmacy lookup (unchanged)
+          const pharmacy = pharmacies.find(p => 
+            p.PharmacyName.trim().toLowerCase() === order.pharmacy_name.trim().toLowerCase()
+          );
+          if (!pharmacy) {
+            throw new Error(`Pharmacy not found with name: ${order.pharmacy_name}`);
+          }
+          const pharmacyEmail = pharmacy.OwnerEmail;
+          
+          // ✅ FIXED: Changed to match orders.UserID with users.id
+          const rep = users.find(u => u.id === order.UserID);
+          if (!rep) {
+            throw new Error(`Representative not found with ID: ${order.UserID}`);
+          }
+          const repEmail = rep.email;
 
-          setFilteredOrders(filteredOrders.filter(order => order.orderId !== orderId));
+          if (!pharmacyEmail) {
+            throw new Error(`Email not found for pharmacy: ${order.pharmacy_name}`);
+          }
+          
+          if (!repEmail) {
+            throw new Error(`Email not found for representative: ${order.rep_name}`);
+          }
+
+          await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`);
+
+          await axios.post(
+            'http://localhost:5000/api/email/send-order-confirmation',
+            {
+              orderId,
+              pharmacyEmail,
+              repEmail,
+              pharmacyName: order.pharmacy_name,
+              repName: order.rep_name,
+              orderDetails
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+
+          setFilteredOrders(filteredOrders.filter(o => o.orderId !== orderId));
 
           Swal.fire({
             title: "Confirmed!",
-            text: "The order has been confirmed.",
+            text: "Order confirmed and emails sent successfully!",
             icon: "success",
           });
         } catch (error) {
-          console.error('Error confirming order:', error);
+          console.error('Confirmation Error:', error);
+
+          let errorMessage = "Failed to complete confirmation process.";
+          if (error.response?.data?.message) {
+            errorMessage = error.response.data.message;
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
+
           Swal.fire({
             title: "Error!",
-            text: "There was an error confirming the order.",
+            text: errorMessage,
             icon: "error",
           });
+        } finally {
+          setIsLoading(false);
         }
       }
     });
@@ -139,79 +218,83 @@ const APendingorder = () => {
               onChange={(e) => setSearchRepName(e.target.value)} 
             />
             <input 
-              type="text" 
-              placeholder="Search by Order Date (e.g., 2024-04)" 
+              type="date" 
+              placeholder="Search by Order Date" 
               value={searchDate} 
               onChange={(e) => setSearchDate(e.target.value)} 
             />
           </div>
 
-          <div className="table-container-pending">
-            <table className="orders-table-pending">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Pharmacy Name</th>
-                  <th>Rep Name</th>
-                  <th>Total Value</th>
-                  <th>Order Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.length > 0 ? (
-                  filteredOrders.map(order => (
-                    <tr key={order.orderId}>
-                      <td>{order.orderId}</td>
-                      <td>{order.pharmacy_name}</td>
-                      <td>{order.rep_name}</td>
-                      <td>{order.total_value}</td>
-                      <td>{new Date(order.order_date).toLocaleDateString()}</td>
-                      <td className="action-buttons-pending">
-                        <button 
-                          className="view-pending" 
-                          aria-label="View Order"
-                          onClick={() => handleViewOrder(order.orderId)}
-                        >
-                          <Eye size={20} />
-                        </button>
-                        <button 
-                          className="confirm-pending" 
-                          aria-label="Confirm Order"
-                          onClick={() => handleConfirmOrder(order.orderId)} 
-                        >
-                          <Check size={20} />
-                        </button>
-                        <button 
-                          className="delete-pending" 
-                          aria-label="Delete Order"
-                          onClick={() => handleDeleteOrder(order.orderId)} 
-                        >
-                          <Trash2 size={20} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
+          {isLoading ? (
+            <div className="loading-indicator">Loading...</div>
+          ) : (
+            <div className="table-container-pending">
+              <table className="orders-table-pending">
+                <thead>
                   <tr>
-                    <td colSpan="6" className="no-orders">No orders found</td>
+                    <th>Order ID</th>
+                    <th>Pharmacy Name</th>
+                    <th>Rep Name</th>
+                    <th>Total Value</th>
+                    <th>Order Date</th>
+                    <th>Actions</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredOrders.length > 0 ? (
+                    filteredOrders.map(order => (
+                      <tr key={order.orderId}>
+                        <td>{order.orderId}</td>
+                        <td>{order.pharmacy_name}</td>
+                        <td>{order.rep_name}</td>
+                        <td>{order.total_value?.toFixed(2)}</td>
+                        <td>{new Date(order.order_date).toLocaleDateString()}</td>
+                        <td className="action-buttons-pending">
+                          <button 
+                            className="view-pending" 
+                            onClick={() => handleViewOrder(order.orderId)}
+                          >
+                            <Eye size={20} />
+                          </button>
+                          <button 
+                            className="confirm-pending" 
+                            onClick={() => handleConfirmOrder(order.orderId)} 
+                          >
+                            <Check size={20} />
+                          </button>
+                          <button 
+                            className="delete-pending" 
+                            onClick={() => handleDeleteOrder(order.orderId)} 
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="no-orders">No orders found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
-        {/* Popup for Order Details */}
         {showPopup && selectedOrder && (
           <div className="popup-overlay show">
             <div className="popup-content large-popup">
               <h2>Order Details</h2>
-              <p><strong>Order ID:</strong> {selectedOrder[0]?.orderId}</p>
+              <div className="order-summary">
+                <p><strong>Order ID:</strong> {selectedOrder[0]?.orderId}</p>
+                <p><strong>Pharmacy:</strong> {selectedOrder[0]?.pharmacy_name}</p>
+                <p><strong>Representative:</strong> {selectedOrder[0]?.rep_name}</p>
+                <p><strong>Order Date:</strong> {new Date(selectedOrder[0]?.order_date).toLocaleString()}</p>
+              </div>
               <table className="order-details-table">
                 <thead>
                   <tr>
-                    <th>Detail ID</th>
                     <th>Product Name</th>
                     <th>Unit Price</th>
                     <th>Quantity</th>
@@ -221,14 +304,19 @@ const APendingorder = () => {
                 <tbody>
                   {selectedOrder.map(detail => (
                     <tr key={detail.detailId}>
-                      <td>{detail.detailId}</td>
                       <td>{detail.product_name}</td>
-                      <td>{detail.unit_price}</td>
+                      <td>{detail.unit_price?.toFixed(2)}</td>
                       <td>{detail.quantity}</td>
-                      <td>{detail.total_price}</td>
+                      <td>{detail.total_price?.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan="3" className="text-right"><strong>Grand Total:</strong></td>
+                    <td>{selectedOrder.reduce((sum, item) => sum + (item.total_price || 0), 0)?.toFixed(2)}</td>
+                  </tr>
+                </tfoot>
               </table>
               <button className="close-popup" onClick={() => setShowPopup(false)}>Close</button>
             </div>

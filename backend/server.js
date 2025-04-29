@@ -17,6 +17,10 @@ const achievementRoutes = require("./routes/achievements");
 const uploadRoutes = require('./routes/uploadRoutes');
 const cartRoutes = require("./routes/cartRoutes");
 const topProductsRoutes = require("./routes/topProductsRoutes"); // Added top products route
+const emailRoutes = require('./routes/emailRoutes');
+
+// Add this with your other route middleware
+
 
 const app = express();
 app.use(cors());
@@ -38,6 +42,7 @@ app.use("/api/achievements", achievementRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/cart", cartRoutes);
 app.use("/api/analytics", topProductsRoutes); // Mount top products route
+app.use('/api/email', emailRoutes);
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");
