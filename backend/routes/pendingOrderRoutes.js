@@ -10,27 +10,36 @@ function generateNextOrderId(lastId) {
   return 'O' + numeric.toString().padStart(4, '0');
 }
 
+// Helper function to get month name from date
+function getMonthName(date) {
+  return date.toLocaleString('en-US', { month: 'long' });
+}
+
 // Fetch all pending orders with status 'pending'
 router.get('/pending-orders', (req, res) => {
   const query = "SELECT * FROM pending_orders WHERE status = 'pending'";
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching data:', err);
-      return res.status(500).send('Server error');
+      return res.status(500).json({ error: 'Server error', details: err.message });
     }
     res.json(results);
   });
 });
 
-
 // Confirm order with product details and reduce product quantity
 router.post('/confirm-order', (req, res) => {
   const { pharmacy_name, rep_name, total_value, order_date, userID, products } = req.body;
 
+  // Validate input
+  if (!pharmacy_name || !rep_name || !total_value || !order_date || !userID || !products || !Array.isArray(products)) {
+    return res.status(400).json({ error: 'Missing or invalid required fields' });
+  }
+
   db.beginTransaction(err => {
     if (err) {
       console.error('Transaction start error:', err);
-      return res.status(500).send('Transaction error');
+      return res.status(500).json({ error: 'Transaction error', details: err.message });
     }
 
     // Step 1: Get the last orderId
@@ -39,7 +48,7 @@ router.post('/confirm-order', (req, res) => {
     db.query(getLastOrderIdQuery, (err, result) => {
       if (err) {
         console.error('Error getting last orderId:', err);
-        return db.rollback(() => res.status(500).send('Error getting last orderId'));
+        return db.rollback(() => res.status(500).json({ error: 'Error getting last orderId', details: err.message }));
       }
 
       const lastOrderId = result.length > 0 ? result[0].orderId : null;
@@ -54,7 +63,7 @@ router.post('/confirm-order', (req, res) => {
       db.query(pendingOrderQuery, [newOrderId, pharmacy_name, rep_name, total_value, order_date, userID], (err, result) => {
         if (err) {
           console.error('Error inserting into pending_orders:', err);
-          return db.rollback(() => res.status(500).send('Error inserting pending order'));
+          return db.rollback(() => res.status(500).json({ error: 'Error inserting pending order', details: err.message }));
         }
 
         // Step 3: Insert into order_details
@@ -74,7 +83,7 @@ router.post('/confirm-order', (req, res) => {
         db.query(detailQuery, [detailValues], (err, result) => {
           if (err) {
             console.error('Error inserting into order_details:', err);
-            return db.rollback(() => res.status(500).send('Error inserting order details'));
+            return db.rollback(() => res.status(500).json({ error: 'Error inserting order details', details: err.message }));
           }
 
           // Step 4: Reduce product quantity in products table
@@ -100,14 +109,14 @@ router.post('/confirm-order', (req, res) => {
               db.commit(err => {
                 if (err) {
                   console.error('Commit error:', err);
-                  return db.rollback(() => res.status(500).send('Error committing transaction'));
+                  return db.rollback(() => res.status(500).json({ error: 'Error committing transaction', details: err.message }));
                 }
                 res.status(200).json({ message: 'Order confirmed and stock updated', orderId: newOrderId });
               });
             })
             .catch(err => {
               console.error('Error updating product stock:', err);
-              db.rollback(() => res.status(500).send('Error updating product stock'));
+              db.rollback(() => res.status(500).json({ error: 'Error updating product stock', details: err.message }));
             });
         });
       });
@@ -115,14 +124,14 @@ router.post('/confirm-order', (req, res) => {
   });
 });
 
-
+// Delete pending order and restore product quantities
 router.delete('/pending-orders/:orderId', (req, res) => {
   const { orderId } = req.params;
 
   db.beginTransaction(err => {
     if (err) {
       console.error('Transaction start error:', err);
-      return res.status(500).send('Transaction error');
+      return res.status(500).json({ error: 'Transaction error', details: err.message });
     }
 
     // Step 1: Get order details
@@ -130,7 +139,7 @@ router.delete('/pending-orders/:orderId', (req, res) => {
     db.query(getDetailsQuery, [orderId], (err, orderDetails) => {
       if (err) {
         console.error('Error fetching order details:', err);
-        return db.rollback(() => res.status(500).send('Error fetching order details'));
+        return db.rollback(() => res.status(500).json({ error: 'Error fetching order details', details: err.message }));
       }
 
       // Step 2: Restore product quantities
@@ -156,7 +165,7 @@ router.delete('/pending-orders/:orderId', (req, res) => {
           db.query(deleteDetailsQuery, [orderId], (err, result) => {
             if (err) {
               console.error('Error deleting order details:', err);
-              return db.rollback(() => res.status(500).send('Error deleting order details'));
+              return db.rollback(() => res.status(500).json({ error: 'Error deleting order details', details: err.message }));
             }
 
             // Step 5: Delete the pending order
@@ -164,65 +173,153 @@ router.delete('/pending-orders/:orderId', (req, res) => {
             db.query(deleteOrderQuery, [orderId], (err, result) => {
               if (err) {
                 console.error('Error deleting order:', err);
-                return db.rollback(() => res.status(500).send('Error deleting order'));
+                return db.rollback(() => res.status(500).json({ error: 'Error deleting order', details: err.message }));
               }
 
               if (result.affectedRows === 0) {
-                return db.rollback(() => res.status(404).send('Order not found'));
+                return db.rollback(() => res.status(404).json({ error: 'Order not found' }));
               }
 
               db.commit(err => {
                 if (err) {
                   console.error('Commit error:', err);
-                  return db.rollback(() => res.status(500).send('Commit error'));
+                  return db.rollback(() => res.status(500).json({ error: 'Commit error', details: err.message }));
                 }
 
-                res.status(200).send('Order deleted and stock restored successfully');
+                res.status(200).json({ message: 'Order deleted and stock restored successfully' });
               });
             });
           });
         })
         .catch(err => {
           console.error('Error restoring stock:', err);
-          db.rollback(() => res.status(500).send('Error restoring stock'));
+          db.rollback(() => res.status(500).json({ error: 'Error restoring stock', details: err.message }));
         });
     });
   });
 });
 
-// Updated route to preserve UserID when confirming an order
+// Confirm order, move to confirmed_order, update rep_achievements, and mark as confirmed
 router.put('/pending-orders/confirm/:orderId', (req, res) => {
   const { orderId } = req.params;
 
-  // 1. Insert into confirmed_order (including UserID)
-  const insertQuery = `
-    INSERT INTO confirmed_order (OrderID, PharmacyName, RepName, TotalValue, OrderDate, ConfirmedDate, UserID)
-    SELECT orderId, pharmacy_name, rep_name, total_value, order_date, CURDATE(), UserID
-    FROM pending_orders WHERE orderId = ?
-  `;
-
-  db.query(insertQuery, [orderId], (err, result) => {
+  db.beginTransaction(err => {
     if (err) {
-      console.error('Error inserting into confirmed_order:', err);
-      return res.status(500).send('Server error');
+      console.error('Transaction start error:', err);
+      return res.status(500).json({ error: 'Transaction error', details: err.message });
     }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).send('Order not found in pending orders');
-    }
-
-    // 2. Update the status to 'confirmed'
-    const updateStatusQuery = `
-      UPDATE pending_orders SET status = 'confirmed' WHERE orderId = ?
+    // Step 1: Fetch order details
+    const fetchOrderQuery = `
+      SELECT UserID, total_value, order_date
+      FROM pending_orders
+      WHERE orderId = ?
     `;
-
-    db.query(updateStatusQuery, [orderId], (err, updateResult) => {
+    db.query(fetchOrderQuery, [orderId], (err, orderResult) => {
       if (err) {
-        console.error('Error updating order status:', err);
-        return res.status(500).send('Server error');
+        console.error('Error fetching order:', err);
+        return db.rollback(() => res.status(500).json({ error: 'Failed to fetch order', details: err.message }));
       }
 
-      res.status(200).send('Order confirmed, inserted into confirmed orders, and marked as confirmed in pending orders');
+      if (orderResult.length === 0) {
+        return db.rollback(() => res.status(404).json({ error: 'Order not found' }));
+      }
+
+      const { UserID, total_value, order_date } = orderResult[0];
+      const orderDate = new Date(order_date);
+      const month = getMonthName(orderDate);
+      const year = orderDate.getFullYear();
+
+      // Step 2: Insert into confirmed_order
+      const insertQuery = `
+        INSERT INTO confirmed_order (OrderID, PharmacyName, RepName, TotalValue, OrderDate, ConfirmedDate, UserID)
+        SELECT orderId, pharmacy_name, rep_name, total_value, order_date, CURDATE(), UserID
+        FROM pending_orders
+        WHERE orderId = ?
+      `;
+      db.query(insertQuery, [orderId], (err, result) => {
+        if (err) {
+          console.error('Error inserting into confirmed_order:', err);
+          return db.rollback(() => res.status(500).json({ error: 'Failed to confirm order', details: err.message }));
+        }
+
+        if (result.affectedRows === 0) {
+          return db.rollback(() => res.status(404).json({ error: 'Order not found in pending orders' }));
+        }
+
+        // Step 3: Update rep_achievements
+        const checkAchievementQuery = `
+          SELECT TotalSales, Target
+          FROM rep_achievements
+          WHERE RepID = ? AND Month = ? AND Year = ?
+        `;
+        db.query(checkAchievementQuery, [UserID, month, year], (err, achievementResult) => {
+          if (err) {
+            console.error('Error checking rep_achievements:', err);
+            return db.rollback(() => res.status(500).json({ error: 'Failed to check achievements', details: err.message }));
+          }
+
+          if (achievementResult.length > 0) {
+            // Update existing record
+            const { TotalSales, Target } = achievementResult[0];
+            const newTotalSales = parseFloat(TotalSales) + parseFloat(total_value);
+            const newPercentage = Target > 0 ? (newTotalSales / Target) * 100 : 0;
+
+            const updateAchievementQuery = `
+              UPDATE rep_achievements
+              SET TotalSales = ?, percentage = ?, LastUpdated = CURRENT_TIMESTAMP
+              WHERE RepID = ? AND Month = ? AND Year = ?
+            `;
+            db.query(updateAchievementQuery, [newTotalSales, newPercentage, UserID, month, year], (err) => {
+              if (err) {
+                console.error('Error updating rep_achievements:', err);
+                return db.rollback(() => res.status(500).json({ error: 'Failed to update achievements', details: err.message }));
+              }
+              proceedToUpdateStatus();
+            });
+          } else {
+            // Insert new record
+            const newTotalSales = parseFloat(total_value);
+            const defaultTarget = 0.00; // Adjust if you have a default target
+            const newPercentage = defaultTarget > 0 ? (newTotalSales / defaultTarget) * 100 : 0;
+
+            const insertAchievementQuery = `
+              INSERT INTO rep_achievements (RepID, Month, Year, Target, TotalSales, percentage)
+              VALUES (?, ?, ?, ?, ?, ?)
+            `;
+            db.query(insertAchievementQuery, [UserID, month, year, defaultTarget, newTotalSales, newPercentage], (err) => {
+              if (err) {
+                console.error('Error inserting into rep_achievements:', err);
+                return db.rollback(() => res.status(500).json({ error: 'Failed to insert achievements', details: err.message }));
+              }
+              proceedToUpdateStatus();
+            });
+          }
+        });
+
+        // Step 4: Update pending_orders status
+        function proceedToUpdateStatus() {
+          const updateStatusQuery = `
+            UPDATE pending_orders
+            SET status = 'confirmed'
+            WHERE orderId = ?
+          `;
+          db.query(updateStatusQuery, [orderId], (err, updateResult) => {
+            if (err) {
+              console.error('Error updating order status:', err);
+              return db.rollback(() => res.status(500).json({ error: 'Failed to update order status', details: err.message }));
+            }
+
+            db.commit(err => {
+              if (err) {
+                console.error('Commit error:', err);
+                return db.rollback(() => res.status(500).json({ error: 'Commit error', details: err.message }));
+              }
+              res.status(200).json({ message: 'Order confirmed, achievements updated, and marked as confirmed in pending orders' });
+            });
+          });
+        }
+      });
     });
   });
 });
