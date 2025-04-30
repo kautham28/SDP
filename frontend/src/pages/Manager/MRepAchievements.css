@@ -58,7 +58,7 @@
   text-align: center;
   font-size: 36px;
   color: #003f4f; /* Match header color from previous code */
-  margin-top: 30px;
+  margin-top: 0px;
   font-weight: bold;
 }
 
@@ -67,7 +67,7 @@
   text-align: center;
   color: #003f4f;
   font-size: 18px;
-  margin-bottom: 30px;
+  margin-bottom: 0px;
 }
 
 /* Container for representative achievement cards */
@@ -178,5 +178,142 @@
 
   .rep-achievement-card {
       padding: 15px;
+  }
+}
+.rep-achievements-container {
+  padding: 2rem;
+  background: rgb(201, 239, 234);
+}
+
+.rep-achievements-list {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.rep-achievement-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 1rem;
+  width: 300px;
+  text-align: center;
+}
+
+.rep-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.rep-achievement-filters {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.manager-target-form {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.manager-target-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.manager-target-form button {
+  padding: 0.5rem 1rem;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+}
+/* Container for the entire page */
+.rep-achievements-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Content area with sidebar and main section */
+.rep-achievements-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Main content area */
+.rep-achievements-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: rgb(201, 239, 234);
+}
+
+/* Grid for rep cards */
+.rep-achievements-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Style for each rep card */
+.rep-achievements-list > div {
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Form styling */
+.manager-target-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.manager-target-form input,
+.manager-target-form button {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.manager-target-form button {
+  background-color: #003f4f;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.manager-target-form button:hover {
+  background-color: #2b8bc6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .rep-achievements-list {
+    grid-template-columns: 1fr;
+  }
+
+  .manager-target-form {
+    flex-direction: column;
+  }
+
+  .manager-target-form input,
+  .manager-target-form button {
+    width: 100%;
   }
 }

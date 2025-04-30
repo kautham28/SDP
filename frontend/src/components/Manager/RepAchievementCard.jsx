@@ -1,63 +1,137 @@
 import React from "react";
-import { Pie, Line } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from "chart.js";
-import "./RepAchievementCard.css";
+import { Pie } from "react-chartjs-2";
+import "chart.js/auto";
+import ktmImage from "../../assets/ktm.jpg";
+import kamalImage from "../../assets/kamal.png";
+import kauthamanImage from "../../assets/kauthaman.png";
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
+const RepAchievementCard = ({ rep, onMonthYearChange }) => {
+  const percentage = rep.percentage || 0;
+  const id = rep.id || "N/A";
+  const name = rep.name || `Rep ${id}`;
+  const salesTarget = rep.salesTarget || 0;
+  const currentMonthSales = rep.currentMonthSales || 0;
+  const month = rep.month || "";
+  const year = rep.year || "";
 
-const RepAchievementCard = ({ rep }) => {
-  const completedPercentage = Math.round((rep.currentMonthSales / rep.salesTarget) * 100);
-
-  const pieData = {
-    labels: ["Completed", "Remaining"],
+  const data = {
+    labels: ["Achieved", "Remaining"],
     datasets: [
       {
-        data: [rep.currentMonthSales, rep.salesTarget - rep.currentMonthSales],
-        backgroundColor: ["#00C49F", "#FF8042"],
+        data: [percentage, 100 - percentage],
+        backgroundColor: ["#36A2EB", "#E0E0E0"],
+        hoverBackgroundColor: ["#36A2EB", "#E0E0E0"],
       },
     ],
   };
 
-  const lineData = {
-    labels: ["Last Month", "This Month"],
-    datasets: [
-      {
-        label: "Sales",
-        data: [rep.lastMonthSales, rep.currentMonthSales],
-        borderColor: "#8884d8",
-        backgroundColor: "rgba(136, 132, 216, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-    ],
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "month" || name === "year") {
+      const newMonth = name === "month" ? value : month;
+      const newYear = name === "year" ? value : year;
+      onMonthYearChange(rep, newYear, newMonth);
+    }
   };
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+
+  const imageMap = {
+    "ktm.jpg": ktmImage,
+    "kamal.png": kamalImage,
+    "kauthaman.png": kauthamanImage,
+  };
+
+  const filename = rep.photo_link ? rep.photo_link.split("/").pop() : null;
+  const imageUrl = filename && imageMap[filename]
+    ? imageMap[filename]
+    : "https://placehold.co/150?text=No+Image";
 
   return (
-    <div className="rep-card-container">
-      <div className="rep-card">
-        <div className="rep-header">
-          <img src={rep.photo} alt={rep.name} className="rep-photo" />
-          <h3>{rep.name}</h3>
+    <div
+      style={{
+        border: "1px solid #ccc",
+        borderRadius: "16px",
+        padding: "16px",
+        boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+        backgroundColor: "#e6f7ff",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
+      {/* Representative Info with Month/Year Selection */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+        <div style={{ width: "50px", height: "50px", overflow: "hidden", borderRadius: "50%" }}>
+          <img
+            src={imageUrl}
+            alt={name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            onError={(e) => {
+              e.target.src = "https://placehold.co/50?text=No+Image";
+              console.error(`Failed to load image for RepID ${id}: ${imageUrl}.`);
+            }}
+          />
         </div>
-
-        <div className="charts-container">
-          <div className="chart-container">
-            <h4>Sales Completion</h4>
-            <Pie data={pieData} />
+        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+          <div>
+            <h3 style={{ margin: "0", fontSize: "18px" }}>{name}</h3>
+            <p style={{ margin: "0", fontSize: "14px", color: "#666" }}>ID: {id}</p>
           </div>
-
-          <div className="chart-container">
-            <h4>Sales Trend</h4>
-            <Line data={lineData} />
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <select
+              name="month"
+              value={month}
+              onChange={handleChange}
+              style={{
+                padding: "4px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                fontSize: "14px",
+              }}
+            >
+              {months.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+            <input
+              type="number"
+              name="year"
+              value={year}
+              onChange={handleChange}
+              style={{
+                padding: "4px",
+                width: "80px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                fontSize: "14px",
+              }}
+            />
           </div>
         </div>
+      </div>
 
-        <div className="sales-details">
-          <p>Last Month Sales: <strong>${rep.lastMonthSales}</strong></p>
-          <p>Current Month Sales: <strong>${rep.currentMonthSales}</strong></p>
-          <p>Sales Target: <strong>${rep.salesTarget}</strong></p>
-          <p>Completed: <strong>{completedPercentage}%</strong></p>
-        </div>
+      {/* Sales Data */}
+      <div>
+        <p style={{ margin: "4px 0", fontSize: "14px" }}>
+          <strong>This Month Target:</strong> {salesTarget.toLocaleString()}
+        </p>
+        <p style={{ margin: "4px 0", fontSize: "14px" }}>
+          <strong>Sales:</strong> {currentMonthSales.toLocaleString()}
+        </p>
+        <p style={{ margin: "4px 0", fontSize: "14px" }}>
+          <strong>Achieved Percentage:</strong> {percentage}%
+        </p>
+      </div>
+
+      {/* Pie Chart */}
+      <div style={{ width: "100%", height: "150px" }}>
+        <Pie data={data} options={{ maintainAspectRatio: false }} />
       </div>
     </div>
   );
