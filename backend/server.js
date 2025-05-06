@@ -16,11 +16,10 @@ const supplierRoutes = require("./routes/supplierRoutes");
 const achievementRoutes = require("./routes/achievements");
 const uploadRoutes = require('./routes/uploadRoutes');
 const cartRoutes = require("./routes/cartRoutes");
-const topProductsRoutes = require("./routes/topProductsRoutes"); // Added top products route
+const topProductsRoutes = require("./routes/topProductsRoutes");
 const emailRoutes = require('./routes/emailRoutes');
-
-// Add this with your other route middleware
-
+const inventoryReportRoutes = require("./routes/inventoryReport"); // New route for Inventory Report
+const orderReportRoutes = require("./routes/orderReport"); // New route for Order Report
 
 const app = express();
 app.use(cors());
@@ -41,8 +40,10 @@ app.use("/api/suppliers", supplierRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/cart", cartRoutes);
-app.use("/api/analytics", topProductsRoutes); // Mount top products route
+app.use("/api/analytics", topProductsRoutes);
 app.use('/api/email', emailRoutes);
+app.use("/api/reports", inventoryReportRoutes); // Mount Inventory Report routes
+app.use("/api/reports", orderReportRoutes); // Mount Order Report routes
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

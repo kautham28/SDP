@@ -23,6 +23,11 @@ import MSettings from "./pages/Manager/MSettings";
 import TopSellingProductsPage from "./pages/Manager/TopSellingProductsPage";
 import MStockAlert from "./pages/Manager/MStockAlert";
 import MSupplier from "./pages/Manager/MSupplier"; 
+import InventoryReport from "./pages/Manager/Reports/InventoryReport";
+import OrderSummaryReport from "./pages/Manager/Reports/OrderSummaryReport";
+import RepPerformanceReport from "./pages/Manager/Reports/RepPerformanceReport";
+import PharmacySalesReport from "./pages/Manager/Reports/PharmacySalesReport";
+import ExpiryGoodsReport from "./pages/Manager/Reports/ExpiryGoodsReport";
 
 // Rep Imports
 import RDashboard from "./pages/Rep/RDashboard"; 
@@ -59,8 +64,13 @@ function App() {
         <Route path="/manager/assign-roles" element={<MAssignRoles />} />
         <Route path="/manager/inventory" element={<MInventory />} />
         <Route path="/manager/sales-reports" element={<MSalesReports />} />
+        <Route path="/manager/sales-reports/inventory" element={<InventoryReport />} />
+        <Route path="/manager/sales-reports/orders" element={<OrderSummaryReport />} />
+        <Route path="/manager/sales-reports/rep-performance" element={<RepPerformanceReport />} />
+        <Route path="/manager/sales-reports/pharmacy-sales" element={<PharmacySalesReport />} />
+        <Route path="/manager/sales-reports/expiry" element={<ExpiryGoodsReport />} />
         <Route path="/manager/settings" element={<MSettings />} />
-        <Route path="/manager/make-purchase" element={<TopSellingProductsPage/>} />
+        <Route path="/manager/make-purchase" element={<TopSellingProductsPage />} />
         <Route path="/manager/stock-alert" element={<MStockAlert />} />
         <Route path="/manager/supplier" element={<MSupplier />} />
 

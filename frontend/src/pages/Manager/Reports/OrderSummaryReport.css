@@ -1,0 +1,242 @@
+/* Layout */
+.order-summary-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f7fafc;
+    margin-top: 150px;
+  }
+  
+  .order-summary-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  .order-summary-main {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px); /* Adjust for margin-top */
+    scrollbar-width: thin;
+    scrollbar-color: #a0aec0 #edf2f7;
+  }
+  
+  .order-summary-main::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .order-summary-main::-webkit-scrollbar-track {
+    background: #edf2f7;
+  }
+  
+  .order-summary-main::-webkit-scrollbar-thumb {
+    background-color: #a0aec0;
+    border-radius: 4px;
+  }
+  
+  /* Heading and Description */
+  .order-summary-heading {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+  }
+  
+  .order-summary-description {
+    color: #718096;
+    margin-bottom: 1rem;
+  }
+  
+  /* Date Filter */
+  .order-summary-date-filter {
+    margin-bottom: 1.5rem;
+  }
+  
+  .order-summary-date-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+  }
+  
+  .order-summary-date-inputs {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .order-summary-date-input {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    width: 160px;
+    background-color: #fff;
+    color: #4a5568;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .order-summary-date-input:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+  }
+  
+  /* Total Values Section */
+  .order-summary-totals {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .order-summary-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+  }
+  
+  .order-summary-totals-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .order-summary-label {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 0.25rem;
+  }
+  
+  .order-summary-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .order-summary-blue {
+    color: #3182ce;
+  }
+  
+  .order-summary-yellow {
+    color: #d69e2e;
+  }
+  
+  .order-summary-green {
+    color: #38a169;
+  }
+  
+  .order-summary-full-width {
+    grid-column: span 2;
+  }
+  
+  /* Pie Chart */
+  .order-summary-chart {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .order-summary-chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  /* Order Table */
+  .order-summary-table {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+  }
+  
+  .order-summary-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .order-summary-table-content {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .order-summary-table-header {
+    background-color: #f7fafc;
+  }
+  
+  .order-summary-table-header-cell {
+    font-weight: 500;
+    color: #4a5568;
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .order-summary-table-body {
+    background-color: #ffffff;
+  }
+  
+  .order-summary-table-cell {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    color: #2d3748;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .order-summary-table-body tr:hover {
+    background-color: #f7fafc;
+  }
+  
+  /* Loading and Error States */
+  .order-summary-loading,
+  .order-summary-error {
+    text-align: center;
+  }
+  
+  .order-summary-loading {
+    color: #718096;
+  }
+  
+  .order-summary-error {
+    color: #e53e3e;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .order-summary-main {
+      padding: 1rem;
+    }
+  
+    .order-summary-date-inputs {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .order-summary-date-input {
+      width: 100%;
+    }
+  
+    .order-summary-totals-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .order-summary-chart-container {
+      height: 200px;
+      max-width: 100%;
+    }
+  
+    .order-summary-table-wrapper {
+      display: block;
+      overflow-x: auto;
+    }
+  }

@@ -1,0 +1,97 @@
+/* MSalesReports.css */
+
+/* Container for the entire page */
+.sales-reports-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f9fafb; 
+    margin-top: 150px;/* Tailwind bg-gray-50 */
+  }
+  
+  /* Content area including sidebar and main content */
+  .sales-reports-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  /* Main content area */
+  .sales-reports-main {
+    flex: 1;
+    padding: 1.5rem;
+  }
+  
+  /* Report cards grid */
+  .report-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* Individual report card */
+  .report-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb; /* Tailwind border-gray-200 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .report-card:hover {
+    border-color: #2563eb; /* Tailwind border-blue-600 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .report-card.active {
+    border: 2px solid #2563eb; /* Tailwind border-blue-600 */
+  }
+  
+  /* Icon and text alignment */
+  .report-card .flex {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  /* Typography */
+  h1 {
+    font-size: 1.875rem; /* Tailwind text-3xl */
+    font-weight: 700; /* Tailwind font-bold */
+    color: #1f2937; /* Tailwind text-gray-800 */
+  }
+  
+  p {
+    color: #4b5563; /* Tailwind text-gray-600 */
+  }
+  
+  .report-card h2 {
+    font-size: 1.125rem; /* Tailwind text-lg */
+    font-weight: 600; /* Tailwind font-semibold */
+    color: #1f2937; /* Tailwind text-gray-800 */
+  }
+  
+  .report-card p {
+    font-size: 0.875rem; /* Tailwind text-sm */
+    margin-top: 0.25rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .sales-reports-content {
+      flex-direction: column;
+    }
+  
+    .sales-reports-main {
+      padding: 1rem;
+    }
+  
+    .report-cards-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .report-card {
+      padding: 1rem;
+    }
+  }
