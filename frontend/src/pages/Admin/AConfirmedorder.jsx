@@ -8,19 +8,19 @@ import './AConfirmedorder.css';
 
 // Reusable Components
 const Input = ({ type, placeholder, className, onChange }) => (
-    <input type={type} placeholder={placeholder} className={`custom-input ${className}`} onChange={onChange} />
+    <input type={type} placeholder={placeholder} className={`aco-custom-input ${className}`} onChange={onChange} />
 );
 const Button = ({ children, className, onClick }) => (
-    <button className={`custom-button ${className}`} onClick={onClick}>
+    <button className={`aco-custom-button ${className}`} onClick={onClick}>
         {children}
     </button>
 );
-const Table = ({ children }) => <table className="custom-table">{children}</table>;
-const TableHead = ({ children }) => <thead className="table-head">{children}</thead>;
-const TableRow = ({ children }) => <tr className="table-row">{children}</tr>;
-const TableHeader = ({ children }) => <th className="table-header">{children}</th>;
-const TableBody = ({ children }) => <tbody className="table-body">{children}</tbody>;
-const TableCell = ({ children }) => <td className="table-cell">{children}</td>;
+const Table = ({ children }) => <table className="aco-orders-table">{children}</table>;
+const TableHead = ({ children }) => <thead className="aco-table-head">{children}</thead>;
+const TableRow = ({ children }) => <tr className="aco-table-row">{children}</tr>;
+const TableHeader = ({ children }) => <th className="aco-table-header">{children}</th>;
+const TableBody = ({ children }) => <tbody className="aco-table-body">{children}</tbody>;
+const TableCell = ({ children }) => <td className="aco-table-cell">{children}</td>;
 
 const AConfirmedorder = () => {
     const [orders, setOrders] = useState([]);
@@ -62,7 +62,7 @@ const AConfirmedorder = () => {
                     body { font-family: Arial, sans-serif; padding: 20px; }
                     h2 { color: #003f4f; }
                     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
                     th { background-color: #f2f2f2; }
                 </style>
             </head>
@@ -70,7 +70,6 @@ const AConfirmedorder = () => {
                 <p><strong>RAM Medical</strong></p>
                 <br/>
                 ${printContents}
-               
             </body>
             </html>
         `);
@@ -87,14 +86,14 @@ const AConfirmedorder = () => {
     );
 
     return (
-        <div className="admin-layout">
+        <div className="aco-admin-layout">
             <ASidebar />
-            <div className="content">
+            <div className="aco-content">
                 <ANavbar />
-                <div className="page-content">
-                    <h1 className="page-title">Confirmed Orders</h1>
+                <div className="aco-page-content">
+                    <h1 className="aco-page-title">Confirmed Orders</h1>
 
-                    <div className="search-filters">
+                    <div className="aco-search-bar">
                         <Input
                             type="text"
                             placeholder="Search by Pharmacy Name"
@@ -117,7 +116,7 @@ const AConfirmedorder = () => {
                         />
                     </div>
 
-                    <div className="table-container">
+                    <div className="aco-table-container">
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -140,9 +139,11 @@ const AConfirmedorder = () => {
                                         <TableCell>{formatDate(order.OrderDate)}</TableCell>
                                         <TableCell>{formatDate(order.ConfirmedDate)}</TableCell>
                                         <TableCell>
-                                            <Button onClick={() => handleViewOrder(order.OrderID)}>
-                                                <Eye size={20} />
-                                            </Button>
+                                            <div className="aco-action-buttons">
+                                                <Button className="aco-view-button" onClick={() => handleViewOrder(order.OrderID)}>
+                                                    <Eye />
+                                                </Button>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -151,17 +152,17 @@ const AConfirmedorder = () => {
                     </div>
 
                     {showPopup && selectedOrder && (
-                        <div className="popup-overlay show">
-                            <div className="popup-content large-popup">
-                                <div className="popup-header">
+                        <div className="aco-popup-overlay">
+                            <div className="aco-popup-content">
+                                <div className="aco-popup-header">
                                     <h2>Order Details</h2>
-                                    <button className="print-button" onClick={handlePrint}>
+                                    <Button className="aco-print-button" onClick={handlePrint}>
                                         <FaPrint /> Print
-                                    </button>
+                                    </Button>
                                 </div>
 
                                 <div ref={printRef}>
-                                    <div className="order-summary">
+                                    <div className="aco-order-summary">
                                         <p><strong>Order ID:</strong> {selectedOrder.info.OrderID}</p>
                                         <p><strong>Pharmacy Name:</strong> {selectedOrder.info.PharmacyName}</p>
                                         <p><strong>Rep Name:</strong> {selectedOrder.info.RepName}</p>
@@ -169,7 +170,7 @@ const AConfirmedorder = () => {
                                         <p><strong>Confirmed Date:</strong> {formatDate(selectedOrder.info.ConfirmedDate)}</p>
                                     </div>
 
-                                    <table className="order-details-table">
+                                    <table className="aco-order-details-table">
                                         <thead>
                                             <tr>
                                                 <th>Detail ID</th>
@@ -196,7 +197,7 @@ const AConfirmedorder = () => {
                                     <p><strong>Total Value:</strong> {selectedOrder.info.TotalValue.toFixed(2)}</p>
                                 </div>
 
-                                <button className="close-popup" onClick={() => setShowPopup(false)}>Close</button>
+                                <Button className="aco-close-popup" onClick={() => setShowPopup(false)}>Close</Button>
                             </div>
                         </div>
                     )}

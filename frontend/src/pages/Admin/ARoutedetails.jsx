@@ -134,7 +134,7 @@ const ARouteDetails = () => {
       if (selectedPharmacy) {
         setNewPharmacy({
           PharmacyName: selectedPharmacy.PharmacyName,
-          Address: selectedPharmacy.PharmacyLocation, // Changed from Address to PharmacyLocation
+          Address: selectedPharmacy.PharmacyLocation,
           GoogleMapLink: selectedPharmacy.LocationLink || `https://maps.google.com/?q=${encodeURIComponent(selectedPharmacy.PharmacyLocation)}`
         });
       }
@@ -186,7 +186,7 @@ const ARouteDetails = () => {
         const pharmacyToAdd = {
           PharmacyID: selectedPharmacyId,
           PharmacyName: newPharmacy.PharmacyName,
-          Address: selectedPharmacy.PharmacyLocation, // Changed from Address to PharmacyLocation
+          Address: selectedPharmacy.PharmacyLocation,
           GoogleMapLink: selectedPharmacy.LocationLink || `https://maps.google.com/?q=${encodeURIComponent(selectedPharmacy.PharmacyLocation)}`
         };
         
@@ -320,7 +320,6 @@ const ARouteDetails = () => {
           <button className="route-details-make-route-button" onClick={handleCreateRouteClick}>
             Create Route
           </button>
-          <button className="route-details-report-button">Generate Report</button>
         </div>
 
         <table className="route-details-table">

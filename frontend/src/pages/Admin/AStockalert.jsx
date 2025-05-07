@@ -33,10 +33,6 @@ const AStockAlertNew = () => {
     setFilteredData(filtered);
   };
 
-  const handleGenerateReport = () => {
-    console.log("Generate Report clicked");
-  };
-
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -58,12 +54,6 @@ const AStockAlertNew = () => {
             value={searchQuery}
             onChange={handleSearchChange}
           />
-          <button
-            className="new-stock-alert-report-btn"
-            onClick={handleGenerateReport}
-          >
-            Generate Report
-          </button>
         </div>
         <div className="new-stock-alert-table-container">
           <table className="new-stock-alert-table">

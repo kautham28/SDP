@@ -74,7 +74,7 @@ const AExpiryalert = () => {
         <div className="expiry-alert-content">
           <h1 className="expiry-alert-title">Expiry Alert</h1>
 
-          {/* Search & Report Buttons */}
+          {/* Search */}
           <div className="expiry-alert-search-container">
             <div className="expiry-alert-search-item">
               <label className="expiry-alert-search-label" htmlFor="nameSearch">
@@ -116,61 +116,62 @@ const AExpiryalert = () => {
             <button className="expiry-alert-search-button" onClick={handleSearch}>
               Search
             </button>
-            <button className="expiry-alert-report-button">Generate Report</button>
           </div>
 
           {/* Expiry Table */}
-          <table className="expiry-alert-table">
-            <thead>
-              <tr>
-                <th>Medicine Name</th>
-                <th>Batch Number</th>
-                <th>Expiry Date</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Total Value</th>
-                <th>Days to Expiry</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProducts.map((item, index) => {
-                const daysToExpiry = Math.ceil(
-                  (new Date(item.ExpiryDate) - new Date()) / (1000 * 60 * 60 * 24)
-                );
-                const expiryDate = new Date(item.ExpiryDate).toLocaleDateString();
+          <div className="expiry-alert-table-wrapper">
+            <table className="expiry-alert-table">
+              <thead>
+                <tr>
+                  <th>Medicine Name</th>
+                  <th>Batch Number</th>
+                  <th>Expiry Date</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total Value</th>
+                  <th>Days to Expiry</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProducts.map((item, index) => {
+                  const daysToExpiry = Math.ceil(
+                    (new Date(item.ExpiryDate) - new Date()) / (1000 * 60 * 60 * 24)
+                  );
+                  const expiryDate = new Date(item.ExpiryDate).toLocaleDateString();
 
-                // Format Unit Price correctly
-                const unitPrice = item.Price && !isNaN(item.Price)
-                  ? item.Price.toFixed(2)
-                  : "N/A"; // Ensure that Price is a valid number
-                const totalValue = item.Quantity * (item.Price || 0); // Calculate total value
+                  // Format Unit Price correctly
+                  const unitPrice = item.Price && !isNaN(item.Price)
+                    ? item.Price.toFixed(2)
+                    : "N/A"; // Ensure that Price is a valid number
+                  const totalValue = item.Quantity * (item.Price || 0); // Calculate total value
 
-                return (
-                  <tr
-                    key={index}
-                    className={daysToExpiry < 30 ? "expiry-alert-low-stock" : ""}
-                  >
-                    <td>{item.Name}</td>
-                    <td>{item.BatchNumber}</td>
-                    <td>{expiryDate}</td>
-                    <td>{item.Quantity}</td>
-                    <td>{item.UnitPrice.toFixed(2)}</td> {/* Display Unit Price */}
-                    <td>{item.TotalPrice.toFixed(2)}</td> {/* Display Total Value */}
-                    <td className="expiry-alert-days-to-expiry">{daysToExpiry}</td>
-                    <td>
-                      <button
-                        className="expiry-alert-return-button"
-                        onClick={() => handleReturn(item.ID)}
-                      >
-                        Return
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                  return (
+                    <tr
+                      key={index}
+                      className={daysToExpiry < 30 ? "expiry-alert-low-stock" : ""}
+                    >
+                      <td>{item.Name}</td>
+                      <td>{item.BatchNumber}</td>
+                      <td>{expiryDate}</td>
+                      <td>{item.Quantity}</td>
+                      <td>{item.UnitPrice.toFixed(2)}</td> {/* Display Unit Price */}
+                      <td>{item.TotalPrice.toFixed(2)}</td> {/* Display Total Value */}
+                      <td className="expiry-alert-days-to-expiry">{daysToExpiry}</td>
+                      <td>
+                        <button
+                          className="expiry-alert-return-button"
+                          onClick={() => handleReturn(item.ID)}
+                        >
+                          Return
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
