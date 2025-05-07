@@ -28,6 +28,7 @@ import OrderSummaryReport from "./pages/Manager/Reports/OrderSummaryReport";
 import RepPerformanceReport from "./pages/Manager/Reports/RepPerformanceReport";
 import PharmacySalesReport from "./pages/Manager/Reports/PharmacySalesReport";
 import ExpiryGoodsReport from "./pages/Manager/Reports/ExpiryGoodsReport";
+import ProductSalesReport from "./pages/Manager/Reports/ProductSalesReport"; // New import
 
 // Rep Imports
 import RDashboard from "./pages/Rep/RDashboard"; 
@@ -69,6 +70,7 @@ function App() {
         <Route path="/manager/sales-reports/rep-performance" element={<RepPerformanceReport />} />
         <Route path="/manager/sales-reports/pharmacy-sales" element={<PharmacySalesReport />} />
         <Route path="/manager/sales-reports/expiry" element={<ExpiryGoodsReport />} />
+        <Route path="/manager/sales-reports/product-sales" element={<ProductSalesReport />} /> {/* New route */}
         <Route path="/manager/settings" element={<MSettings />} />
         <Route path="/manager/make-purchase" element={<TopSellingProductsPage />} />
         <Route path="/manager/stock-alert" element={<MStockAlert />} />

@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+// Import all routes
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes");
@@ -18,8 +19,12 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const cartRoutes = require("./routes/cartRoutes");
 const topProductsRoutes = require("./routes/topProductsRoutes");
 const emailRoutes = require('./routes/emailRoutes');
-const inventoryReportRoutes = require("./routes/inventoryReport"); // New route for Inventory Report
-const orderReportRoutes = require("./routes/orderReport"); // New route for Order Report
+const inventoryReportRoutes = require("./routes/inventoryReport");
+const orderReportRoutes = require("./routes/orderReport");
+const pharmacySalesReportRoutes = require("./routes/pharmacySalesReport");
+const expiryGoodsReport = require("./routes/expiryGoodsReport");
+const repPerformanceReport = require("./routes/repPerformanceReport");
+const productSalesReport = require("./routes/productSalesReport"); // New route for Product Sales Report
 
 const app = express();
 app.use(cors());
@@ -42,8 +47,12 @@ app.use("/api/upload", uploadRoutes);
 app.use("/cart", cartRoutes);
 app.use("/api/analytics", topProductsRoutes);
 app.use('/api/email', emailRoutes);
-app.use("/api/reports", inventoryReportRoutes); // Mount Inventory Report routes
-app.use("/api/reports", orderReportRoutes); // Mount Order Report routes
+app.use("/api/reports", inventoryReportRoutes);
+app.use("/api/reports", orderReportRoutes);
+app.use("/api/reports", pharmacySalesReportRoutes);
+app.use("/api/reports", expiryGoodsReport);
+app.use("/api/reports", repPerformanceReport);
+app.use("/api/reports", productSalesReport); // Mount Product Sales Report route
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

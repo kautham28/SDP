@@ -46,6 +46,13 @@ const MSalesReports = () => {
       icon: <Calendar className="h-8 w-8 text-gray-500" />,
       path: '/manager/sales-reports/expiry',
     },
+    {
+      id: 'productSales',
+      title: 'Product-wise Sales Report',
+      description: 'Analyze sales performance based on individual products, including revenue and sales trends.',
+      icon: <BarChart className="h-8 w-8 text-gray-500" />,
+      path: '/manager/sales-reports/product-sales',
+    },
   ];
 
   const handleCardClick = (id, path) => {

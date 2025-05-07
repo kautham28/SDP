@@ -1,0 +1,258 @@
+/* Layout */
+.pharmacy-sales-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f7fafc;
+    margin-top: 150px;
+  }
+  
+  .pharmacy-sales-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  .pharmacy-sales-main {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px); /* Adjust for margin-top */
+    scrollbar-width: thin;
+    scrollbar-color: #a0aec0 #edf2f7;
+  }
+  
+  .pharmacy-sales-main::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .pharmacy-sales-main::-webkit-scrollbar-track {
+    background: #edf2f7;
+  }
+  
+  .pharmacy-sales-main::-webkit-scrollbar-thumb {
+    background-color: #a0aec0;
+    border-radius: 4px;
+  }
+  
+  /* Heading and Description */
+  .pharmacy-sales-heading {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+  }
+  
+  .pharmacy-sales-description {
+    color: #718096;
+    margin-bottom: 2rem;
+  }
+  
+  /* Filters */
+  .pharmacy-sales-filters {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .pharmacy-sales-date-filter,
+  .pharmacy-sales-pharmacy-filter {
+    flex: 1;
+  }
+  
+  .pharmacy-sales-date-label,
+  .pharmacy-sales-pharmacy-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+  }
+  
+  .pharmacy-sales-date-inputs {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .pharmacy-sales-date-input,
+  .pharmacy-sales-pharmacy-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    background-color: #fff;
+    color: #4a5568;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .pharmacy-sales-date-input {
+    width: 160px;
+  }
+  
+  .pharmacy-sales-pharmacy-select {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .pharmacy-sales-date-input:focus,
+  .pharmacy-sales-pharmacy-select:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+  }
+  
+  /* Summary Metrics */
+  .pharmacy-sales-totals {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .pharmacy-sales-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+  }
+  
+  .pharmacy-sales-totals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .pharmacy-sales-label {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 0.25rem;
+  }
+  
+  .pharmacy-sales-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .pharmacy-sales-blue {
+    color: #3182ce;
+  }
+  
+  .pharmacy-sales-green {
+    color: #38a169;
+  }
+  
+  /* Charts */
+  .pharmacy-sales-chart {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .pharmacy-sales-chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* Detailed Table */
+  .pharmacy-sales-table {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+  }
+  
+  .pharmacy-sales-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .pharmacy-sales-table-content {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .pharmacy-sales-table-header {
+    background-color: #f7fafc;
+  }
+  
+  .pharmacy-sales-table-header-cell {
+    font-weight: 500;
+    color: #4a5568;
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .pharmacy-sales-table-body {
+    background-color: #ffffff;
+  }
+  
+  .pharmacy-sales-table-cell {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    color: #2d3748;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .pharmacy-sales-table-body tr:hover {
+    background-color: #f7fafc;
+  }
+  
+  /* Loading and Error States */
+  .pharmacy-sales-loading,
+  .pharmacy-sales-error {
+    text-align: center;
+  }
+  
+  .pharmacy-sales-loading {
+    color: #718096;
+  }
+  
+  .pharmacy-sales-error {
+    color: #e53e3e;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .pharmacy-sales-main {
+      padding: 1rem;
+    }
+  
+    .pharmacy-sales-filters {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .pharmacy-sales-date-inputs {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .pharmacy-sales-date-input,
+    .pharmacy-sales-pharmacy-select {
+      width: 100%;
+    }
+  
+    .pharmacy-sales-totals-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .pharmacy-sales-chart-container {
+      height: 200px;
+      max-width: 100%;
+    }
+  
+    .pharmacy-sales-table-wrapper {
+      display: block;
+      overflow-x: auto;
+    }
+  }

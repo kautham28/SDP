@@ -1,0 +1,259 @@
+/* Layout */
+.expiry-goods-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f7fafc;
+    margin-top: 150px;
+    margin-left: 250px;
+  }
+  
+  .expiry-goods-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  .expiry-goods-main {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px); /* Adjust for margin-top */
+    scrollbar-width: thin;
+    scrollbar-color: #a0aec0 #edf2f7;
+  }
+  
+  .expiry-goods-main::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .expiry-goods-main::-webkit-scrollbar-track {
+    background: #edf2f7;
+  }
+  
+  .expiry-goods-main::-webkit-scrollbar-thumb {
+    background-color: #a0aec0;
+    border-radius: 4px;
+  }
+  
+  /* Heading and Description */
+  .expiry-goods-heading {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+  }
+  
+  .expiry-goods-description {
+    color: #718096;
+    margin-bottom: 2rem;
+  }
+  
+  /* Filters */
+  .expiry-goods-filters {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .expiry-goods-date-filter,
+  .expiry-goods-supplier-filter {
+    flex: 1;
+  }
+  
+  .expiry-goods-date-label,
+  .expiry-goods-supplier-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+  }
+  
+  .expiry-goods-date-inputs {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .expiry-goods-date-input,
+  .expiry-goods-supplier-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    background-color: #fff;
+    color: #4a5568;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .expiry-goods-date-input {
+    width: 160px;
+  }
+  
+  .expiry-goods-supplier-select {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .expiry-goods-date-input:focus,
+  .expiry-goods-supplier-select:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+  }
+  
+  /* Summary Metrics */
+  .expiry-goods-totals {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .expiry-goods-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+  }
+  
+  .expiry-goods-totals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .expiry-goods-label {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 0.25rem;
+  }
+  
+  .expiry-goods-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .expiry-goods-blue {
+    color: #3182ce;
+  }
+  
+  .expiry-goods-red {
+    color: #e53e3e;
+  }
+  
+  /* Charts */
+  .expiry-goods-chart {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .expiry-goods-chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* Detailed Table */
+  .expiry-goods-table {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+  }
+  
+  .expiry-goods-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .expiry-goods-table-content {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .expiry-goods-table-header {
+    background-color: #f7fafc;
+  }
+  
+  .expiry-goods-table-header-cell {
+    font-weight: 500;
+    color: #4a5568;
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .expiry-goods-table-body {
+    background-color: #ffffff;
+  }
+  
+  .expiry-goods-table-cell {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    color: #2d3748;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .expiry-goods-table-body tr:hover {
+    background-color: #f7fafc;
+  }
+  
+  /* Loading and Error States */
+  .expiry-goods-loading,
+  .expiry-goods-error {
+    text-align: center;
+  }
+  
+  .expiry-goods-loading {
+    color: #718096;
+  }
+  
+  .expiry-goods-error {
+    color: #e53e3e;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .expiry-goods-main {
+      padding: 1rem;
+    }
+  
+    .expiry-goods-filters {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .expiry-goods-date-inputs {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .expiry-goods-date-input,
+    .expiry-goods-supplier-select {
+      width: 100%;
+    }
+  
+    .expiry-goods-totals-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .expiry-goods-chart-container {
+      height: 200px;
+      max-width: 100%;
+    }
+  
+    .expiry-goods-table-wrapper {
+      display: block;
+      overflow-x: auto;
+    }
+  }
