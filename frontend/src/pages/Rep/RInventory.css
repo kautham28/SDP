@@ -1,153 +1,117 @@
-/* MInventory Layout */
-.inventory-container {
-    display: flex;
-    height: 100vh;
-  }
-  
-  .inventory-content {
-    display: flex;
-    flex: 1;
-    margin-left: 250px;
-     /* Adjust the padding to accommodate the sidebar */
-  }
-  
-  .inventory-main {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto; /* Allow vertical scrolling if content overflows */
-  }
-  
-  /* Title */
-  .inventory-main h1 {
-    text-align: center;
-    font-size: 40px;
-    color: #003f4f;
-    margin-top: 30px;
-    font-weight: bold;
-  }
-  
-  .inventory-main p {
-    text-align: center;
-    color: #003f4f;
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-  
-  /* Scrollable Table Container */
-  .table-container {
-    overflow-x: auto;  /* Enable horizontal scrolling */
-    overflow-y: auto;  /* Enable vertical scrolling */
-    max-height: 75vh; /* Set max height so the table won't overflow the screen */
-    margin-top: 20px;
-  }
-  
-  /* Table */
-  .inventory-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    margin-top: 100px;
-    
-  }
-  
-  .inventory-table th, 
-  .inventory-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
-    white-space: nowrap;
-  }
-  
-  .inventory-table th {
-    background-color: #003f4f;
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-  }
-  
-  /* Column Adjustments */
-  .inventory-table th:nth-child(1),
-  .inventory-table td:nth-child(1) {
-    width: 15%; /* Adjust as needed */
-  }
-  
-  .inventory-table th:nth-child(2),
-  .inventory-table td:nth-child(2) {
-    width: 20%;
-  }
-  
-  .inventory-table th:nth-child(3),
-  .inventory-table td:nth-child(3) {
-    width: 20%;
-  }
-  
-  .inventory-table th:nth-child(4),
-  .inventory-table td:nth-child(4) {
-    width: 20%;
-  }
-  
-  .inventory-table th:nth-child(5),
-  .inventory-table td:nth-child(5) {
-    width: 10%;
-  }
-  
-  .inventory-table th:nth-child(6),
-  .inventory-table td:nth-child(6) {
-    width: 10%;
-  }
-  
-  .inventory-table th:nth-child(7),
-  .inventory-table td:nth-child(7) {
-    width: 15%;
-  }
-  
-  /* Alternating Row Colors */
-  .inventory-table tbody tr:nth-child(odd) {
-    background-color: #e6f7ff;
-  }
-  
-  .inventory-table tbody tr:nth-child(even) {
-    background-color: #cce7f0;
-  }
-  
-  /* Expiry Date Alert */
-  .inventory-days-to-expiry {
-    color: red;
-    font-weight: bold;
-  }
-  
-  /* Low Stock Warning */
-  .inventory-low-stock {
-    background-color: rgba(228, 99, 99, 0.7);
-  }
-  
-  /* Action Button */
-  .inventory-return-button {
-    background-color: #3498db;
-    border-color: #3498db;
-    cursor: pointer;
-    padding: 5px 10px;
-    color: white;
-    font-size: small;
-    font-weight: bold;
-    border-radius: 5px;
-  }
-  
-  .inventory-return-button:hover {
-    background-color: #003f4f;
-  }
-  
-  /* Sidebar and Navbar - Assuming you are using the same styles as the Admin Page */
-  .inventory-content {
-    display: flex;
-    flex: 1;
-    padding-left: 250px; /* Adjust the padding to accommodate the sidebar */
-  }
-  
-  .inventory-main {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto; /* Allow vertical scrolling if content overflows */
-  }
-  
+/* RInventory Layout */
+.r-inventory-wrapper {
+  display: flex;
+  height: 100vh;
+}
+.r-inventory-main-section h1 {
+  text-align: center;
+  font-size: 40px;
+  color: #003f4f;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+.r-inventory-main-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-left: 280px;
+  padding-top: 60px; /* Adjust to move table below sidebar and navbar */
+}
+
+.r-inventory-table-wrapper {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 75vh;
+  margin-top: 0;
+}
+
+.r-inventory-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 0;
+}
+
+.r-inventory-data-table th,
+.r-inventory-data-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.r-inventory-data-table th {
+  background-color: #003f4f;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.r-inventory-data-table th:nth-child(1),
+.r-inventory-data-table td:nth-child(1) {
+  width: 15%;
+}
+
+.r-inventory-data-table th:nth-child(2),
+.r-inventory-data-table td:nth-child(2) {
+  width: 20%;
+}
+
+.r-inventory-data-table th:nth-child(3),
+.r-inventory-data-table td:nth-child(3) {
+  width: 20%;
+}
+
+.r-inventory-data-table th:nth-child(4),
+.r-inventory-data-table td:nth-child(4) {
+  width: 20%;
+}
+
+.r-inventory-data-table th:nth-child(5),
+.r-inventory-data-table td:nth-child(5) {
+  width: 10%;
+}
+
+.r-inventory-data-table th:nth-child(6),
+.r-inventory-data-table td:nth-child(6) {
+  width: 10%;
+}
+
+.r-inventory-data-table th:nth-child(7),
+.r-inventory-data-table td:nth-child(7) {
+  width: 15%;
+}
+
+.r-inventory-data-table tbody tr:nth-child(odd) {
+  background-color: #e6f7ff;
+}
+
+.r-inventory-data-table tbody tr:nth-child(even) {
+  background-color: #cce7f0;
+}
+
+.r-inventory-days-to-expiry {
+  color: red;
+  font-weight: bold;
+}
+
+.r-inventory-low-stock {
+  background-color: rgba(228, 99, 99, 0.7);
+}
+
+.r-inventory-return-button {
+  background-color: #3498db;
+  border-color: #3498db;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: white;
+  font-size: small;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.r-inventory-return-button:hover {
+  background-color: #003f4f;
+}

@@ -1,4 +1,3 @@
-// src/components/Rep/RRouteDetails.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RNavbar from "../../components/Rep/RNavbar";
@@ -11,8 +10,10 @@ const RRouteDetails = () => {
     const [routes, setRoutes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedRoute, setSelectedRoute] = useState(null); // State to hold selected route details
-    const [isPopupVisible, setIsPopupVisible] = useState(false); // State to control popup visibility
+    const [selectedRoute, setSelectedRoute] = useState(null);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [routeDateFilter, setRouteDateFilter] = useState("");
+    const [majorAreaFilter, setMajorAreaFilter] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -54,25 +55,30 @@ const RRouteDetails = () => {
         fetchRouteData();
     }, []);
 
-    // Function to handle "View" button click and fetch route details for the selected route
     const viewRouteDetails = async (routeID) => {
         try {
             const response = await axios.get(
                 `http://localhost:5000/api/routes/${routeID}/pharmacies`
             );
-            setSelectedRoute(response.data); // Set the route details in state
-            setIsPopupVisible(true); // Show the popup
+            setSelectedRoute(response.data);
+            setIsPopupVisible(true);
         } catch (error) {
             console.error("Error fetching route details:", error);
             setError("Failed to fetch route details.");
         }
     };
 
-    // Function to close the popup
     const closePopup = () => {
         setIsPopupVisible(false);
         setSelectedRoute(null);
     };
+
+    const filteredRoutes = routes.filter(route => {
+        const routeDate = new Date(route.RouteDate).toLocaleDateString();
+        const matchesDate = routeDateFilter ? routeDate.includes(routeDateFilter) : true;
+        const matchesArea = majorAreaFilter ? route.RouteArea.toLowerCase().includes(majorAreaFilter.toLowerCase()) : true;
+        return matchesDate && matchesArea;
+    });
 
     return (
         <div className="route-details-page-container">
@@ -83,13 +89,28 @@ const RRouteDetails = () => {
             <div className="route-details-main-content">
                 <div className="route-details-header">
                     <h1>Route Details</h1>
-                    <p>Check and update route details.</p>
                 </div>
-                
+                <div className="route-details-filters">
+                    <input
+                        type="text"
+                        placeholder="Filter by Route Date (e.g., 5/8/2025)"
+                        value={routeDateFilter}
+                        onChange={(e) => setRouteDateFilter(e.target.value)}
+                        className="route-details-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Filter by Major Area"
+                        value={majorAreaFilter}
+                        onChange={(e) => setMajorAreaFilter(e.target.value)}
+                        className="route-details-input"
+                    />
+                </div>
+
                 {loading && <p>Loading routes...</p>}
                 {error && <p>{error}</p>}
 
-                {!loading && !error && routes.length > 0 ? (
+                {!loading && !error && filteredRoutes.length > 0 ? (
                     <div className="route-details-table-container">
                         <table className="route-details-table">
                             <thead>
@@ -102,7 +123,7 @@ const RRouteDetails = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {routes.map((route) => (
+                                {filteredRoutes.map((route) => (
                                     <tr key={route.RouteID}>
                                         <td>{route.RouteID}</td>
                                         <td>{route.RepName}</td>
@@ -122,7 +143,6 @@ const RRouteDetails = () => {
                     <p>No routes found.</p>
                 )}
 
-                {/* Popup for showing route details */}
                 {isPopupVisible && selectedRoute && (
                     <div className="popup-overlay">
                         <div className="popup-content">

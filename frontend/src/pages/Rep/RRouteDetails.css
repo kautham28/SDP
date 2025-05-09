@@ -1,6 +1,7 @@
 /* General Layout */
 .route-details-page-container {
   display: flex;
+  margin-top: 90px;
 }
 
 .route-details-sidebar {

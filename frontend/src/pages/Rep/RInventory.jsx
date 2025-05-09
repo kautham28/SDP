@@ -6,9 +6,9 @@ import './RInventory.css';
 
 const RInventory = () => {
   const [products, setProducts] = useState([]);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    // Fetch products from the API
     axios.get("http://localhost:5000/api/admin/products/report")
       .then(response => {
         setProducts(response.data);
@@ -18,45 +18,57 @@ const RInventory = () => {
       });
   }, []);
 
+  const filteredProducts = products.filter(product =>
+    product.MedicineName.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
-    <div className="inventory-container">
+    <div className="r-inventory-wrapper">
       <RNavbar />
       <RSidebar />
-      <div className="dashboard-content">
-        
+      <div className="r-inventory-main-section">
         <h1>Inventory table</h1>
-        <table className="inventory-table">
-          <thead>
-            <tr>
-              <th>Product ID</th>
-              <th>Medicine Name</th>
-              <th>Generic Name</th>
-              <th>Expiry Date</th>
-              <th>Unit Price</th>
-              <th>Quantity</th>
-              <th>Total Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.length > 0 ? (
-              products.map(product => (
-                <tr key={product.ProductID}>
-                  <td>{product.ProductID}</td>
-                  <td>{product.MedicineName}</td>
-                  <td>{product.GenericName}</td>
-                  <td>{product.ExpiryDate}</td>
-                  <td>{product.UnitPrice}</td>
-                  <td>{product.Quantity}</td>
-                  <td>{product.TotalPrice}</td>
-                </tr>
-              ))
-            ) : (
+        <input
+          type="text"
+          placeholder="Filter by Medicine Name"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          style={{ marginBottom: '20px', padding: '5px', width: '200px' }}
+        />
+        <div className="r-inventory-table-wrapper">
+          <table className="r-inventory-data-table">
+            <thead>
               <tr>
-                <td colSpan="7">No products found</td>
+                <th>Product ID</th>
+                <th>Medicine Name</th>
+                <th>Generic Name</th>
+                <th>Expiry Date</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map(product => (
+                  <tr key={product.ProductID}>
+                    <td>{product.ProductID}</td>
+                    <td>{product.MedicineName}</td>
+                    <td>{product.GenericName}</td>
+                    <td>{new Date(product.ExpiryDate).toLocaleDateString()}</td>
+                    <td>{Number(product.UnitPrice).toFixed(2)}</td>
+                    <td>{product.Quantity}</td>
+                    <td>{Number(product.TotalPrice).toFixed(2)}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">No products found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

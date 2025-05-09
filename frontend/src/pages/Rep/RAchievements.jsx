@@ -9,6 +9,7 @@ import {
   Pie,
   Tooltip,
   Cell,
+  Legend,
   ResponsiveContainer
 } from 'recharts';
 
@@ -17,6 +18,15 @@ const RAchievements = () => {
   const [confirmedOrders, setConfirmedOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState('');
+
+  // Generate list of all 12 months for the current year (2025)
+  const currentYear = new Date().getFullYear(); // 2025
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const monthOptions = months.map(month => `${month}-${currentYear}`);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +60,18 @@ const RAchievements = () => {
     fetchData();
   }, []);
 
+  // Set default selected month to the current month (May 2025)
+  useEffect(() => {
+    const currentMonthIndex = new Date().getMonth(); // 4 (May)
+    setSelectedMonth(`${months[currentMonthIndex]}-${currentYear}`);
+  }, []);
+
+  // Filter achievements based on the selected month and year
+  const filteredAchievements = achievements.filter(ach => {
+    const [selectedMonthName, selectedYear] = selectedMonth.split('-');
+    return ach.Month === selectedMonthName && ach.Year.toString() === selectedYear;
+  });
+
   return (
     <div className="rach-container">
       <RNavbar />
@@ -62,61 +84,74 @@ const RAchievements = () => {
         ) : (
           <>
             <div className="rach-achievements">
-              {achievements.length === 0 ? (
-                <p className="rach-status-msg">No achievements found.</p>
+              <div className="rach-month-select">
+                <label htmlFor="monthSelect">Select Month: </label>
+                <select
+                  id="monthSelect"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="rach-select"
+                >
+                  {monthOptions.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option.replace('-', ' ')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {filteredAchievements.length === 0 ? (
+                <p className="rach-status-msg">No achievements found for this month.</p>
               ) : (
-                <div>
-                  <h2 className="rach-subtitle">Achievements</h2>
-                  {achievements.map((ach, index) => {
-                    const pieData = [
-                      { name: 'Achieved', value: ach.percentage },
-                      { name: 'Remaining', value: 100 - ach.percentage }
-                    ];
-                    return (
-                      <div key={index} className="rach-row">
-                        <div className="rach-box">
-                          <p><strong>Month:</strong> {ach.Month}</p>
-                          <p><strong>Year:</strong> {ach.Year}</p>
-                          <p><strong>Target:</strong> {ach.Target}</p>
-                          <p><strong>Total Sales:</strong> {ach.TotalSales}</p>
-                          <p><strong>Percentage:</strong> {ach.percentage}%</p>
-                          <p><strong>Last Updated:</strong> {new Date(ach.LastUpdated).toLocaleString()}</p>
-                        </div>
-                        <div className="rach-chart">
-                          <ResponsiveContainer width={200} height={200}>
-                            <PieChart>
-                              <Pie
-                                data={pieData}
-                                dataKey="value"
-                                nameKey="name"
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={0}
-                                outerRadius={100}
-                                label={({ name, percent }) => {
-                                  const color = name === 'Achieved' ? 'green' : 'red';
-                                  return (
-                                    <tspan fill={color}>
-                                      {name}: {(percent * 100).toFixed(0)}%
-                                    </tspan>
-                                  );
-                                }}
-                              >
-                                {pieData.map((entry, idx) => (
-                                  <Cell
-                                    key={`cell-${idx}`}
-                                    fill={idx === 0 ? '#00C49F' : '#FF8042'}
-                                  />
-                                ))}
-                              </Pie>
-                              <Tooltip />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
+                filteredAchievements.map((ach, index) => {
+                  const pieData = [
+                    { name: 'Achieved', value: ach.percentage },
+                    { name: 'Remaining', value: 100 - ach.percentage }
+                  ];
+                  return (
+                    <div key={index} className="rach-row">
+                      <div className="rach-box">
+                        <p><strong>Month:</strong> {ach.Month}</p>
+                        <p><strong>Year:</strong> {ach.Year}</p>
+                        <p><strong>Target:</strong> {ach.Target}</p>
+                        <p><strong>Total Sales:</strong> {ach.TotalSales}</p>
+                        <p><strong>Percentage:</strong> {ach.percentage}%</p>
+                        <p><strong>Last Updated:</strong> {new Date(ach.LastUpdated).toLocaleString()}</p>
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="rach-chart">
+                        <ResponsiveContainer width={300} height={300}>
+                          <PieChart>
+                            <Pie
+                              data={pieData}
+                              dataKey="value"
+                              nameKey="name"
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={60}
+                              outerRadius={100}
+                              fill="#8884d8"
+                              labelLine={false}
+                              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            >
+                              {pieData.map((entry, idx) => (
+                                <Cell
+                                  key={`cell-${idx}`}
+                                  fill={idx === 0 ? '#00C49F' : '#FFBB28'}
+                                />
+                              ))}
+                            </Pie>
+                            <Tooltip formatter={(value) => `${value}%`} />
+                            <Legend
+                              layout="vertical"
+                              verticalAlign="middle"
+                              align="right"
+                              wrapperStyle={{ fontSize: '14px', fontWeight: 'bold' }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  );
+                })
               )}
             </div>
 
