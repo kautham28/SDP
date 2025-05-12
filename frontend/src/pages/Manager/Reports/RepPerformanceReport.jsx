@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import MNavbar from '../../../components/Manager/MNavbar';
 import MSidebar from '../../../components/Manager/MSidebar';
 import './RepPerformanceReport.css';
+import { saveAs } from 'file-saver';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
@@ -18,6 +19,9 @@ const RepPerformanceReport = () => {
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const barChartRef = useRef(null);
+  const pieChartRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -95,6 +99,48 @@ const RepPerformanceReport = () => {
   const uniqueMonths = [...new Set(data.map(item => item.month))];
   const uniqueYears = [...new Set(data.map(item => item.year))];
 
+  // Function to generate PDF report
+  const generatePDF = async () => {
+    setGeneratingPdf(true);
+    
+    try {
+      // Get chart images as base64
+      let barChartImage = null;
+      let pieChartImage = null;
+      
+      if (barChartRef.current) {
+        barChartImage = barChartRef.current.toBase64Image();
+      }
+      
+      if (pieChartRef.current) {
+        pieChartImage = pieChartRef.current.toBase64Image();
+      }
+      
+      // Send data to backend to generate PDF
+      const response = await axios.post('http://localhost:5000/api/reports/generate-pdf', {
+        reportType: 'Rep Performance Report',
+        filters: { repId, month, year, startDate, endDate },
+        summary: { totalTarget, totalSales, totalConfirmedSales, avgPercentage },
+        tableData: data,
+        charts: {
+          barChart: barChartImage,
+          pieChart: pieChartImage
+        }
+      }, { responseType: 'blob' });
+      
+      // Create a blob from the PDF data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      
+      // Save the file using FileSaver.js
+      saveAs(blob, `Rep_Performance_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      setError('Failed to generate PDF report');
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
   return (
     <div className="rep-performance-container">
       <MNavbar />
@@ -103,6 +149,26 @@ const RepPerformanceReport = () => {
         <div className="rep-performance-main">
           <h1 className="rep-performance-heading">Rep Performance Report</h1>
           <p className="rep-performance-description">Evaluate the performance of sales representatives based on targets, sales, and confirmed orders.</p>
+          
+          {/* Export PDF Button - Added to your existing UI */}
+          <button 
+            onClick={generatePDF}
+            disabled={loading || generatingPdf || data.length === 0}
+            style={{
+              marginBottom: '1rem',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#3182ce',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontWeight: '500',
+              fontSize: '0.875rem',
+              alignSelf: 'flex-end'
+            }}
+          >
+            {generatingPdf ? 'Generating PDF...' : 'Export as PDF'}
+          </button>
 
           {/* Filters */}
           <div className="rep-performance-filters">
@@ -205,6 +271,7 @@ const RepPerformanceReport = () => {
                         x: { title: { display: true, text: 'Rep (Month Year)' } }
                       }
                     }}
+                    ref={barChartRef}
                   />
                 </div>
               </div>
@@ -216,6 +283,7 @@ const RepPerformanceReport = () => {
                   <Pie
                     data={pieData}
                     options={{ responsive: true, maintainAspectRatio: false }}
+                    ref={pieChartRef}
                   />
                 </div>
               </div>

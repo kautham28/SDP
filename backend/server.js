@@ -28,7 +28,10 @@ const productSalesReport = require("./routes/productSalesReport"); // New route 
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+
+// IMPORTANT: Increase the body parser limits to fix PayloadTooLargeError
+app.use(bodyParser.json({ limit: '100mb' }));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true, parameterLimit: 50000 }));
 
 // API routes
 app.use("/api/auth", authRoutes);
@@ -53,6 +56,16 @@ app.use("/api/reports", pharmacySalesReportRoutes);
 app.use("/api/reports", expiryGoodsReport);
 app.use("/api/reports", repPerformanceReport);
 app.use("/api/reports", productSalesReport); // Mount Product Sales Report route
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Server error',
+    error: err.message
+  });
+});
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

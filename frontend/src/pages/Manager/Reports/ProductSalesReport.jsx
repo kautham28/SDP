@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import MNavbar from '../../../components/Manager/MNavbar';
 import MSidebar from '../../../components/Manager/MSidebar';
 import './ProductSalesReport.css';
+import { saveAs } from 'file-saver';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
@@ -12,13 +13,16 @@ ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearS
 const ProductSalesReport = () => {
   const [productData, setProductData] = useState([]);
   const [repData, setRepData] = useState([]);
-  const [startDate, setStartDate] = useState('2025-04-01'); // Default start date to match sample data
-  const [endDate, setEndDate] = useState('2025-05-07'); // Default end date to current date
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [productNameFilter, setProductNameFilter] = useState('');
   const [pharmacyNameFilter, setPharmacyNameFilter] = useState('');
   const [repNameFilter, setRepNameFilter] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const barChartRef = useRef(null);
+  const pieChartRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -39,17 +43,14 @@ const ProductSalesReport = () => {
         },
       });
 
-      console.log('API Response:', response.data); // Debug: Log the full response
-
-      // Handle different possible response structures
       if (response.data.success) {
-        setProductData(response.data.data?.productSummary || response.data.productSummary || []);
-        setRepData(response.data.data?.repProductSummary || response.data.repProductSummary || []);
+        setProductData(response.data.data?.productSummary || []);
+        setRepData(response.data.data?.repProductSummary || []);
       } else {
         throw new Error('API returned unsuccessful response: ' + (response.data.message || 'Unknown error'));
       }
     } catch (err) {
-      console.error('Error fetching data:', err.message, err.response?.data); // Debug: Log error details
+      console.error('Error fetching data:', err.message, err.response?.data);
       setError('Failed to fetch product sales report data. Please check the server logs or try again later.');
       setProductData([]);
       setRepData([]);
@@ -63,10 +64,10 @@ const ProductSalesReport = () => {
     ? productData.reduce((sum, item) => sum + parseFloat(item.totalSalesValue || 0), 0).toFixed(2)
     : '0.00';
   const totalQuantitySold = productData.length > 0
-    ? productData.reduce((sum, item) => sum + (item.totalQuantity || 0), 0)
+    ? productData.reduce((sum, item) => sum + (parseInt(item.totalQuantity) || 0), 0)
     : 0;
   const totalOrderCount = productData.length > 0
-    ? productData.reduce((sum, item) => sum + (item.orderCount || 0), 0)
+    ? productData.reduce((sum, item) => sum + (parseInt(item.orderCount) || 0), 0)
     : 0;
   const avgUnitPrice = productData.length > 0
     ? (productData.reduce((sum, item) => sum + parseFloat(item.avgUnitPrice || 0), 0) / productData.length).toFixed(2)
@@ -74,18 +75,18 @@ const ProductSalesReport = () => {
 
   // Bar Chart: Sales Value and Quantity by Product
   const barData = {
-    labels: productData.map(item => item.productName || 'Unknown'),
+    labels: productData.slice(0, 10).map(item => item.productName || 'Unknown'),
     datasets: [
       {
         label: 'Total Sales Value',
-        data: productData.map(item => parseFloat(item.totalSalesValue || 0)),
+        data: productData.slice(0, 10).map(item => parseFloat(item.totalSalesValue || 0)),
         backgroundColor: '#36A2EB',
         borderColor: '#36A2EB',
         borderWidth: 1,
       },
       {
         label: 'Total Quantity Sold',
-        data: productData.map(item => item.totalQuantity || 0),
+        data: productData.slice(0, 10).map(item => parseInt(item.totalQuantity) || 0),
         backgroundColor: '#FF6384',
         borderColor: '#FF6384',
         borderWidth: 1,
@@ -112,31 +113,67 @@ const ProductSalesReport = () => {
     ],
   };
 
-  // Stacked Bar Chart: Rep-wise Product Sales
-  const uniqueReps = [...new Set(repData.map(item => item.repName || 'Unknown'))];
-  const uniqueProducts = [...new Set(repData.map(item => item.productName || 'Unknown'))];
-  const repBarData = {
-    labels: uniqueReps,
-    datasets: uniqueProducts.map((product, index) => ({
-      label: product,
-      data: uniqueReps.map(rep => {
-        const repProduct = repData.find(item => item.repName === rep && item.productName === product);
-        return repProduct ? parseFloat(repProduct.totalSalesValue || 0) : 0;
-      }),
-      backgroundColor: ['#FF6384', '#36A2EB', '#4BC0C0', '#FFCE56', '#E7E9ED'][index % 5],
-      borderWidth: 1,
-    })),
+  // Function to generate PDF report
+  const generatePDF = async () => {
+    setGeneratingPdf(true);
+    setError(null);
+    
+    try {
+      // Get chart images as base64
+      let barChartImage = null;
+      let pieChartImage = null;
+      
+      if (barChartRef.current) {
+        barChartImage = barChartRef.current.toBase64Image();
+      }
+      
+      if (pieChartRef.current) {
+        pieChartImage = pieChartRef.current.toBase64Image();
+      }
+      
+      // Send data to backend to generate PDF
+      const response = await axios.post(
+        'http://localhost:5000/api/reports/generate-product-sales-pdf', 
+        {
+          reportType: 'Product Sales Report',
+          filters: { 
+            startDate, 
+            endDate, 
+            productName: productNameFilter, 
+            pharmacyName: pharmacyNameFilter, 
+            repName: repNameFilter 
+          },
+          summary: {
+            totalSalesValue,
+            totalQuantitySold,
+            totalOrderCount,
+            avgUnitPrice
+          },
+          productData,
+          repData,
+          charts: {
+            barChart: barChartImage,
+            pieChart: pieChartImage
+          }
+        }, 
+        { 
+          responseType: 'blob',
+          timeout: 60000 // Increase timeout for large PDFs
+        }
+      );
+      
+      // Create a blob from the PDF data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      
+      // Save the file using FileSaver.js
+      saveAs(blob, `Product_Sales_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      setError('Failed to generate PDF report: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setGeneratingPdf(false);
+    }
   };
-
-  // Top Product per Rep
-  const topProductsByRep = uniqueReps.map(rep => {
-    const repSales = repData.filter(item => item.repName === rep);
-    return repSales.reduce(
-      (top, item) =>
-        parseFloat(item.totalSalesValue || 0) > parseFloat(top.totalSalesValue || 0) ? item : top,
-      { productName: 'N/A', totalSalesValue: '0.00' }
-    );
-  });
 
   // Unique Product Names, Pharmacies, and Reps for dropdowns
   const uniqueProductNames = [...new Set(productData.map(item => item.productName || 'Unknown'))];
@@ -153,6 +190,26 @@ const ProductSalesReport = () => {
           <p className="product-sales-description">
             Analyze sales performance based on individual products and sales trends.
           </p>
+          
+          {/* Export PDF Button */}
+          <button 
+            onClick={generatePDF}
+            disabled={loading || generatingPdf || productData.length === 0}
+            style={{
+              marginBottom: '1rem',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#3182ce',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontWeight: '500',
+              fontSize: '0.875rem',
+              alignSelf: 'flex-end'
+            }}
+          >
+            {generatingPdf ? 'Generating PDF...' : 'Export as PDF'}
+          </button>
 
           {/* Filters */}
           <div className="product-sales-filters">
@@ -266,6 +323,7 @@ const ProductSalesReport = () => {
                               x: { title: { display: true, text: 'Product' } },
                             },
                           }}
+                          ref={barChartRef}
                         />
                       </div>
                     </div>
@@ -281,6 +339,7 @@ const ProductSalesReport = () => {
                         <Pie
                           data={pieData}
                           options={{ responsive: true, maintainAspectRatio: false }}
+                          ref={pieChartRef}
                         />
                       </div>
                     </div>
@@ -303,15 +362,16 @@ const ProductSalesReport = () => {
                             </tr>
                           </thead>
                           <tbody className="product-sales-table-body">
-                            {productData.map((item) => (
-                              <tr key={item.productName || 'unknown'}>
+                            {productData.map((item, index) => (
+                              <tr key={`${item.productName}-${index}`}>
                                 <td className="product-sales-table-cell">{item.productName || 'Unknown'}</td>
                                 <td className="product-sales-table-cell">{item.totalQuantity || 0}</td>
                                 <td className="product-sales-table-cell">{item.totalSalesValue || '0.00'}</td>
                                 <td className="product-sales-table-cell">{item.avgUnitPrice || '0.00'}</td>
                                 <td className="product-sales-table-cell">{item.orderCount || 0}</td>
                                 <td className="product-sales-table-cell">
-                                  {(item.pharmacies || []).join(', ') || 'N/A'}
+                                  {(item.pharmacies || []).slice(0, 3).join(', ')}
+                                  {(item.pharmacies || []).length > 3 ? '...' : ''}
                                 </td>
                               </tr>
                             ))}
@@ -321,83 +381,33 @@ const ProductSalesReport = () => {
                     </div>
                   )}
 
-                  {/* Rep-wise Product Sales Section */}
+                  {/* Rep-wise Product Sales Table */}
                   {repData.length > 0 && (
-                    <>
-                      {/* Stacked Bar Chart: Rep-wise Product Sales */}
-                      <div className="product-sales-chart">
-                        <h2 className="product-sales-section-title">Rep-wise Product Sales</h2>
-                        <div className="product-sales-chart-container">
-                          <Bar
-                            data={repBarData}
-                            options={{
-                              responsive: true,
-                              maintainAspectRatio: false,
-                              scales: {
-                                x: { stacked: true, title: { display: true, text: 'Rep' } },
-                                y: {
-                                  stacked: true,
-                                  beginAtZero: true,
-                                  title: { display: true, text: 'Sales Value' },
-                                },
-                              },
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Top Product per Rep Table */}
-                      <div className="product-sales-table">
-                        <h2 className="product-sales-section-title">Top Product per Rep</h2>
-                        <div className="product-sales-table-wrapper">
-                          <table className="product-sales-table-content">
-                            <thead className="product-sales-table-header">
-                              <tr>
-                                <th className="product-sales-table-header-cell">Rep Name</th>
-                                <th className="product-sales-table-header-cell">Top Product</th>
-                                <th className="product-sales-table-header-cell">Sales Value</th>
+                    <div className="product-sales-table">
+                      <h2 className="product-sales-section-title">Rep-wise Product Sales Details</h2>
+                      <div className="product-sales-table-wrapper">
+                        <table className="product-sales-table-content">
+                          <thead className="product-sales-table-header">
+                            <tr>
+                              <th className="product-sales-table-header-cell">Rep Name</th>
+                              <th className="product-sales-table-header-cell">Product Name</th>
+                              <th className="product-sales-table-header-cell">Total Quantity Sold</th>
+                              <th className="product-sales-table-header-cell">Total Sales Value</th>
+                            </tr>
+                          </thead>
+                          <tbody className="product-sales-table-body">
+                            {repData.map((item, index) => (
+                              <tr key={`${item.repName}-${item.productName}-${index}`}>
+                                <td className="product-sales-table-cell">{item.repName || 'Unknown'}</td>
+                                <td className="product-sales-table-cell">{item.productName || 'Unknown'}</td>
+                                <td className="product-sales-table-cell">{item.totalQuantity || 0}</td>
+                                <td className="product-sales-table-cell">{item.totalSalesValue || '0.00'}</td>
                               </tr>
-                            </thead>
-                            <tbody className="product-sales-table-body">
-                              {topProductsByRep.map((item, index) => (
-                                <tr key={uniqueReps[index] || `rep-${index}`}>
-                                  <td className="product-sales-table-cell">{uniqueReps[index] || 'Unknown'}</td>
-                                  <td className="product-sales-table-cell">{item.productName || 'N/A'}</td>
-                                  <td className="product-sales-table-cell">{item.totalSalesValue || '0.00'}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-
-                      {/* Detailed Rep-wise Product Sales Table */}
-                      <div className="product-sales-table">
-                        <h2 className="product-sales-section-title">Rep-wise Product Sales Details</h2>
-                        <div className="product-sales-table-wrapper">
-                          <table className="product-sales-table-content">
-                            <thead className="product-sales-table-header">
-                              <tr>
-                                <th className="product-sales-table-header-cell">Rep Name</th>
-                                <th className="product-sales-table-header-cell">Product Name</th>
-                                <th className="product-sales-table-header-cell">Total Quantity Sold</th>
-                                <th className="product-sales-table-header-cell">Total Sales Value</th>
-                              </tr>
-                            </thead>
-                            <tbody className="product-sales-table-body">
-                              {repData.map((item, index) => (
-                                <tr key={`${item.repName || 'unknown'}-${item.productName || 'unknown'}-${index}`}>
-                                  <td className="product-sales-table-cell">{item.repName || 'Unknown'}</td>
-                                  <td className="product-sales-table-cell">{item.productName || 'Unknown'}</td>
-                                  <td className="product-sales-table-cell">{item.totalQuantity || 0}</td>
-                                  <td className="product-sales-table-cell">{item.totalSalesValue || '0.00'}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </>
+                    </div>
                   )}
                 </>
               )}
