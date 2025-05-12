@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import MNavbar from '../../../components/Manager/MNavbar';
 import MSidebar from '../../../components/Manager/MSidebar';
 import './ExpiryGoodsReport.css';
+import { saveAs } from 'file-saver';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
@@ -16,6 +17,9 @@ const ExpiryGoodsReport = () => {
   const [selectedSupplier, setSelectedSupplier] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const barChartRef = useRef(null);
+  const pieChartRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -96,6 +100,48 @@ const ExpiryGoodsReport = () => {
   // Unique suppliers for dropdown
   const uniqueSuppliers = suppliers.filter(supplier => supplier !== 'N/A');
 
+  // Function to generate PDF report
+  const generatePDF = async () => {
+    setGeneratingPdf(true);
+    
+    try {
+      // Get chart images as base64
+      let barChartImage = null;
+      let pieChartImage = null;
+      
+      if (barChartRef.current) {
+        barChartImage = barChartRef.current.toBase64Image();
+      }
+      
+      if (pieChartRef.current) {
+        pieChartImage = pieChartRef.current.toBase64Image();
+      }
+      
+      // Send data to backend to generate PDF
+      const response = await axios.post('http://localhost:5000/api/reports/expiry-goods-pdf', {
+        reportType: 'Expiry Goods Report',
+        filters: { startDate, endDate, supplierName: selectedSupplier },
+        summary: { totalExpiredQuantity, totalExpiringSoonQuantity, totalValueAtRisk },
+        tableData: data,
+        charts: {
+          barChart: barChartImage,
+          pieChart: pieChartImage
+        }
+      }, { responseType: 'blob' });
+      
+      // Create a blob from the PDF data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      
+      // Save the file using FileSaver.js
+      saveAs(blob, `Expiry_Goods_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      setError('Failed to generate PDF report');
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
   return (
     <div className="expiry-goods-container">
       <MNavbar />
@@ -104,6 +150,26 @@ const ExpiryGoodsReport = () => {
         <div className="expiry-goods-main">
           <h1 className="expiry-goods-heading">Expiry Goods Report</h1>
           <p className="expiry-goods-description">Track products nearing expiration or already expired to manage inventory effectively.</p>
+          
+          {/* Export PDF Button */}
+          <button 
+            onClick={generatePDF}
+            disabled={loading || generatingPdf || data.length === 0}
+            style={{
+              marginBottom: '1rem',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#3182ce',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontWeight: '500',
+              fontSize: '0.875rem',
+              alignSelf: 'flex-end'
+            }}
+          >
+            {generatingPdf ? 'Generating PDF...' : 'Export as PDF'}
+          </button>
 
           {/* Filters */}
           <div className="expiry-goods-filters">
@@ -162,7 +228,7 @@ const ExpiryGoodsReport = () => {
                 </div>
               </div>
 
-              {/* Bar Chart: Expiring goods by supplier */}
+              /* Bar Chart: Expiring goods by supplier */
               <div className="expiry-goods-chart">
                 <h2 className="expiry-goods-section-title">Expiring Goods by Supplier</h2>
                 <div className="expiry-goods-chart-container">
@@ -176,22 +242,24 @@ const ExpiryGoodsReport = () => {
                         x: { title: { display: true, text: 'Supplier' } }
                       }
                     }}
+                    ref={barChartRef}
                   />
                 </div>
               </div>
 
-              {/* Pie Chart: Status Distribution */}
+              /* Pie Chart: Status Distribution */
               <div className="expiry-goods-chart">
                 <h2 className="expiry-goods-section-title">Status Distribution</h2>
                 <div className="expiry-goods-chart-container">
                   <Pie
                     data={pieData}
                     options={{ responsive: true, maintainAspectRatio: false }}
+                    ref={pieChartRef}
                   />
                 </div>
               </div>
 
-              {/* Detailed Table */}
+              /* Detailed Table */
               <div className="expiry-goods-table">
                 <h2 className="expiry-goods-section-title">Expiry Details</h2>
                 <div className="expiry-goods-table-wrapper">
