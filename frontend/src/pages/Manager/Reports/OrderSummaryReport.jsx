@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { saveAs } from 'file-saver';
 import MNavbar from '../../../components/Manager/MNavbar';
 import MSidebar from '../../../components/Manager/MSidebar';
 import './OrderSummaryReport.css';
@@ -16,6 +17,7 @@ const OrderSummaryReport = () => {
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const pieChartRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -60,6 +62,37 @@ const OrderSummaryReport = () => {
     ]
   };
 
+  // Export PDF function
+  const exportPDF = async () => {
+    try {
+      const pieChartDataUrl = pieChartRef.current?.toBase64Image();
+      const pdfData = {
+        reportType: 'Order Summary Report',
+        filters: { startDate, endDate },
+        summary: {
+          totalOrders: summary.totalOrders,
+          pendingOrdersCount: summary.pendingOrdersCount,
+          confirmedOrdersCount: summary.confirmedOrdersCount,
+          totalOrderValue: summary.totalOrderValue,
+          confirmedPercentage: summary.confirmedPercentage
+        },
+        tableData: details,
+        charts: {
+          pieChart: pieChartDataUrl
+        }
+      };
+      console.log('Sending tableData with', pdfData.tableData.length, 'rows');
+      const response = await axios.post('http://localhost:5000/api/reports/order-report/pdf', pdfData, {
+        responseType: 'blob'
+      });
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      saveAs(pdfBlob, 'ram_medical_order_summary_report.pdf');
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      alert('Failed to export PDF');
+    }
+  };
+
   return (
     <div className="order-summary-container">
       <MNavbar />
@@ -69,7 +102,7 @@ const OrderSummaryReport = () => {
           <h1 className="order-summary-heading">Order Summary Report</h1>
           <p className="order-summary-description">View comprehensive summaries of orders including order volumes, values, and fulfillment status.</p>
 
-          {/* Date Filter */}
+          {/* Date Filter and Export Button */}
           <div className="order-summary-date-filter">
             <label className="order-summary-date-label">Filter by Date Range</label>
             <div className="order-summary-date-inputs">
@@ -85,6 +118,9 @@ const OrderSummaryReport = () => {
                 onChange={(e) => setEndDate(e.target.value)}
                 className="order-summary-date-input"
               />
+              <button onClick={exportPDF} className="order-summary-export-button">
+                Export as PDF
+              </button>
             </div>
           </div>
 
@@ -110,7 +146,7 @@ const OrderSummaryReport = () => {
                   </div>
                   <div>
                     <p className="order-summary-label">Total Value</p>
-                    <p className="order-summary-value order-summary-blue">${summary.totalOrderValue.toFixed(2)}</p>
+                    <p className="order-summary-value order-summary-blue">{summary.totalOrderValue.toFixed(2)}</p>
                   </div>
                   <div className="order-summary-full-width">
                     <p className="order-summary-label">Confirmed Percentage</p>
@@ -123,7 +159,11 @@ const OrderSummaryReport = () => {
               <div className="order-summary-chart">
                 <h2 className="order-summary-section-title">Order Status Distribution</h2>
                 <div className="order-summary-chart-container">
-                  <Pie data={pieData} options={{ responsive: true, maintainAspectRatio: false }} />
+                  <Pie
+                    data={pieData}
+                    options={{ responsive: true, maintainAspectRatio: false }}
+                    ref={pieChartRef}
+                  />
                 </div>
               </div>
 
@@ -149,7 +189,7 @@ const OrderSummaryReport = () => {
                           <td className="order-summary-table-cell">{order.orderId}</td>
                           <td className="order-summary-table-cell">{order.pharmacyName}</td>
                           <td className="order-summary-table-cell">{order.repName}</td>
-                          <td className="order-summary-table-cell">${order.totalValue}</td>
+                          <td className="order-summary-table-cell">{order.totalValue}</td>
                           <td className="order-summary-table-cell">{order.orderDate}</td>
                           <td className="order-summary-table-cell">{order.userId}</td>
                           <td className="order-summary-table-cell">{order.status}</td>

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import { saveAs } from 'file-saver';
 import MNavbar from '../../../components/Manager/MNavbar';
 import MSidebar from '../../../components/Manager/MSidebar';
 import './PharmacySalesReport.css';
@@ -17,6 +18,8 @@ const PharmacySalesReport = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const barChartRef = useRef(null);
+  const pieChartRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -76,6 +79,33 @@ const PharmacySalesReport = () => {
   // Unique pharmacies for dropdown
   const pharmacies = [...new Set(summary.map(item => item.pharmacy_name))];
 
+  // Export PDF function
+  const exportPDF = async () => {
+    try {
+      const barChartDataUrl = !selectedPharmacy ? barChartRef.current?.toBase64Image() : null;
+      const pieChartDataUrl = selectedPharmacy ? pieChartRef.current?.toBase64Image() : null;
+      const pdfData = {
+        reportType: 'Pharmacy-wise Sales Report',
+        filters: { startDate, endDate, pharmacy_name: selectedPharmacy || undefined },
+        summary: selectedPharmacy ? selectedSummary : summary,
+        tableData: details,
+        charts: {
+          barChart: barChartDataUrl,
+          pieChart: pieChartDataUrl
+        }
+      };
+      console.log('Sending tableData with', pdfData.tableData.length, 'rows');
+      const response = await axios.post('http://localhost:5000/api/reports/pharmacy-sales-report/pdf', pdfData, {
+        responseType: 'blob'
+      });
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      saveAs(pdfBlob, 'ram_medical_pharmacy_sales_report.pdf');
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      alert('Failed to export PDF');
+    }
+  };
+
   return (
     <div className="pharmacy-sales-container">
       <MNavbar />
@@ -117,6 +147,9 @@ const PharmacySalesReport = () => {
                 ))}
               </select>
             </div>
+            <button onClick={exportPDF} className="pharmacy-sales-export-button">
+              Export as PDF
+            </button>
           </div>
 
           {loading && <div className="pharmacy-sales-loading">Loading...</div>}
@@ -172,6 +205,7 @@ const PharmacySalesReport = () => {
                           x: { title: { display: true, text: 'Pharmacy' } }
                         }
                       }}
+                      ref={barChartRef}
                     />
                   </div>
                 </div>
@@ -185,6 +219,7 @@ const PharmacySalesReport = () => {
                     <Pie
                       data={pieData}
                       options={{ responsive: true, maintainAspectRatio: false }}
+                      ref={pieChartRef}
                     />
                   </div>
                 </div>

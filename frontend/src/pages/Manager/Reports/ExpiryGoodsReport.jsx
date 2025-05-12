@@ -228,7 +228,7 @@ const ExpiryGoodsReport = () => {
                 </div>
               </div>
 
-              /* Bar Chart: Expiring goods by supplier */
+              {/* Bar Chart: Expiring goods by supplier */}
               <div className="expiry-goods-chart">
                 <h2 className="expiry-goods-section-title">Expiring Goods by Supplier</h2>
                 <div className="expiry-goods-chart-container">
@@ -247,7 +247,7 @@ const ExpiryGoodsReport = () => {
                 </div>
               </div>
 
-              /* Pie Chart: Status Distribution */
+              {/* Pie Chart: Status Distribution */}
               <div className="expiry-goods-chart">
                 <h2 className="expiry-goods-section-title">Status Distribution</h2>
                 <div className="expiry-goods-chart-container">
@@ -259,7 +259,7 @@ const ExpiryGoodsReport = () => {
                 </div>
               </div>
 
-              /* Detailed Table */
+              {/* Expiry Goods Table */}
               <div className="expiry-goods-table">
                 <h2 className="expiry-goods-section-title">Expiry Details</h2>
                 <div className="expiry-goods-table-wrapper">
