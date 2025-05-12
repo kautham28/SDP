@@ -15,42 +15,42 @@ const MSalesReports = () => {
       id: 'inventory',
       title: 'Inventory Status Report',
       description: 'Get detailed information about current stock levels, item availability, and inventory valuations.',
-      icon: <Package className="h-8 w-8 text-gray-500" />,
+      icon: <Package className="h-12 w-12 text-gray-500" />,
       path: '/manager/sales-reports/inventory',
     },
     {
       id: 'orders',
       title: 'Order Summary Report',
       description: 'View comprehensive summaries of orders including order volumes, values, and fulfillment status.',
-      icon: <ShoppingCart className="h-8 w-8 text-gray-500" />,
+      icon: <ShoppingCart className="h-12 w-12 text-gray-500" />,
       path: '/manager/sales-reports/orders',
     },
     {
       id: 'repPerformance',
       title: 'Rep Performance Report',
       description: 'Analyze sales representative performance including targets, achievements, and sales metrics.',
-      icon: <Users className="h-8 w-8 text-gray-500" />,
+      icon: <Users className="h-12 w-12 text-gray-500" />,
       path: '/manager/sales-reports/rep-performance',
     },
     {
       id: 'pharmacySales',
       title: 'Pharmacy-wise Sales Report',
       description: 'Examine sales data across different pharmacy locations, including revenue and product distribution.',
-      icon: <BarChart className="h-8 w-8 text-gray-500" />,
+      icon: <BarChart className="h-12 w-12 text-gray-500" />,
       path: '/manager/sales-reports/pharmacy-sales',
     },
     {
       id: 'expiry',
       title: 'Expiry Goods Report',
       description: 'Track products approaching expiration dates to manage inventory and reduce waste effectively.',
-      icon: <Calendar className="h-8 w-8 text-gray-500" />,
+      icon: <Calendar className="h-12 w-12 text-gray-500" />,
       path: '/manager/sales-reports/expiry',
     },
     {
       id: 'productSales',
       title: 'Product-wise Sales Report',
       description: 'Analyze sales performance based on individual products, including revenue and sales trends.',
-      icon: <BarChart className="h-8 w-8 text-gray-500" />,
+      icon: <BarChart className="h-12 w-12 text-gray-500" />,
       path: '/manager/sales-reports/product-sales',
     },
   ];
@@ -61,16 +61,16 @@ const MSalesReports = () => {
   };
 
   return (
-    <div className="sales-reports-container min-h-screen bg-gray-50">
+    <div className="sales-reports-container">
       <MNavbar />
-      <div className="sales-reports-content flex">
+      <div className="sales-reports-content">
         <MSidebar />
-        <div className="sales-reports-main p-6 flex-1">
-          <h1 className="text-3xl font-bold mb-2">Report Generation</h1>
+        <div className="sales-reports-main">
+          <h1 className="report-heading">Report Generation</h1>
           <p className="text-gray-600 mb-8">Select a report type to generate detailed business insights.</p>
 
           {/* Report Cards Grid */}
-          <div className="report-cards-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="report-cards-grid">
             {reportCards.map((report) => (
               <div
                 key={report.id}

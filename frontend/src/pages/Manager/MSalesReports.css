@@ -1,97 +1,134 @@
-/* MSalesReports.css */
-
 /* Container for the entire page */
 .sales-reports-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-color: #f9fafb; 
-    margin-top: 150px;/* Tailwind bg-gray-50 */
-  }
-  
-  /* Content area including sidebar and main content */
-  .sales-reports-content {
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
+    background-color: rgb(201, 239, 234); /* Updated background color */
+    margin: 0; /* Remove any margin */
+    overflow: hidden; /* Prevent scrolling on the container */
+    margin-left: 500px;
+    margin-top: 10px;
+    padding-right: 200px;
+}
+
+/* Content area including sidebar and main content */
+.sales-reports-content {
     display: flex;
-    flex: 1;
-  }
-  
-  /* Main content area */
-  .sales-reports-main {
-    flex: 1;
+    flex: 1; /* Take remaining height after navbar */
+    overflow: hidden; /* Prevent scrolling */
+}
+
+/* Main content area */
+.sales-reports-main {
+    flex: 1; /* Take remaining width after sidebar */
     padding: 1.5rem;
-  }
-  
-  /* Report cards grid */
-  .report-cards-grid {
+    overflow-y: auto; /* Allow scrolling within the main content if needed */
+    box-sizing: border-box;
+}
+
+/* Report cards grid */
+.report-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  /* Individual report card */
-  .report-card {
+    grid-template-columns: repeat(3, 1fr); /* Fixed 3 columns */
+    gap: 30px;
+    height: fit-content; /* Adjust to content */
+    margin-top: 30px;
+}
+
+/* Individual report card */
+.report-card {
     background-color: white;
-    padding: 1.5rem;
+    padding: 2rem; /* Increased padding to accommodate larger icons */
     border-radius: 0.5rem;
-    border: 1px solid #e5e7eb; /* Tailwind border-gray-200 */
+    border: 3px solid #091938; /* Updated border color */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-  }
-  
-  .report-card:hover {
+    max-width: 350px;
+}
+
+.report-card:hover {
     border-color: #2563eb; /* Tailwind border-blue-600 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .report-card.active {
+}
+
+.report-card.active {
     border: 2px solid #2563eb; /* Tailwind border-blue-600 */
-  }
-  
-  /* Icon and text alignment */
-  .report-card .flex {
+}
+
+/* Icon and text alignment */
+.report-card .flex {
     display: flex;
     align-items: center;
-    gap: 1rem;
-  }
-  
-  /* Typography */
-  h1 {
+    gap: 1.5rem; /* Increased gap for larger icons */
+}
+
+/* Icon size adjustment */
+.report-card .flex svg {
+    height: 48px; /* Increased icon size (equivalent to h-12) */
+    width: 48px; /* Increased icon size (equivalent to w-12) */
+}
+
+/* Heading specific to this page */
+.report-heading {
+    margin-top: 40px;
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgb(201, 239, 234);
+    width: 100%;
+    padding: 15px 0;
+    color:  #003f4f; /* Tailwind text-gray-800 */
+}
+
+/* Typography */
+h1 {
     font-size: 1.875rem; /* Tailwind text-3xl */
     font-weight: 700; /* Tailwind font-bold */
     color: #1f2937; /* Tailwind text-gray-800 */
-  }
-  
-  p {
+}
+
+p {
+  text-align: center;
     color: #4b5563; /* Tailwind text-gray-600 */
-  }
-  
-  .report-card h2 {
+}
+
+.report-card h2 {
     font-size: 1.125rem; /* Tailwind text-lg */
     font-weight: 600; /* Tailwind font-semibold */
     color: #1f2937; /* Tailwind text-gray-800 */
-  }
-  
-  .report-card p {
+}
+
+.report-card p {
     font-size: 0.875rem; /* Tailwind text-sm */
     margin-top: 0.25rem;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
     .sales-reports-content {
-      flex-direction: column;
+        flex-direction: column;
     }
-  
+
     .sales-reports-main {
-      padding: 1rem;
+        padding: 1rem;
     }
-  
+
     .report-cards-grid {
-      grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
-  
+
     .report-card {
-      padding: 1rem;
+        padding: 1.5rem; /* Adjusted padding for smaller screens */
     }
-  }
+
+    .report-card .flex {
+        gap: 1rem; /* Adjusted gap for smaller screens */
+    }
+
+    .report-card .flex svg {
+        height: 36px; /* Slightly smaller icons on mobile (equivalent to h-9) */
+        width: 36px; /* Slightly smaller icons on mobile (equivalent to w-9) */
+    }
+}

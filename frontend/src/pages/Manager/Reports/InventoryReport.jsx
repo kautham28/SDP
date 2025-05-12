@@ -82,13 +82,22 @@ const InventoryReport = () => {
     }
   }));
 
+  // Function to format date to dd.mm.yyyy
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
   return (
-    <div className="inventory-report-container min-h-screen bg-gray-50">
+    <div className="inventory-report-container">
       <MNavbar />
-      <div className="inventory-report-content flex">
+      <div className="inventory-report-content">
         <MSidebar />
-        <div className="inventory-report-main p-6 flex-1 overflow-y-auto">
-          <h1 className="text-3xl font-bold mb-2">Inventory Status Report</h1>
+        <div className="inventory-report-main">
+          <h1 className="report-heading">Inventory Status Report</h1>
           <p className="text-gray-600 mb-8">Detailed information about current stock levels, item availability, and inventory valuations.</p>
 
           {/* Total Value and Expired Value */}
@@ -152,27 +161,27 @@ const InventoryReport = () => {
           </div>
 
           {/* Product Table */}
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="inventory-report-table">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product List</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 w-full inventory-report-table">
-                <thead className="bg-gray-50">
+            <div className="inventory-report-table-wrapper">
+              <table className="inventory-report-table-content">
+                <thead className="inventory-report-table-header">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch Number</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
+                    <th className="inventory-report-table-header-cell">Product ID</th>
+                    <th className="inventory-report-table-header-cell">Name</th>
+                    <th className="inventory-report-table-header-cell">Batch Number</th>
+                    <th className="inventory-report-table-header-cell">Expiry Date</th>
+                    <th className="inventory-report-table-header-cell">Total Price</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="inventory-report-table-body">
                   {analytics.products.map(product => (
                     <tr key={product.productId}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.productId}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.batchNumber}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.expiryDate}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.totalPrice}</td>
+                      <td className="inventory-report-table-cell">{product.productId}</td>
+                      <td className="inventory-report-table-cell">{product.name}</td>
+                      <td className="inventory-report-table-cell">{product.batchNumber}</td>
+                      <td className="inventory-report-table-cell">{formatDate(product.expiryDate)}</td>
+                      <td className="inventory-report-table-cell">{product.totalPrice}</td>
                     </tr>
                   ))}
                 </tbody>

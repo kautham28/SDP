@@ -2,122 +2,281 @@
 .inventory-report-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-color: #f7fafc;
-    margin-top: 150px;
-  }
-  
-  .inventory-report-content {
+    min-height: 65vh;
+    max-height: 250vh;
+    background-color: rgb(201, 239, 234); /* Match order summary background */
+    margin-top: 10px;
+    margin-left: 260px;
+    width: 1250px;
+}
+
+.inventory-report-content {
     display: flex;
     flex: 1;
-  }
-  
-  /* Main Content Area */
-  .inventory-report-main {
+}
+
+/* Main Content Area */
+.inventory-report-main {
     flex: 1;
     padding: 1.5rem;
     overflow-y: auto;
-    max-height: calc(100vh - 64px); /* Adjust based on navbar height (e.g., 64px) */
+    max-height: calc(100vh - 150px); /* Match order summary scrollbar height */
     scrollbar-width: thin;
     scrollbar-color: #a0aec0 #edf2f7;
-    width: 100%; /* Ensure full width */
-  }
-  
-  .inventory-report-main::-webkit-scrollbar {
+}
+
+.inventory-report-main::-webkit-scrollbar {
     width: 8px;
-  }
-  
-  .inventory-report-main::-webkit-scrollbar-track {
+}
+
+.inventory-report-main::-webkit-scrollbar-track {
     background: #edf2f7;
-  }
-  
-  .inventory-report-main::-webkit-scrollbar-thumb {
+}
+
+.inventory-report-main::-webkit-scrollbar-thumb {
     background-color: #a0aec0;
     border-radius: 4px;
-  }
-  
-  /* Chart Container */
-  .chart-container {
+}
+
+/* Heading and Description */
+.report-heading {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #2d3748; /* Match order summary heading color */
+    text-align: center;
+}
+
+.text-gray-600 {
+    color: #718096; /* Match order summary description color */
+    margin-bottom: 1rem;
+}
+
+/* Section Containers (Inventory Overview, Total Expired Percentage, Supplier Total Value, Supplier Expiry Breakdown, Product List) */
+.bg-white {
+    background-color: #ffffff;
+}
+
+.p-6 {
+    padding: 1.5rem;
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.border {
+    border: 1px solid #e2e8f0;
+}
+
+.border-gray-200 {
+    border-color: #e2e8f0;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+/* Section Headings */
+.text-lg {
+    font-size: 1.125rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.text-gray-800 {
+    color: #2d3748;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+/* Grid for Inventory Overview */
+.grid {
+    display: grid;
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+/* Text Styles for Inventory Overview */
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-blue-600 {
+    color: #3182ce; /* Match order summary blue */
+}
+
+.text-red-600 {
+    color: #e53e3e; /* Consistent with error color */
+}
+
+/* Chart Container */
+.chart-container {
     position: relative;
     height: 300px;
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
-  }
-  
-  /* Supplier Pie Container */
-  .supplier-pie-container {
+}
+
+/* Supplier Pie Container */
+.supplier-pie-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
-  .supplier-pie-container .chart-container {
+}
+
+.supplier-pie-container .chart-container {
     height: 200px;
     max-width: 200px;
-  }
-  
-  /* Table Styling */
-  .inventory-report-table {
-    width: 100% !important; /* Force full width */
+}
+
+/* Supplier Pie Chart Headings */
+.text-md {
+    font-size: 1rem;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-gray-700 {
+    color: #4a5568;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+/* Grid for Supplier Pie Charts */
+.inventory-report-pie-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+/* Inventory Table */
+.inventory-report-table {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+}
+
+.inventory-report-table-wrapper {
+    overflow-x: auto;
+}
+
+.inventory-report-table-content {
+    width: 100%;
     border-collapse: collapse;
-    min-width: 0;
-  }
-  
-  .inventory-report-table th,
-  .inventory-report-table td {
-    padding: 0.75rem;
-    text-align: left;
-  }
-  
-  .inventory-report-table thead th {
+}
+
+.inventory-report-table-header {
     background-color: #f7fafc;
+}
+
+.inventory-report-table-header-cell {
     font-weight: 500;
     color: #4a5568;
-  }
-  
-  .inventory-report-table tbody tr:hover {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.inventory-report-table-body {
+    background-color: #ffffff;
+}
+
+.inventory-report-table-cell {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    color: #2d3748;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.inventory-report-table-body tr:hover {
     background-color: #f7fafc;
-  }
-  
-  /* Grid for Supplier Pie Charts */
-  .inventory-report-pie-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important; /* Force 3 charts per row */
-    gap: 1.5rem;
-  }
-  
-  /* Loading and Error States */
-  .loading, .error {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    font-size: 1.25rem;
-    color: #4a5568;
-  }
-  
-  .error {
+}
+
+/* Loading and Error States */
+.loading,
+.error {
+    text-align: center;
+    color: #718096;
+}
+
+.error {
     color: #e53e3e;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
     .inventory-report-main {
-      padding: 1rem;
+        padding: 1rem;
     }
-  
+
     .chart-container {
-      height: 250px;
-      max-width: 100%;
+        height: 200px;
+        max-width: 100%;
     }
-  
+
     .supplier-pie-container .chart-container {
-      height: 150px;
-      max-width: 150px;
+        height: 150px;
+        max-width: 150px;
     }
-  
+
     .inventory-report-pie-grid {
-      grid-template-columns: 1fr !important; /* Stack vertically on mobile */
+        grid-template-columns: 1fr;
     }
-  }
+
+    .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .inventory-report-table-wrapper {
+        display: block;
+        overflow-x: auto;
+    }
+}

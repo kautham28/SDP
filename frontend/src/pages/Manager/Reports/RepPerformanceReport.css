@@ -2,81 +2,89 @@
 .rep-performance-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-color: #f7fafc;
-    margin-top: 150px;
-    margin-left: 250px;
-  }
-  
-  .rep-performance-content {
+    min-height: 650px;
+    max-height: 650px;
+    background-color: rgb(201, 239, 234); /* Match order summary background */
+    margin-top: 50px;
+    margin-left: 260px;
+    width: 1250px;
+    overflow: hidden;
+}
+
+.rep-performance-content {
     display: flex;
     flex: 1;
-  }
-  
-  .rep-performance-main {
+    min-height: 650px;
+    max-height: 650px;
+}
+
+.rep-performance-main {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 1.5rem;
     overflow-y: auto;
-    max-height: calc(100vh - 150px); /* Adjust for margin-top */
+    min-height: 650px;
+    max-height: 650px;
     scrollbar-width: thin;
     scrollbar-color: #a0aec0 #edf2f7;
-  }
-  
-  .rep-performance-main::-webkit-scrollbar {
+}
+
+.rep-performance-main::-webkit-scrollbar {
     width: 8px;
-  }
-  
-  .rep-performance-main::-webkit-scrollbar-track {
+}
+
+.rep-performance-main::-webkit-scrollbar-track {
     background: #edf2f7;
-  }
-  
-  .rep-performance-main::-webkit-scrollbar-thumb {
+}
+
+.rep-performance-main::-webkit-scrollbar-thumb {
     background-color: #a0aec0;
     border-radius: 4px;
-  }
-  
-  /* Heading and Description */
-  .rep-performance-heading {
+}
+
+/* Heading and Description */
+.rep-performance-heading {
     font-size: 1.875rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: #2d3748;
-  }
-  
-  .rep-performance-description {
+}
+
+.rep-performance-description {
     color: #718096;
     margin-bottom: 2rem;
-  }
-  
-  /* Filters */
-  .rep-performance-filters {
+}
+
+/* Filters */
+.rep-performance-filters {
     display: flex;
     gap: 1.5rem;
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
-  }
-  
-  .rep-performance-filter,
-  .rep-performance-date-filter {
+}
+
+.rep-performance-filter,
+.rep-performance-date-filter {
     flex: 1;
     min-width: 200px;
-  }
-  
-  .rep-performance-label {
+}
+
+.rep-performance-label {
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
     color: #4a5568;
     margin-bottom: 0.5rem;
-  }
-  
-  .rep-performance-date-inputs {
+}
+
+.rep-performance-date-inputs {
     display: flex;
     gap: 1rem;
-  }
-  
-  .rep-performance-date-input,
-  .rep-performance-select {
+}
+
+.rep-performance-date-input,
+.rep-performance-select {
     border: 1px solid #e2e8f0;
     border-radius: 0.375rem;
     padding: 0.5rem;
@@ -84,107 +92,107 @@
     background-color: #fff;
     color: #4a5568;
     transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  
-  .rep-performance-date-input {
+}
+
+.rep-performance-date-input {
     width: 160px;
-  }
-  
-  .rep-performance-select {
+}
+
+.rep-performance-select {
     width: 100%;
     max-width: 200px;
-  }
-  
-  .rep-performance-date-input:focus,
-  .rep-performance-select:focus {
+}
+
+.rep-performance-date-input:focus,
+.rep-performance-select:focus {
     outline: none;
     border-color: #3182ce;
     box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
-  }
-  
-  /* Summary Metrics */
-  .rep-performance-totals {
+}
+
+/* Summary Metrics */
+.rep-performance-totals {
     background-color: #ffffff;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-  }
-  
-  .rep-performance-section-title {
+}
+
+.rep-performance-section-title {
     font-size: 1.125rem;
     font-weight: 600;
     color: #2d3748;
     margin-bottom: 1rem;
-  }
-  
-  .rep-performance-totals-grid {
+}
+
+.rep-performance-totals-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-  }
-  
-  .rep-performance-label {
+}
+
+.rep-performance-label {
     font-size: 0.875rem;
     color: #718096;
     margin-bottom: 0.25rem;
-  }
-  
-  .rep-performance-value {
+}
+
+.rep-performance-value {
     font-size: 1.5rem;
     font-weight: 700;
-  }
-  
-  .rep-performance-blue {
+}
+
+.rep-performance-blue {
     color: #3182ce;
-  }
-  
-  .rep-performance-green {
+}
+
+.rep-performance-green {
     color: #38a169;
-  }
-  
-  /* Charts */
-  .rep-performance-chart {
+}
+
+/* Charts */
+.rep-performance-chart {
     background-color: #ffffff;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-  }
-  
-  .rep-performance-chart-container {
+}
+
+.rep-performance-chart-container {
     position: relative;
     height: 300px;
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
-  }
-  
-  /* Detailed Table */
-  .rep-performance-table {
+}
+
+/* Detailed Table */
+.rep-performance-table {
     background-color: #ffffff;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
     padding: 1.5rem;
-  }
-  
-  .rep-performance-table-wrapper {
+}
+
+.rep-performance-table-wrapper {
     overflow-x: auto;
-  }
-  
-  .rep-performance-table-content {
+}
+
+.rep-performance-table-content {
     width: 100%;
     border-collapse: collapse;
-  }
-  
-  .rep-performance-table-header {
+}
+
+.rep-performance-table-header {
     background-color: #f7fafc;
-  }
-  
-  .rep-performance-table-header-cell {
+}
+
+.rep-performance-table-header-cell {
     font-weight: 500;
     color: #4a5568;
     padding: 0.75rem 1.5rem;
@@ -192,70 +200,70 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-  }
-  
-  .rep-performance-table-body {
+}
+
+.rep-performance-table-body {
     background-color: #ffffff;
-  }
-  
-  .rep-performance-table-cell {
+}
+
+.rep-performance-table-cell {
     padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
     color: #2d3748;
     border-bottom: 1px solid #e2e8f0;
-  }
-  
-  .rep-performance-table-body tr:hover {
+}
+
+.rep-performance-table-body tr:hover {
     background-color: #f7fafc;
-  }
-  
-  /* Loading and Error States */
-  .rep-performance-loading,
-  .rep-performance-error {
+}
+
+/* Loading and Error States */
+.rep-performance-loading,
+.rep-performance-error {
     text-align: center;
-  }
-  
-  .rep-performance-loading {
+}
+
+.rep-performance-loading {
     color: #718096;
-  }
-  
-  .rep-performance-error {
+}
+
+.rep-performance-error {
     color: #e53e3e;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
     .rep-performance-main {
-      padding: 1rem;
+        padding: 1rem;
     }
-  
+
     .rep-performance-filters {
-      flex-direction: column;
-      gap: 1rem;
+        flex-direction: column;
+        gap: 1rem;
     }
-  
+
     .rep-performance-date-inputs {
-      flex-direction: column;
-      gap: 0.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
     }
-  
+
     .rep-performance-date-input,
     .rep-performance-select {
-      width: 100%;
-      max-width: none;
+        width: 100%;
+        max-width: none;
     }
-  
+
     .rep-performance-totals-grid {
-      grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
-  
+
     .rep-performance-chart-container {
-      height: 200px;
-      max-width: 100%;
+        height: 200px;
+        max-width: 100%;
     }
-  
+
     .rep-performance-table-wrapper {
-      display: block;
-      overflow-x: auto;
+        display: block;
+        overflow-x: auto;
     }
-  }
+}

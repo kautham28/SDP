@@ -20,7 +20,7 @@ import MAssignRoles from "./pages/Manager/MAssignRoles";
 import MInventory from "./pages/Manager/MInventory";
 import MSalesReports from "./pages/Manager/MSalesReports";
 import MSettings from "./pages/Manager/MSettings";
-import TopSellingProductsPage from "./pages/Manager/TopSellingProductsPage";
+
 import MStockAlert from "./pages/Manager/MStockAlert";
 import MSupplier from "./pages/Manager/MSupplier"; 
 import InventoryReport from "./pages/Manager/Reports/InventoryReport";
@@ -72,7 +72,6 @@ function App() {
         <Route path="/manager/sales-reports/expiry" element={<ExpiryGoodsReport />} />
         <Route path="/manager/sales-reports/product-sales" element={<ProductSalesReport />} /> {/* New route */}
         <Route path="/manager/settings" element={<MSettings />} />
-        <Route path="/manager/make-purchase" element={<TopSellingProductsPage />} />
         <Route path="/manager/stock-alert" element={<MStockAlert />} />
         <Route path="/manager/supplier" element={<MSupplier />} />
 
