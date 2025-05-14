@@ -248,7 +248,7 @@ const APendingorder = () => {
                         <td>{order.orderId}</td>
                         <td>{order.pharmacy_name}</td>
                         <td>{order.rep_name}</td>
-                        <td>${order.total_value?.toFixed(2)}</td>
+                        <td>{order.total_value?.toFixed(2)}</td>
                         <td>{new Date(order.order_date).toLocaleDateString()}</td>
                         <td className="action-buttons-pending">
                           <button
@@ -310,16 +310,16 @@ const APendingorder = () => {
                         {selectedOrder.map(detail => (
                           <tr key={detail.detailId}>
                             <td>{detail.product_name}</td>
-                            <td>${detail.unit_price?.toFixed(2)}</td>
+                            <td>{detail.unit_price?.toFixed(2)}</td>
                             <td>{detail.quantity}</td>
-                            <td>${detail.total_price?.toFixed(2)}</td>
+                            <td>{detail.total_price?.toFixed(2)}</td>
                           </tr>
                         ))}
                       </tbody>
                       <tfoot>
                         <tr>
                           <td colSpan="3" className="text-right"><strong>Grand Total:</strong></td>
-                          <td>${selectedOrder.reduce((sum, item) => sum + (item.total_price || 0), 0)?.toFixed(2)}</td>
+                          <td>{selectedOrder.reduce((sum, item) => sum + (item.total_price || 0), 0)?.toFixed(2)}</td>
                         </tr>
                       </tfoot>
                     </table>
