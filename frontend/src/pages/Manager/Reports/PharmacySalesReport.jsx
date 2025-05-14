@@ -13,6 +13,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearS
 const PharmacySalesReport = () => {
   const [summary, setSummary] = useState([]);
   const [details, setDetails] = useState([]);
+  const [topPharmacies, setTopPharmacies] = useState([]); // New state for top pharmacies
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedPharmacy, setSelectedPharmacy] = useState('');
@@ -33,11 +34,19 @@ const PharmacySalesReport = () => {
       const response = await axios.get('http://localhost:5000/api/reports/pharmacy-sales-report', {
         params: { startDate, endDate, pharmacy_name: selectedPharmacy || undefined }
       });
-      setSummary(response.data.data.summary);
-      setDetails(response.data.data.details);
+      if (response.data.success) {
+        setSummary(response.data.data.summary || []);
+        setDetails(response.data.data.details || []);
+        setTopPharmacies(response.data.data.topPharmacies || []); // Set top pharmacies data
+      } else {
+        throw new Error('API returned unsuccessful response: ' + (response.data.message || 'Unknown error'));
+      }
     } catch (err) {
       setError('Failed to fetch pharmacy sales report data');
       console.error('Error fetching data:', err);
+      setSummary([]);
+      setDetails([]);
+      setTopPharmacies([]);
     } finally {
       setLoading(false);
     }
@@ -89,12 +98,16 @@ const PharmacySalesReport = () => {
         filters: { startDate, endDate, pharmacy_name: selectedPharmacy || undefined },
         summary: selectedPharmacy ? selectedSummary : summary,
         tableData: details,
+        topPharmacies, // Include top pharmacies data
         charts: {
           barChart: barChartDataUrl,
           pieChart: pieChartDataUrl
         }
       };
-      console.log('Sending tableData with', pdfData.tableData.length, 'rows');
+      console.log('Sending PDF data:', {
+        tableDataRows: pdfData.tableData.length,
+        topPharmaciesRows: pdfData.topPharmacies.length
+      });
       const response = await axios.post('http://localhost:5000/api/reports/pharmacy-sales-report/pdf', pdfData, {
         responseType: 'blob'
       });
@@ -102,7 +115,7 @@ const PharmacySalesReport = () => {
       saveAs(pdfBlob, 'ram_medical_pharmacy_sales_report.pdf');
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      alert('Failed to export PDF');
+      setError('Failed to export PDF: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -147,14 +160,18 @@ const PharmacySalesReport = () => {
                 ))}
               </select>
             </div>
-            <button onClick={exportPDF} className="pharmacy-sales-export-button">
+            <button 
+              onClick={exportPDF} 
+              className="pharmacy-sales-export-button"
+              disabled={loading || summary.length === 0}
+            >
               Export as PDF
             </button>
           </div>
 
           {loading && <div className="pharmacy-sales-loading">Loading...</div>}
           {error && <div className="pharmacy-sales-error">{error}</div>}
-          {!loading && !error && summary.length > 0 && (
+          {!loading && !error && (summary.length > 0 || details.length > 0 || topPharmacies.length > 0) ? (
             <>
               {/* Summary Metrics */}
               <div className="pharmacy-sales-totals">
@@ -189,6 +206,35 @@ const PharmacySalesReport = () => {
                   )}
                 </div>
               </div>
+
+              {/* Top Pharmacies Table */}
+              {!selectedPharmacy && topPharmacies.length > 0 && (
+                <div className="pharmacy-sales-table">
+                  <h2 className="pharmacy-sales-section-title">Top Pharmacies (by Total Sales)</h2>
+                  <div className="pharmacy-sales-table-wrapper">
+                    <table className="pharmacy-sales-table-content">
+                      <thead className="pharmacy-sales-table-header">
+                        <tr>
+                          <th className="pharmacy-sales-table-header-cell">Pharmacy Name</th>
+                          <th className="pharmacy-sales-table-header-cell">Total Orders</th>
+                          <th className="pharmacy-sales-table-header-cell">Total Sales</th>
+                          <th className="pharmacy-sales-table-header-cell">Average Order Value</th>
+                        </tr>
+                      </thead>
+                      <tbody className="pharmacy-sales-table-body">
+                        {topPharmacies.map((pharmacy, index) => (
+                          <tr key={`${pharmacy.pharmacy_name}-${index}`}>
+                            <td className="pharmacy-sales-table-cell">{pharmacy.pharmacy_name || 'Unknown'}</td>
+                            <td className="pharmacy-sales-table-cell">{pharmacy.totalOrders || 0}</td>
+                            <td className="pharmacy-sales-table-cell">{pharmacy.totalSales || '0.00'}</td>
+                            <td className="pharmacy-sales-table-cell">{pharmacy.avgOrderValue || '0.00'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               {/* Bar Chart: Sales by Pharmacy */}
               {!selectedPharmacy && (
@@ -226,38 +272,42 @@ const PharmacySalesReport = () => {
               )}
 
               {/* Detailed Table */}
-              <div className="pharmacy-sales-table">
-                <h2 className="pharmacy-sales-section-title">Order Details</h2>
-                <div className="pharmacy-sales-table-wrapper">
-                  <table className="pharmacy-sales-table-content">
-                    <thead className="pharmacy-sales-table-header">
-                      <tr>
-                        <th className="pharmacy-sales-table-header-cell">Pharmacy Name</th>
-                        <th className="pharmacy-sales-table-header-cell">Order ID</th>
-                        <th className="pharmacy-sales-table-header-cell">Rep Name</th>
-                        <th className="pharmacy-sales-table-header-cell">Total Value</th>
-                        <th className="pharmacy-sales-table-header-cell">Order Date</th>
-                        <th className="pharmacy-sales-table-header-cell">Status</th>
-                        <th className="pharmacy-sales-table-header-cell">User ID</th>
-                      </tr>
-                    </thead>
-                    <tbody className="pharmacy-sales-table-body">
-                      {details.map((order) => (
-                        <tr key={order.orderId}>
-                          <td className="pharmacy-sales-table-cell">{order.pharmacy_name}</td>
-                          <td className="pharmacy-sales-table-cell">{order.orderId}</td>
-                          <td className="pharmacy-sales-table-cell">{order.repName}</td>
-                          <td className="pharmacy-sales-table-cell">{order.totalValue}</td>
-                          <td className="pharmacy-sales-table-cell">{order.orderDate}</td>
-                          <td className="pharmacy-sales-table-cell">{order.status}</td>
-                          <td className="pharmacy-sales-table-cell">{order.userId}</td>
+              {details.length > 0 && (
+                <div className="pharmacy-sales-table">
+                  <h2 className="pharmacy-sales-section-title">Order Details</h2>
+                  <div className="pharmacy-sales-table-wrapper">
+                    <table className="pharmacy-sales-table-content">
+                      <thead className="pharmacy-sales-table-header">
+                        <tr>
+                          <th className="pharmacy-sales-table-header-cell">Pharmacy Name</th>
+                          <th className="pharmacy-sales-table-header-cell">Order ID</th>
+                          <th className="pharmacy-sales-table-header-cell">Rep Name</th>
+                          <th className="pharmacy-sales-table-header-cell">Total Value</th>
+                          <th className="pharmacy-sales-table-header-cell">Order Date</th>
+                          <th className="pharmacy-sales-table-header-cell">Status</th>
+                          <th className="pharmacy-sales-table-header-cell">User ID</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="pharmacy-sales-table-body">
+                        {details.map((order) => (
+                          <tr key={order.orderId}>
+                            <td className="pharmacy-sales-table-cell">{order.pharmacy_name}</td>
+                            <td className="pharmacy-sales-table-cell">{order.orderId}</td>
+                            <td className="pharmacy-sales-table-cell">{order.repName}</td>
+                            <td className="pharmacy-sales-table-cell">{order.totalValue}</td>
+                            <td className="pharmacy-sales-table-cell">{order.orderDate}</td>
+                            <td className="pharmacy-sales-table-cell">{order.status}</td>
+                            <td className="pharmacy-sales-table-cell">{order.userId}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              )}
             </>
+          ) : !loading && !error && (
+            <div className="pharmacy-sales-no-data">No data available for the selected filters.</div>
           )}
         </div>
       </div>

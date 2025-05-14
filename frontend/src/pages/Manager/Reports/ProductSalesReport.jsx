@@ -13,6 +13,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearS
 const ProductSalesReport = () => {
   const [productData, setProductData] = useState([]);
   const [repData, setRepData] = useState([]);
+  const [fastMovingData, setFastMovingData] = useState([]); // New state for fast-moving products
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [productNameFilter, setProductNameFilter] = useState('');
@@ -46,6 +47,7 @@ const ProductSalesReport = () => {
       if (response.data.success) {
         setProductData(response.data.data?.productSummary || []);
         setRepData(response.data.data?.repProductSummary || []);
+        setFastMovingData(response.data.data?.fastMovingProducts || []); // Set fast-moving data
       } else {
         throw new Error('API returned unsuccessful response: ' + (response.data.message || 'Unknown error'));
       }
@@ -54,6 +56,7 @@ const ProductSalesReport = () => {
       setError('Failed to fetch product sales report data. Please check the server logs or try again later.');
       setProductData([]);
       setRepData([]);
+      setFastMovingData([]);
     } finally {
       setLoading(false);
     }
@@ -95,7 +98,7 @@ const ProductSalesReport = () => {
   };
 
   // Pie Chart: Sales Distribution by Pharmacy (for top products)
-  const topProducts = productData.slice(0, 5); // Limit to top 5 for visualization
+  const topProducts = productData.slice(0, 5);
   const pharmacySales = {};
   topProducts.forEach(item => {
     (item.pharmacies || []).forEach(pharmacy => {
@@ -117,55 +120,51 @@ const ProductSalesReport = () => {
   const generatePDF = async () => {
     setGeneratingPdf(true);
     setError(null);
-    
+
     try {
-      // Get chart images as base64
       let barChartImage = null;
       let pieChartImage = null;
-      
+
       if (barChartRef.current) {
         barChartImage = barChartRef.current.toBase64Image();
       }
-      
+
       if (pieChartRef.current) {
         pieChartImage = pieChartRef.current.toBase64Image();
       }
-      
-      // Send data to backend to generate PDF
+
       const response = await axios.post(
-        'http://localhost:5000/api/reports/generate-product-sales-pdf', 
+        'http://localhost:5000/api/reports/generate-product-sales-pdf',
         {
           reportType: 'Product Sales Report',
-          filters: { 
-            startDate, 
-            endDate, 
-            productName: productNameFilter, 
-            pharmacyName: pharmacyNameFilter, 
-            repName: repNameFilter 
+          filters: {
+            startDate,
+            endDate,
+            productName: productNameFilter,
+            pharmacyName: pharmacyNameFilter,
+            repName: repNameFilter,
           },
           summary: {
             totalSalesValue,
             totalQuantitySold,
             totalOrderCount,
-            avgUnitPrice
+            avgUnitPrice,
           },
           productData,
           repData,
+          fastMovingData, // Include fast-moving data
           charts: {
             barChart: barChartImage,
-            pieChart: pieChartImage
-          }
-        }, 
-        { 
+            pieChart: pieChartImage,
+          },
+        },
+        {
           responseType: 'blob',
-          timeout: 60000 // Increase timeout for large PDFs
+          timeout: 60000,
         }
       );
-      
-      // Create a blob from the PDF data
+
       const blob = new Blob([response.data], { type: 'application/pdf' });
-      
-      // Save the file using FileSaver.js
       saveAs(blob, `Product_Sales_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
     } catch (err) {
       console.error('Error generating PDF:', err);
@@ -190,9 +189,8 @@ const ProductSalesReport = () => {
           <p className="product-sales-description">
             Analyze sales performance based on individual products and sales trends.
           </p>
-          
-          {/* Export PDF Button */}
-          <button 
+
+          <button
             onClick={generatePDF}
             disabled={loading || generatingPdf || productData.length === 0}
             style={{
@@ -205,13 +203,12 @@ const ProductSalesReport = () => {
               cursor: 'pointer',
               fontWeight: '500',
               fontSize: '0.875rem',
-              alignSelf: 'flex-end'
+              alignSelf: 'flex-end',
             }}
           >
             {generatingPdf ? 'Generating PDF...' : 'Export as PDF'}
           </button>
 
-          {/* Filters */}
           <div className="product-sales-filters">
             <div className="product-sales-date-filter">
               <label className="product-sales-label">Filter by Date Range</label>
@@ -281,11 +278,10 @@ const ProductSalesReport = () => {
           {error && <div className="product-sales-error">{error}</div>}
           {!loading && !error && (
             <>
-              {productData.length === 0 && repData.length === 0 ? (
+              {productData.length === 0 && repData.length === 0 && fastMovingData.length === 0 ? (
                 <div className="product-sales-no-data">No data available for the selected filters.</div>
               ) : (
                 <>
-                  {/* Product-wise Summary Metrics */}
                   <div className="product-sales-totals">
                     <h2 className="product-sales-section-title">Product Sales Overview</h2>
                     <div className="product-sales-totals-grid">
@@ -308,7 +304,6 @@ const ProductSalesReport = () => {
                     </div>
                   </div>
 
-                  {/* Bar Chart: Sales Value and Quantity by Product */}
                   {productData.length > 0 && (
                     <div className="product-sales-chart">
                       <h2 className="product-sales-section-title">Sales Value and Quantity by Product</h2>
@@ -329,7 +324,6 @@ const ProductSalesReport = () => {
                     </div>
                   )}
 
-                  {/* Pie Chart: Sales Distribution by Pharmacy */}
                   {Object.keys(pharmacySales).length > 0 && (
                     <div className="product-sales-chart">
                       <h2 className="product-sales-section-title">
@@ -345,7 +339,34 @@ const ProductSalesReport = () => {
                     </div>
                   )}
 
-                  {/* Product-wise Detailed Table */}
+                  {fastMovingData.length > 0 && (
+                    <div className="product-sales-table">
+                      <h2 className="product-sales-section-title">Fast Moving Products (Top 5)</h2>
+                      <div className="product-sales-table-wrapper">
+                        <table className="product-sales-table-content">
+                          <thead className="product-sales-table-header">
+                            <tr>
+                              <th className="product-sales-table-header-cell">Product Name</th>
+                              <th className="product-sales-table-header-cell">Total Quantity Sold</th>
+                              <th className="product-sales-table-header-cell">Total Sales Value</th>
+                              <th className="product-sales-table-header-cell">Order Count</th>
+                            </tr>
+                          </thead>
+                          <tbody className="product-sales-table-body">
+                            {fastMovingData.map((item, index) => (
+                              <tr key={`${item.productName}-${index}`}>
+                                <td className="product-sales-table-cell">{item.productName || 'Unknown'}</td>
+                                <td className="product-sales-table-cell">{item.totalQuantity || 0}</td>
+                                <td className="product-sales-table-cell">{item.totalSalesValue || '0.00'}</td>
+                                <td className="product-sales-table-cell">{item.orderCount || 0}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
                   {productData.length > 0 && (
                     <div className="product-sales-table">
                       <h2 className="product-sales-section-title">Product Sales Details</h2>
@@ -381,7 +402,6 @@ const ProductSalesReport = () => {
                     </div>
                   )}
 
-                  {/* Rep-wise Product Sales Table */}
                   {repData.length > 0 && (
                     <div className="product-sales-table">
                       <h2 className="product-sales-section-title">Rep-wise Product Sales Details</h2>

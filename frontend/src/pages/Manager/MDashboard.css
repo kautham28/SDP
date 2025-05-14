@@ -1,14 +1,15 @@
-/* Ensure the body and html take full height */
-html, body {
-  background-color: rgb(201, 239, 234);
-  height: 100vh;
+/* Page body background color */
+body {
+  background-color: rgb(201, 239, 234); /* Or any other color you prefer */
   margin: 0;
-  display: flex;
-  flex-direction: column;
+  padding: 0;
+  font-family: Arial, sans-serif; /* Optional for consistency */
 }
 
-/* Full-screen dashboard layout with sidebar and navbar */
-.dashboard-container {
+
+
+/* Full-screen dashboard layout */
+.manager-dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -17,8 +18,8 @@ html, body {
   margin-left: 250px;
 }
 
-/* Container for Navbar and Sidebar */
-.dashboard-content {
+/* Navbar and Sidebar container */
+.manager-dashboard-content {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -26,8 +27,8 @@ html, body {
   padding-top: 20px;
 }
 
-/* Main content area (content to the right of the sidebar) */
-.dashboard-main {
+/* Main content area */
+.manager-dashboard-main {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -38,32 +39,34 @@ html, body {
 }
 
 /* Title styling */
-.dashboard-main h1 {
+.manager-dashboard-title {
   margin-top: 40px;
+  margin-bottom: 0px;
   font-size: 28px;
   font-weight: bold;
   text-align: center;
   background-color: rgb(201, 239, 234);
   width: 100%;
   padding: 15px 0;
+  margin-left: 37px;
 }
 
-/* Box layout */
-.dashboard-boxes {
+/* Card layout */
+.manager-dashboard-cards {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
   width: 90%;
   padding: 20px;
 }
 
-.dashboard-box {
+.manager-dashboard-card {
   background: rgba(119, 179, 192, 0.7);
-  padding: 20px; /* Reduced padding */
-  border-radius: 10px; /* Slightly smaller border radius */
+  padding: 30px;
+  border-radius: 12px;
   flex: 1;
-  min-height: 140px; /* Decreased height */
+  min-height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -71,26 +74,58 @@ html, body {
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
-  max-width: 200px; /* Reduced max width */
+  max-width: 250px;
 }
 
-.dashboard-box:hover {
+.manager-dashboard-card:hover {
   transform: translateY(-5px);
 }
 
 /* Icon styling */
-.dashboard-box svg {
+.manager-dashboard-icon {
   color: rgba(0, 0, 0, 0.6);
-  margin-bottom: 10px; /* Adjusted spacing */
-  width: 40px; /* Reduced icon size */
-  height: 40px;
+  margin-bottom: 15px;
 }
 
-/* Responsive layout */
+/* Charts container */
+.manager-dashboard-charts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 90%;
+  margin-top: 20px;
+}
+
+/* Chart container */
+.manager-dashboard-chart-container {
+  width: 70vh;
+  height: 40vh;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.manager-dashboard-chart-container h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #333;
+}
+
+/* Responsive charts */
 @media (max-width: 900px) {
-  .dashboard-boxes {
+  .manager-dashboard-charts {
     flex-direction: column;
     align-items: center;
   }
-}
 
+  .manager-dashboard-chart-container {
+    width: 90%;
+  }
+}

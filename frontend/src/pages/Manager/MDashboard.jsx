@@ -1,7 +1,7 @@
 import React from "react";
 import MNavbar from "../../components/Manager/MNavbar";
 import MSidebar from "../../components/Manager/MSidebar";
-import { Package, Box, Users, Pill, UserCheck } from "lucide-react";
+import { Package, ClipboardList, ShoppingBag, Users } from "lucide-react";
 import { Bar, Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./MDashboard.css";
@@ -35,58 +35,48 @@ const MDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="manager-dashboard-container">
       <MNavbar />
-      <div className="dashboard-content">
+      <div className="manager-dashboard-content">
         <MSidebar />
-        <div className="dashboard-main">
-          <h1>Manager Dashboard</h1>
-          <p>Welcome to the Manager Dashboard. Here you can manage operations efficiently.</p>
+        <main className="manager-dashboard-main">
+          <h2 className="manager-dashboard-title">Dashboard</h2>
 
-          <div className="dashboard-boxes">
-            <div className="dashboard-box">
-              <Package size={50} />
-              <h3>Total Orders</h3>
-              <p>150</p>
+          <div className="manager-dashboard-cards">
+            <div className="manager-dashboard-card">
+              <Package className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
+              <h3>Balance Stock</h3>
+              <p>120,000,000</p>
             </div>
-
-            <div className="dashboard-box">
-              <Box size={50} />
-              <h3>Total Inventory</h3>
-              <p>1200 Items</p>
+            <div className="manager-dashboard-card">
+              <ClipboardList className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
+              <h3>Pending Orders</h3>
+              <p>5,000,000</p>
             </div>
-
-            <div className="dashboard-box">
-              <Users size={50} />
-              <h3>No. of Suppliers</h3>
-              <p>25</p>
+            <div className="manager-dashboard-card">
+              <ShoppingBag className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
+              <h3>Total Sales</h3>
+              <p>20,850,000</p>
             </div>
-
-            <div className="dashboard-box">
-              <Pill size={50} />
-              <h3>No. of Pharmacies</h3>
-              <p>18</p>
-            </div>
-
-            <div className="dashboard-box">
-              <UserCheck size={50} />
-              <h3>No. of Reps</h3>
-              <p>35</p>
+            <div className="manager-dashboard-card">
+              <Users className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
+              <h3>Number of Reps</h3>
+              <p>50</p>
             </div>
           </div>
 
-          <div className="charts">
-            <div className="chart-container">
+          <div className="manager-dashboard-charts">
+            <div className="manager-dashboard-chart-container">
               <h3>Last 5 Months Sales</h3>
               <Bar data={barChartData} />
             </div>
 
-            <div className="chart-container">
+            <div className="manager-dashboard-chart-container">
               <h3>Rep Sales Comparison</h3>
               <Line data={lineChartData} />
             </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

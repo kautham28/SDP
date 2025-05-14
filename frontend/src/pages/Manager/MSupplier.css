@@ -3,12 +3,14 @@
     display: flex;
     flex: 1;
     padding-left: 250px; /* Adjust according to sidebar width */
+    background-color: rgb(201, 239, 234);
 }
 
 .supplier-main {
     flex: 1;
     padding: 20px;
     overflow-y: auto; /* Enables vertical scrolling */
+    background-color: rgb(201, 239, 234);
 }
 
 /* Scrollable Table */
