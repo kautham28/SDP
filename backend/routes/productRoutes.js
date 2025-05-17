@@ -19,15 +19,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Get all non-expired products
+// Get all non-expired and active products
 router.get("/", (req, res) => {
-  const sql = "SELECT * FROM products WHERE ExpiryDate > CURDATE()"; // Only products with future expiry
+  const sql = "SELECT * FROM Products WHERE ExpiryDate > CURDATE() AND Status = 'Active'";
   db.query(sql, (err, results) => {
     if (err) {
       console.error("Error fetching products:", err);
       return res.status(500).json({ error: "Database query error" });
     }
-    res.json(results); // Send non-expired product data as JSON
+    res.json(results); // Send non-expired and active product data as JSON
   });
 });
 
@@ -270,21 +270,21 @@ router.put("/:id", upload.single("Image"), (req, res) => {
 });
 
 
-// Route to delete a product by ID
+// Route to "delete" (soft delete) a product by ID
 router.delete("/:id", (req, res) => {
   const productId = req.params.id;
 
-  const sql = "DELETE FROM products WHERE ProductID = ?";
+  const sql = "UPDATE Products SET Status = 'Inactive' WHERE ProductID = ?";
 
   db.query(sql, [productId], (err, result) => {
     if (err) {
-      console.error("Error deleting product:", err);
+      console.error("Error updating product status:", err);
       return res.status(500).json({ error: "Database error" });
     }
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Product not found" });
     }
-    res.status(200).json({ message: "Product deleted successfully" });
+    res.status(200).json({ message: "Product status changed to Inactive" });
   });
 });
 

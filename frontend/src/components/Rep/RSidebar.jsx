@@ -9,7 +9,7 @@ const repMenu = [
   { name: 'Inventory', path: '/rep/inventory', icon: <Package size={20} /> },
   { name: 'Route Details', path: '/rep/route-details', icon: <Map size={20} /> },
   { name: 'Customer Details', path: '/rep/customer-details', icon: <Users size={20} /> },
-  { name: 'Rep Achievements', path: '/rep/achievements', icon: <Award size={20} /> },
+  
   { name: 'Settings', path: '/rep/settings', icon: <Settings size={20} /> },
   
 ];

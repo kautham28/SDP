@@ -36,7 +36,6 @@ import RMakeOrder from "./pages/Rep/RMakeOrder";
 import RInventory from "./pages/Rep/RInventory";
 import RRouteDetails from "./pages/Rep/RRouteDetails";
 import RCustomerDetails from "./pages/Rep/RCustomerDetails";
-import RAchievements from "./pages/Rep/RAchievements";
 import RSettings from "./pages/Rep/RSettings";
 import RCart from "./pages/Rep/RCart";
 
@@ -81,7 +80,7 @@ function App() {
         <Route path="/rep/inventory" element={<RInventory />} />
         <Route path="/rep/route-details" element={<RRouteDetails />} />
         <Route path="/rep/customer-details" element={<RCustomerDetails />} />
-        <Route path="/rep/achievements" element={<RAchievements />} />
+       
         <Route path="/rep/settings" element={<RSettings />} />
         <Route path="/rep/cart" element={<RCart />} />
       </Routes>
