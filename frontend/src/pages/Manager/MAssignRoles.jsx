@@ -86,13 +86,13 @@ const MAssignRoles = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newUser),
+        body: JSON.stringify({ ...newUser, status: "working" }), // Ensure new users have status 'working'
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setAssignedUsers([...assignedUsers, { ...newUser, id: data.userId }]);
+        setAssignedUsers([...assignedUsers, { ...newUser, id: data.userId, status: "working" }]);
         setShowAddUserModal(false);
         setError("");
         setNewUser({
@@ -115,6 +115,33 @@ const MAssignRoles = () => {
     }
   };
 
+  const handleStatusChange = async (userId, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:5000/users/${userId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        setAssignedUsers(
+          assignedUsers.map((user) =>
+            user.id === userId ? { ...user, status: newStatus } : user
+          )
+        );
+        alert(`User status updated to ${newStatus}`);
+      } else {
+        const data = await response.json();
+        alert(data.message || "Failed to update status");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("An error occurred while updating the status");
+    }
+  };
+
   return (
     <div className="assign-roles-container">
       <MNavbar />
@@ -132,6 +159,7 @@ const MAssignRoles = () => {
                 <th>Role</th>
                 <th>Email</th>
                 <th>Phone Number</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -142,12 +170,28 @@ const MAssignRoles = () => {
                   <td>{user.role || "Not Assigned"}</td>
                   <td>{user.email}</td>
                   <td>{user.phone_number}</td>
+                  <td>{user.status}</td>
                   <td>
                     <Eye
                       onClick={() => handleShowModal(user)}
                       className="eye-icon"
-                      style={{ cursor: "pointer", color: "blue" }}
+                      style={{ cursor: "pointer", color: "blue", marginRight: "10px" }}
                     />
+                    {user.status === "working" ? (
+                      <MButton
+                        label="Terminate"
+                        onClick={() => handleStatusChange(user.id, "terminated")}
+                        variant="danger"
+                        style={{ padding: "5px 10px" }}
+                      />
+                    ) : (
+                      <MButton
+                        label="Rejoin"
+                        onClick={() => handleStatusChange(user.id, "working")}
+                        variant="success"
+                        style={{ padding: "5px 10px" }}
+                      />
+                    )}
                   </td>
                 </tr>
               ))}
@@ -203,6 +247,12 @@ const MAssignRoles = () => {
                         <strong>Date of Birth:</strong>
                       </td>
                       <td>{selectedUser.date_of_birth}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Status:</strong>
+                      </td>
+                      <td>{selectedUser.status}</td>
                     </tr>
                   </tbody>
                 </table>

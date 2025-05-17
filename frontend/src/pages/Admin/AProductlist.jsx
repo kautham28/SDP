@@ -31,6 +31,7 @@ const AProductlist = () => {
     GenericName: "",
     Image: null,
   });
+  const [nameError, setNameError] = useState("");
 
   useEffect(() => {
     fetchProducts();
@@ -49,16 +50,73 @@ const AProductlist = () => {
       });
   };
 
+  const validateForm = () => {
+    const errors = [];
+
+    // Name validation: alphanumeric only
+    if (!newProduct.Name.match(/^[a-zA-Z0-9]+$/)) {
+      errors.push("Product Name should only contain letters and numbers");
+    }
+
+    // Batch Number: alphanumeric only
+    if (!newProduct.BatchNumber.match(/^[a-zA-Z0-9]+$/)) {
+      errors.push("Batch Number should be alphanumeric");
+    }
+
+    // Expiry Date: must be in future
+    if (newProduct.ExpiryDate) {
+      const expiry = new Date(newProduct.ExpiryDate);
+      const today = new Date();
+      if (expiry <= today) {
+        errors.push("Expiry Date must be in the future");
+      }
+    }
+
+    // Quantity: positive integer
+    if (!newProduct.Quantity.match(/^[1-9]\d*$/)) {
+      errors.push("Quantity must be a positive integer");
+    }
+
+    // Unit Price: must be in ###.## format
+    if (!newProduct.UnitPrice.match(/^\d+\.\d{2}$/)) {
+      errors.push("Unit Price must be in ###.## format (e.g., 123.45)");
+    }
+
+    // Supplier Name: only letters and spaces if provided
+    if (newProduct.SupplierName && !newProduct.SupplierName.match(/^[a-zA-Z\s]+$/)) {
+      errors.push("Supplier Name should only contain letters and spaces");
+    }
+
+    // Supplier Email: valid email format if provided
+    if (newProduct.SupplierEmail && !newProduct.SupplierEmail.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      errors.push("Please enter a valid email address");
+    }
+
+    // Min Stock: non-negative integer
+    if (!newProduct.MinStock.toString().match(/^\d+$/)) {
+      errors.push("Minimum Stock must be a non-negative integer");
+    }
+
+    // Supplier ID: alphanumeric if provided
+    if (newProduct.SupplierID && !newProduct.SupplierID.match(/^[a-zA-Z0-9]+$/)) {
+      errors.push("Supplier ID should be alphanumeric");
+    }
+
+    // Generic Name: alphanumeric if provided
+    if (newProduct.GenericName && !newProduct.GenericName.match(/^[a-zA-Z0-9]+$/)) {
+      errors.push("Generic Name should only contain letters and numbers");
+    }
+
+    return errors;
+  };
+
   const generateReport = () => {
-    // Create a new window for printing
     const printWindow = window.open('', '', 'width=800,height=600');
     
-    // Format date for display
     const formatDate = (dateString) => {
       return new Date(dateString).toLocaleDateString("en-GB");
     };
     
-    // Build the HTML table with product data
     let tableRows = '';
     filteredProducts.forEach(product => {
       tableRows += `
@@ -74,7 +132,6 @@ const AProductlist = () => {
       `;
     });
     
-    // Write the complete HTML content to the new window
     printWindow.document.write(`
       <html>
       <head>
@@ -120,7 +177,6 @@ const AProductlist = () => {
       </html>
     `);
     
-    // Close the document stream and trigger print
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -136,19 +192,67 @@ const AProductlist = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
+    
+    if (name === "Name") {
+      // Validate Name field: only letters and numbers
+      if (value && !value.match(/^[a-zA-Z0-9]*$/)) {
+        setNameError("Product Name should only contain letters and numbers");
+      } else {
+        setNameError("");
+      }
+    }
+
+    // Format UnitPrice to ###.## during input
+    if (name === "UnitPrice") {
+      let formattedValue = value.replace(/[^0-9.]/g, '');
+      const decimalCount = formattedValue.split('.').length - 1;
+      if (decimalCount > 1) {
+        formattedValue = formattedValue.slice(0, formattedValue.lastIndexOf('.'));
+      }
+      if (formattedValue.includes('.')) {
+        const [integer, decimal] = formattedValue.split('.');
+        formattedValue = `${integer}.${decimal.slice(0, 2)}`;
+      }
+      
+      setNewProduct((prevProduct) => ({
+        ...prevProduct,
+        [name]: formattedValue,
+      }));
+    } else {
+      setNewProduct((prevProduct) => ({
+        ...prevProduct,
+        [name]: value,
+      }));
+    }
   };
 
   const handleImageChange = (e) => {
-    setNewProduct({ ...newProduct, Image: e.target.files[0] });
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Image size should not exceed 5MB',
+          icon: 'error'
+        });
+        return;
+      }
+      if (!file.type.match(/^image\/(jpeg|png|gif)$/)) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Only JPEG, PNG, or GIF images are allowed',
+          icon: 'error'
+        });
+        return;
+      }
+      setNewProduct({ ...newProduct, Image: file });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Check required fields
     if (!newProduct.Name || !newProduct.BatchNumber || !newProduct.ExpiryDate || 
         !newProduct.Quantity || !newProduct.UnitPrice) {
       Swal.fire({
@@ -159,12 +263,33 @@ const AProductlist = () => {
       return;
     }
 
+    // Check for Name error
+    if (nameError) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: nameError,
+        icon: 'error'
+      });
+      return;
+    }
+
+    // Validate form
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      Swal.fire({
+        title: 'Validation Error',
+        html: validationErrors.join('<br>'),
+        icon: 'error'
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append("Name", newProduct.Name);
     formData.append("BatchNumber", newProduct.BatchNumber);
     formData.append("ExpiryDate", newProduct.ExpiryDate);
     formData.append("Quantity", newProduct.Quantity.toString());
-    formData.append("UnitPrice", newProduct.UnitPrice.toString());
+    formData.append("UnitPrice", parseFloat(newProduct.UnitPrice).toFixed(2));
     formData.append("SupplierName", newProduct.SupplierName || "");
     formData.append("DeliveryDate", newProduct.DeliveryDate || "");
     formData.append("SupplierEmail", newProduct.SupplierEmail || "");
@@ -209,6 +334,7 @@ const AProductlist = () => {
           });
           setEditMode(false);
           setSelectedProduct(null);
+          setNameError("");
         } else {
           throw new Error(response.data?.message || 'Operation failed');
         }
@@ -234,7 +360,7 @@ const AProductlist = () => {
       BatchNumber: product.BatchNumber,
       ExpiryDate: product.ExpiryDate,
       Quantity: product.Quantity,
-      UnitPrice: product.UnitPrice,
+      UnitPrice: product.UnitPrice.toFixed(2),
       SupplierName: product.SupplierName,
       DeliveryDate: product.DeliveryDate,
       SupplierEmail: product.SupplierEmail,
@@ -243,6 +369,7 @@ const AProductlist = () => {
       GenericName: product.GenericName,
       Image: null,
     });
+    setNameError("");
     setShowPopup(true);
   };
 
@@ -377,105 +504,134 @@ const AProductlist = () => {
             <h3>{editMode ? "Edit Product" : "Add New Product"}</h3>
             <form onSubmit={handleSubmit} className="ap-popup-form">
               <div>
-                <input
-                  type="text"
-                  name="Name"
-                  value={newProduct.Name}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Product Name*"
-                />
-                <input
-                  type="text"
-                  name="GenericName"
-                  value={newProduct.GenericName}
-                  onChange={handleInputChange}
-                  placeholder="Generic Name"
-                />
-                <input
-                  type="text"
-                  name="BatchNumber"
-                  value={newProduct.BatchNumber}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Batch Number*"
-                />
-                <input
-                  type="date"
-                  name="ExpiryDate"
-                  value={newProduct.ExpiryDate}
-                  onChange={handleInputChange}
-                  required
-                />
-                <input
-                  type="number"
-                  name="Quantity"
-                  value={newProduct.Quantity}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Quantity*"
-                  min="1"
-                />
-                <input
-                  type="number"
-                  name="UnitPrice"
-                  value={newProduct.UnitPrice}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Unit Price*"
-                  min="0"
-                  step="0.01"
-                />
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="Name"
+                    value={newProduct.Name}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Product Name* (alphanumeric)"
+                  />
+                  {nameError && <span className="error-message">{nameError}</span>}
+                </div>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="GenericName"
+                    value={newProduct.GenericName}
+                    onChange={handleInputChange}
+                    placeholder="Generic Name (alphanumeric)"
+                  />
+                </div>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="BatchNumber"
+                    value={newProduct.BatchNumber}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Batch Number* (alphanumeric)"
+                  />
+                </div>
+                <div className="input-container">
+                  <label htmlFor="ExpiryDate">Expiry Date*</label>
+                  <input
+                    type="date"
+                    id="ExpiryDate"
+                    name="ExpiryDate"
+                    value={newProduct.ExpiryDate}
+                    onChange={handleInputChange}
+                    required
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+                <div className="input-container">
+                  <input
+                    type="number"
+                    name="Quantity"
+                    value={newProduct.Quantity}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Quantity* (positive integer)"
+                    min="1"
+                  />
+                </div>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="UnitPrice"
+                    value={newProduct.UnitPrice}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Unit Price* (###.## format)"
+                  />
+                </div>
               </div>
 
               <div>
-                <input
-                  type="text"
-                  name="SupplierName"
-                  value={newProduct.SupplierName}
-                  onChange={handleInputChange}
-                  placeholder="Supplier Name"
-                />
-                <input
-                  type="date"
-                  name="DeliveryDate"
-                  value={newProduct.DeliveryDate}
-                  onChange={handleInputChange}
-                  placeholder="Delivery Date"
-                />
-                <input
-                  type="email"
-                  name="SupplierEmail"
-                  value={newProduct.SupplierEmail}
-                  onChange={handleInputChange}
-                  placeholder="Supplier Email"
-                />
-                <input
-                  type="number"
-                  name="MinStock"
-                  value={newProduct.MinStock}
-                  onChange={handleInputChange}
-                  placeholder="Minimum Stock"
-                  min="0"
-                />
-                <input
-                  type="text"
-                  name="SupplierID"
-                  value={newProduct.SupplierID}
-                  onChange={handleInputChange}
-                  placeholder="Supplier ID"
-                />
-                <input
-                  type="file"
-                  name="Image"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                />
-                {newProduct.Image && (
-                  <div className="image-preview">
-                    <p>Selected: {newProduct.Image.name}</p>
-                  </div>
-                )}
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="SupplierName"
+                    value={newProduct.SupplierName}
+                    onChange={handleInputChange}
+                    placeholder="Supplier Name (letters only)"
+                  />
+                </div>
+                <div className="input-container">
+                  <label htmlFor="DeliveryDate">Delivery Date</label>
+                  <input
+                    type="date"
+                    id="DeliveryDate"
+                    name="DeliveryDate"
+                    value={newProduct.DeliveryDate}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="input-container">
+                  <input
+                    type="email"
+                    name="SupplierEmail"
+                    value={newProduct.SupplierEmail}
+                    onChange={handleInputChange}
+                    placeholder="Supplier Email"
+                  />
+                </div>
+                <div className="input-container">
+                  <label htmlFor="MinStock">Minimum Stock</label>
+                  <input
+                    type="number"
+                    id="MinStock"
+                    name="MinStock"
+                    value={newProduct.MinStock}
+                    onChange={handleInputChange}
+                    placeholder="Minimum Stock (non-negative)"
+                    min="0"
+                  />
+                </div>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="SupplierID"
+                    value={newProduct.SupplierID}
+                    onChange={handleInputChange}
+                    placeholder="Supplier ID (alphanumeric)"
+                  />
+                </div>
+                <div className="input-container">
+                  <input
+                    type="file"
+                    name="Image"
+                    onChange={handleImageChange}
+                    accept="image/jpeg,image/png,image/gif"
+                  />
+                  {newProduct.Image && (
+                    <div className="image-preview">
+                      <p>Selected: {newProduct.Image.name}</p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="ap-popup-buttons">
@@ -501,6 +657,7 @@ const AProductlist = () => {
                       Image: null,
                     });
                     setEditMode(false);
+                    setNameError("");
                   }}
                   className="cancel-btn"
                 >

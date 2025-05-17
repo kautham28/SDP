@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Fetch all users
+// Fetch all users with status = 'working'
 router.get("/", (req, res) => {
-  const sql = "SELECT id, username, role, email, phone_number, address, ic_number, date_of_birth FROM users";
+  const sql = "SELECT id, username, role, email, phone_number, address, ic_number, date_of_birth,status FROM users";
   db.query(sql, (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -167,5 +167,30 @@ router.put("/users/update/:id", authMiddleware, async (req, res) => {
     res.status(200).json({ message: "User updated successfully" });
   });
 });
+
+
+
+
+// Update user status
+router.put("/:id/status", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!["working", "terminated"].includes(status)) {
+    return res.status(400).json({ error: "Invalid status value" });
+  }
+
+  const sql = "UPDATE users SET status = ? WHERE id = ?";
+  db.query(sql, [status, id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ message: "Status updated successfully" });
+  });
+});
+
 
 module.exports = router;

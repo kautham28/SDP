@@ -293,7 +293,7 @@ const ARouteDetails = () => {
       <ASidebar />
       <div className="route-details-main-content">
         <ANavbar />
-        <div className="route-details-header">
+        <div className="Aroute-details-header">
           <h1>Route Details</h1>
         </div>
         <div className="route-details-filters">

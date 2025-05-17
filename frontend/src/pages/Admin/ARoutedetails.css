@@ -24,12 +24,13 @@ body {
 }
 
 /* Page Title (Fixed in Place) */
-.route-details-header {
+.Aroute-details-header {
   text-align: center;
   font-size: 20px;
   color: #003f4f;
   margin-bottom: 10px;
   font-weight: bold;
+  margin-top: 100px; /* Adjusted to prevent overlap with header */
   position: relative; /* Ensure it does not move */
 }
 

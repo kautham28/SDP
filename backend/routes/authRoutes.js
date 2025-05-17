@@ -13,8 +13,8 @@ router.post("/login", (req, res) => {
     return res.status(400).json({ message: "Username and password are required." });
   }
 
-  // Include `role` in the query
-  const query = "SELECT id, username, role FROM users WHERE username = ? AND password = ?";
+  // Include `role` and check `status = 'working'` in the query
+  const query = "SELECT id, username, role FROM users WHERE username = ? AND password = ? AND status = 'working'";
   db.query(query, [username, password], (err, results) => {
     if (err) {
       console.error("Database Error:", err);
@@ -22,7 +22,7 @@ router.post("/login", (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.status(401).json({ message: "Invalid credentials." });
+      return res.status(401).json({ message: "Invalid credentials or user is not active." });
     }
 
     const user = results[0]; // Get user data

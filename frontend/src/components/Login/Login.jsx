@@ -26,7 +26,7 @@ const Login = () => {
         const { token, userID, role } = response.data;
 
         if (!token || !userID || !role) {
-          console.error("Missing token or role in response", response.data);
+          console.error("Missing token, userID, or role in response", response.data);
           setError("Invalid response from server.");
           return;
         }
@@ -53,7 +53,13 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login Error:", err.response ? err.response.data : err.message);
-      setError("Login failed! Please check your username and password.");
+      if (err.code === "ERR_NETWORK") {
+        setError("Cannot connect to the server. Please check if the server is running or contact support.");
+      } else {
+        setError(
+          err.response?.data?.message || "Login failed! Please check your username and password."
+        );
+      }
     }
   };
 
