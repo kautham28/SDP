@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MNavbar from "../../components/Manager/MNavbar";
 import MSidebar from "../../components/Manager/MSidebar";
 import { Package, ClipboardList, ShoppingBag, Users } from "lucide-react";
@@ -7,32 +7,139 @@ import "chart.js/auto";
 import "./MDashboard.css";
 
 const MDashboard = () => {
-  const barChartData = {
-    labels: ["January", "February", "March", "April", "May"],
-    datasets: [
-      {
-        label: "Monthly Sales",
-        data: [15000, 18000, 22000, 25000, 21000],
-        backgroundColor: "rgba(54, 162, 235, 0.5)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
+  const [dashboardData, setDashboardData] = useState({
+    balanceStock: 0,
+    pendingOrders: 0,
+    totalSales: 0,
+    numberOfReps: 0,
+    barChartData: { labels: [], datasets: [] },
+    lineChartData: {
+      labels: [],
+      datasets: [{
+        label: "Rep Sales (Current Month)",
+        data: [],
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+      }],
+    },
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch general dashboard data
+        const response = await fetch("http://localhost:5000/api/dashboard");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorData.details || 'Unknown'}`);
+        }
+        const data = await response.json();
+
+        // Fetch current month rep sales
+        const repSalesResponse = await fetch("http://localhost:5000/api/rep-sales-current-month");
+        if (!repSalesResponse.ok) {
+          const errorData = await repSalesResponse.json();
+          throw new Error(`HTTP error! Status: ${repSalesResponse.status}, Details: ${errorData.details || 'Unknown'}`);
+        }
+        const repSalesData = await repSalesResponse.json();
+
+        // Filter out negative TotalSales
+        const positiveRepSalesData = repSalesData.filter(item => item.TotalSales >= 0);
+
+        // Update line chart data
+        const updatedLineChartData = {
+          labels: positiveRepSalesData.map(item => `Rep ${item.RepID}`),
+          datasets: [{
+            label: "Rep Sales (Current Month)",
+            data: positiveRepSalesData.map(item => item.TotalSales),
+            borderColor: "rgba(75, 192, 192, 1)",
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            fill: true,
+          }],
+        };
+
+        setDashboardData({
+          ...data,
+          lineChartData: updatedLineChartData,
+        });
+        setLoading(false);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, []);
+
+  // Bar chart options
+  const barChartOptions = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        min: 0,
+        suggestedMax: Math.max(...(dashboardData.barChartData.datasets[0]?.data || [1000])) * 1.1,
+        ticks: {
+          stepSize: Math.ceil(Math.max(...(dashboardData.barChartData.datasets[0]?.data || [1000])) / 5),
+          callback: function(value) {
+            return value.toLocaleString();
+          },
+        },
+        title: {
+          display: false,
+        },
       },
-    ],
+      x: {
+        title: {
+          display: false,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: {
+          boxWidth: 20,
+          padding: 10,
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `Monthly Sales: ${context.parsed.y.toLocaleString()}`;
+          },
+        },
+      },
+    },
+    maintainAspectRatio: false,
   };
 
-  const lineChartData = {
-    labels: ["Rep 1", "Rep 2", "Rep 3", "Rep 4", "Rep 5"],
-    datasets: [
-      {
-        label: "Rep Sales",
-        data: [12000, 15000, 18000, 17000, 20000],
-        borderColor: "rgba(255, 99, 132, 1)",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderWidth: 2,
-        fill: true,
+  // Line chart options
+  const lineChartOptions = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        min: 0,
+        suggestedMax: Math.max(...(dashboardData.lineChartData.datasets[0]?.data || [1000])) * 1.1,
+        ticks: {
+          stepSize: Math.ceil(Math.max(...(dashboardData.lineChartData.datasets[0]?.data || [1000])) / 5),
+        },
       },
-    ],
+    },
+    plugins: {
+      legend: {
+        display: true,
+      },
+    },
+    maintainAspectRatio: false,
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="manager-dashboard-container">
@@ -41,39 +148,36 @@ const MDashboard = () => {
         <MSidebar />
         <main className="manager-dashboard-main">
           <h2 className="manager-dashboard-title">Dashboard</h2>
-
           <div className="manager-dashboard-cards">
             <div className="manager-dashboard-card">
               <Package className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Balance Stock</h3>
-              <p>120,000,000</p>
+              <p>{dashboardData.balanceStock.toLocaleString()}</p>
             </div>
             <div className="manager-dashboard-card">
               <ClipboardList className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Pending Orders</h3>
-              <p>5,000,000</p>
+              <p>{dashboardData.pendingOrders.toLocaleString()}</p>
             </div>
             <div className="manager-dashboard-card">
               <ShoppingBag className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Total Sales</h3>
-              <p>20,850,000</p>
+              <p>{dashboardData.totalSales.toLocaleString()}</p>
             </div>
             <div className="manager-dashboard-card">
               <Users className="manager-dashboard-icon" size={50} strokeWidth={1.5} />
               <h3>Number of Reps</h3>
-              <p>50</p>
+              <p>{dashboardData.numberOfReps}</p>
             </div>
           </div>
-
           <div className="manager-dashboard-charts">
-            <div className="manager-dashboard-chart-container">
+            <div className="manager-dashboard-chart-container" style={{ height: "300px" }}>
               <h3>Last 5 Months Sales</h3>
-              <Bar data={barChartData} />
+              <Bar data={dashboardData.barChartData} options={barChartOptions} />
             </div>
-
-            <div className="manager-dashboard-chart-container">
-              <h3>Rep Sales Comparison</h3>
-              <Line data={lineChartData} />
+            <div className="manager-dashboard-chart-container" style={{ height: "300px" }}>
+              <h3>Rep Sales (Current Month)</h3>
+              <Line data={dashboardData.lineChartData} options={lineChartOptions} />
             </div>
           </div>
         </main>

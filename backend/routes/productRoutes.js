@@ -31,6 +31,32 @@ router.get("/", (req, res) => {
   });
 });
 
+
+// Get all expired and active products
+router.get("/expired", (req, res) => {
+  const sql = "SELECT * FROM Products WHERE ExpiryDate <= CURDATE()";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching expired products:", err);
+      return res.status(500).json({ error: "Database query error" });
+    }
+    res.json(results); // Send expired and active product data as JSON
+  });
+});
+
+// Get all inactive products
+router.get("/inactive", (req, res) => {
+  const sql = "SELECT * FROM Products WHERE Status = 'Inactive'";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching inactive products:", err);
+      return res.status(500).json({ error: "Database query error" });
+    }
+    res.json(results); // Send inactive product data as JSON
+  });
+});
+
+
 // Route to fetch report page data
 router.get("/report", (req, res) => {
   const sql = `

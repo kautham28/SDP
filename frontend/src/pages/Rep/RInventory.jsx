@@ -18,7 +18,17 @@ const RInventory = () => {
       });
   }, []);
 
-  const filteredProducts = products.filter(product =>
+  // Sort products: non-expired first, expired last
+  const sortedProducts = [...products].sort((a, b) => {
+    const today = new Date();
+    const expiryA = new Date(a.ExpiryDate);
+    const expiryB = new Date(b.ExpiryDate);
+    const isExpiredA = expiryA < today;
+    const isExpiredB = expiryB < today;
+    return isExpiredA === isExpiredB ? 0 : isExpiredA ? 1 : -1;
+  });
+
+  const filteredProducts = sortedProducts.filter(product =>
     product.MedicineName.toLowerCase().includes(filter.toLowerCase())
   );
 
@@ -50,17 +60,23 @@ const RInventory = () => {
             </thead>
             <tbody>
               {filteredProducts.length > 0 ? (
-                filteredProducts.map(product => (
-                  <tr key={product.ProductID}>
-                    <td>{product.ProductID}</td>
-                    <td>{product.MedicineName}</td>
-                    <td>{product.GenericName}</td>
-                    <td>{new Date(product.ExpiryDate).toLocaleDateString()}</td>
-                    <td>{Number(product.UnitPrice).toFixed(2)}</td>
-                    <td>{product.Quantity}</td>
-                    <td>{Number(product.TotalPrice).toFixed(2)}</td>
-                  </tr>
-                ))
+                filteredProducts.map(product => {
+                  const isExpired = new Date(product.ExpiryDate) < new Date();
+                  return (
+                    <tr
+                      key={product.ProductID}
+                      className={isExpired ? 'r-expired-row' : ''}
+                    >
+                      <td>{product.ProductID}</td>
+                      <td>{product.MedicineName}</td>
+                      <td>{product.GenericName}</td>
+                      <td>{new Date(product.ExpiryDate).toLocaleDateString()}</td>
+                      <td>{Number(product.UnitPrice).toFixed(2)}</td>
+                      <td>{product.Quantity}</td>
+                      <td>{Number(product.TotalPrice).toFixed(2)}</td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan="7">No products found</td>

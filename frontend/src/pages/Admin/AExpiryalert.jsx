@@ -11,15 +11,19 @@ const AExpiryalert = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // Fetch all products initially
+  // Fetch all products initially and sort by expiry date (descending)
   useEffect(() => {
     const fetchExpiringProducts = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/admin/products/expiring-soon"
         );
-        setProducts(response.data);
-        setFilteredProducts(response.data); // Initialize with all products
+        // Sort products by ExpiryDate (descending)
+        const sortedProducts = response.data.sort((a, b) => 
+          new Date(b.ExpiryDate) - new Date(a.ExpiryDate)
+        );
+        setProducts(sortedProducts);
+        setFilteredProducts(sortedProducts); // Initialize with sorted products
       } catch (error) {
         console.error("Error fetching expiring products:", error);
       }
@@ -45,6 +49,9 @@ const AExpiryalert = () => {
         return expiryDate >= new Date(startDate) && expiryDate <= new Date(endDate);
       });
     }
+
+    // Sort filtered data by ExpiryDate (descending)
+    filteredData.sort((a, b) => new Date(b.ExpiryDate) - new Date(a.ExpiryDate));
 
     setFilteredProducts(filteredData);
   };

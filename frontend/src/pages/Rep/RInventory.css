@@ -92,6 +92,10 @@
   background-color: #cce7f0;
 }
 
+.r-inventory-data-table tbody tr.r-expired-row td {
+  color: #ff0000; /* Red font color for expired products */
+}
+
 .r-inventory-days-to-expiry {
   color: red;
   font-weight: bold;
