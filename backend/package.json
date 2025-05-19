@@ -31,5 +31,8 @@
     "path": "^0.12.7",
     "pdfkit": "^0.17.1",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@ljharb/tsconfig": "^0.3.2"
   }
 }
