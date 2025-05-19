@@ -68,6 +68,23 @@ const RSettingsPage = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('image', file);
+    try {
+      const response = await axios.post('http://localhost:5000/api/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setPhotoLink(response.data.url); // Set Cloudinary URL
+      alert('Image uploaded successfully!');
+    } catch (err) {
+      alert('Image upload failed');
+      console.error(err);
+    }
+  };
+
   const handleSaveProfile = async () => {
     const token = sessionStorage.getItem('token');
 
@@ -121,6 +138,12 @@ const RSettingsPage = () => {
             ) : null}
             {isEditing ? (
               <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="rep-settings-input"
+                />
                 <input
                   type="text"
                   name="name"

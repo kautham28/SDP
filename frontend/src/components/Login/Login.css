@@ -110,6 +110,7 @@
 .quote-text {
   font-size: 1.8rem;
   font-weight: bold;
+  color: #f9f7f7
 }
 
 /* Quote Writer */
@@ -118,6 +119,7 @@
   font-weight: normal;
   margin-top: 0.5rem;
   text-align: right;
+  color: #f9f7f7
 }
 
 /* Quote Meaning */
@@ -125,6 +127,7 @@
   font-size: 20px;
   font-style: italic;
   margin-top: 35px;
+  color: #f9f7f7;
 }
 
 /* Responsive Styles */
