@@ -136,9 +136,9 @@ router.post("/add-user", async (req, res) => {
 });
 
 // Update user
-router.put("/users/update/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { username, email, phone_number, address, ic_number, date_of_birth } = req.body;
+  let { username, email, phone_number, address, ic_number, date_of_birth, password, photo_link } = req.body;
 
   console.log("Update attempt for ID:", id, req.body);
 
@@ -147,14 +147,29 @@ router.put("/users/update/:id", authMiddleware, async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // SQL query to update the user in the database
-  const sql = `
-        UPDATE users 
-        SET username = ?, email = ?, phone_number = ?, address = ?, ic_number = ?, date_of_birth = ?
-        WHERE id = ?
-    `;
+  // Prepare fields to update
+  let fields = ["username = ?", "email = ?", "phone_number = ?", "address = ?", "ic_number = ?", "date_of_birth = ?"];
+  let values = [username, email, phone_number, address, ic_number, date_of_birth];
 
-  db.query(sql, [username, email, phone_number, address, ic_number, date_of_birth, id], (err, result) => {
+  // If password is provided, hash and update it
+  if (password) {
+    const bcrypt = require("bcrypt");
+    password = await bcrypt.hash(password, 10);
+    fields.push("password = ?");
+    values.push(password);
+  }
+
+  // If photo_link is provided, update it
+  if (photo_link) {
+    fields.push("photo_link = ?");
+    values.push(photo_link);
+  }
+
+  values.push(id);
+
+  const sql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+
+  db.query(sql, values, (err, result) => {
     if (err) {
       console.log("SQL Error:", err);
       return res.status(500).json({ error: err.message });
@@ -167,9 +182,6 @@ router.put("/users/update/:id", authMiddleware, async (req, res) => {
     res.status(200).json({ message: "User updated successfully" });
   });
 });
-
-
-
 
 // Update user status
 router.put("/:id/status", (req, res) => {
@@ -191,6 +203,5 @@ router.put("/:id/status", (req, res) => {
     res.json({ message: "Status updated successfully" });
   });
 });
-
 
 module.exports = router;

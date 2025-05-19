@@ -16,6 +16,8 @@ const ASettingsPage = () => {
     nic_number: '',
     residentAddress: '',
   });
+  const [password, setPassword] = useState("");
+  const [photoLink, setPhotoLink] = useState(user.picture || "");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -78,21 +80,23 @@ const ASettingsPage = () => {
     }
 
     try {
-      // Send updated user data to the backend
+      const formattedDOB = user.date_of_birth ? new Date(user.date_of_birth).toISOString().slice(0, 10) : '';
+      const updateData = {
+        username: user.name,
+        email: user.email,
+        phone_number: user.telephone,
+        address: user.residentAddress,
+        date_of_birth: formattedDOB,
+        ic_number: user.nic_number,
+      };
+      if (password) updateData.password = password;
+      if (photoLink) updateData.photo_link = photoLink;
       await axios.put(
-        `http://localhost:5000/users/update/${user.id}`, // Update endpoint with user ID
-        {
-          name: user.name,
-          email: user.email,
-          phone_number: user.telephone,
-          address: user.residentAddress,
-          date_of_birth: user.date_of_birth,  // Optional
-          ic_number: user.nic_number,  // Optional
-          picture: user.picture  // Optional
-        },
+        `http://localhost:5000/users/${user.id}`,
+        updateData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Send token to authorize request
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -112,17 +116,37 @@ const ASettingsPage = () => {
         <div className="admin-settings-profile-content">
           <h1 className="admin-settings-title">Settings</h1>
           <div className="admin-settings-profile-container">
-            <a href={user.picture} target="_blank" rel="noopener noreferrer">
-              <img src={user.picture} alt="User Profile" className="admin-settings-profile-picture" />
-            </a>
+            {user.picture ? (
+              <a href={user.picture} target="_blank" rel="noopener noreferrer">
+                <img src={user.picture} alt="User Profile" className="admin-settings-profile-picture" />
+              </a>
+            ) : null}
             {isEditing ? (
-              <input
-                type="text"
-                name="name"
-                value={user.name}
-                onChange={handleChange}
-                className="admin-settings-input"
-              />
+              <>
+                <input
+                  type="text"
+                  name="name"
+                  value={user.name}
+                  onChange={handleChange}
+                  className="admin-settings-input"
+                />
+                <input
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="New Password"
+                  className="admin-settings-input"
+                />
+                <input
+                  type="text"
+                  name="photo_link"
+                  value={photoLink}
+                  onChange={e => setPhotoLink(e.target.value)}
+                  placeholder="Profile Picture URL"
+                  className="admin-settings-input"
+                />
+              </>
             ) : (
               <h2 className="admin-settings-name">{user.name}</h2>
             )}
