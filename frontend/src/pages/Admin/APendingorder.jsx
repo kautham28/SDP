@@ -18,6 +18,7 @@ const APendingorder = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [discount, setDiscount] = useState(0); // discount as percentage
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,6 +125,17 @@ const APendingorder = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, confirm it!",
+      html: `<input type='number' id='discount-input' class='swal2-input' placeholder='Discount (%)' min='0' max='100' step='0.01' value='${discount}'>`,
+      didOpen: () => {
+        const input = Swal.getPopup().querySelector('#discount-input');
+        if (input) {
+          input.addEventListener('input', (e) => setDiscount(e.target.value));
+        }
+      },
+      preConfirm: () => {
+        const input = Swal.getPopup().querySelector('#discount-input');
+        return input ? parseFloat(input.value) || 0 : 0;
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         setIsLoading(true);
@@ -156,7 +168,9 @@ const APendingorder = () => {
             throw new Error(`Email not found for representative: ${order.rep_name}`);
           }
 
-          await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`);
+          // Use the discount value from the popup (percentage)
+          const discountValue = result.value || 0;
+          await axios.put(`http://localhost:5000/api/admin/pending-orders/confirm/${orderId}`, { discount: discountValue });
 
           await axios.post(
             'http://localhost:5000/api/email/send-order-confirmation',
@@ -318,8 +332,20 @@ const APendingorder = () => {
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colSpan="3" className="text-right"><strong>Grand Total:</strong></td>
-                          <td>{selectedOrder.reduce((sum, item) => sum + (item.total_price || 0), 0)?.toFixed(2)}</td>
+                          <td colSpan="3" className="text-right"><strong>Total Value:</strong></td>
+                          <td>{selectedOrder[0]?.total_value?.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="3" className="text-right"><strong>Discount (%):</strong></td>
+                          <td>{selectedOrder[0]?.discount ? selectedOrder[0].discount + '%' : '0%'}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="3" className="text-right"><strong>Discount Value:</strong></td>
+                          <td>{selectedOrder[0]?.discount_value ? Number(selectedOrder[0].discount_value).toFixed(2) : '0.00'}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="3" className="text-right"><strong>Final Price:</strong></td>
+                          <td>{selectedOrder[0]?.final_price ? Number(selectedOrder[0].final_price).toFixed(2) : (selectedOrder[0]?.total_value - (selectedOrder[0]?.discount_value || 0)).toFixed(2)}</td>
                         </tr>
                       </tfoot>
                     </table>

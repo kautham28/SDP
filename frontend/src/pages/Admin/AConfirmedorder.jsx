@@ -195,6 +195,9 @@ const AConfirmedorder = () => {
 
                                     <br /><br />
                                     <p><strong>Total Value:</strong> {selectedOrder.info.TotalValue.toFixed(2)}</p>
+                                    <p><strong>Discount (%):</strong> {selectedOrder.info.Discount ? selectedOrder.info.Discount + '%' : '0%'}</p>
+                                    <p><strong>Discount Value:</strong> {selectedOrder.info.DiscountValue ? Number(selectedOrder.info.DiscountValue).toFixed(2) : '0.00'}</p>
+                                    <p><strong>Final Price:</strong> {(selectedOrder.info.TotalValue - (selectedOrder.info.DiscountValue || 0)).toFixed(2)}</p>
                                 </div>
 
                                 <Button className="aco-close-popup" onClick={() => setShowPopup(false)}>Close</Button>

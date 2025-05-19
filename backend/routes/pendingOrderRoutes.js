@@ -202,6 +202,8 @@ router.delete('/pending-orders/:orderId', (req, res) => {
 // Confirm order, move to confirmed_order, update rep_achievements, and mark as confirmed
 router.put('/pending-orders/confirm/:orderId', (req, res) => {
   const { orderId } = req.params;
+  let { discount = 0 } = req.body; // discount is now percentage (e.g., 10 for 10%)
+  discount = parseFloat(discount);
 
   db.beginTransaction(err => {
     if (err) {
@@ -229,15 +231,18 @@ router.put('/pending-orders/confirm/:orderId', (req, res) => {
       const orderDate = new Date(order_date);
       const month = getMonthName(orderDate);
       const year = orderDate.getFullYear();
+      // Calculate discount value and final total
+      const discountValue = (parseFloat(total_value) * (discount / 100)).toFixed(2);
+      const finalTotal = (parseFloat(total_value) - discountValue).toFixed(2);
 
-      // Step 2: Insert into confirmed_order
+      // Step 2: Insert into confirmed_order with discount percentage and value
       const insertQuery = `
-        INSERT INTO confirmed_order (OrderID, PharmacyName, RepName, TotalValue, OrderDate, ConfirmedDate, UserID)
-        SELECT orderId, pharmacy_name, rep_name, total_value, order_date, CURDATE(), UserID
+        INSERT INTO confirmed_order (OrderID, PharmacyName, RepName, TotalValue, OrderDate, ConfirmedDate, UserID, Discount, DiscountValue)
+        SELECT orderId, pharmacy_name, rep_name, ?, order_date, CURDATE(), UserID, ?, ?
         FROM pending_orders
         WHERE orderId = ?
       `;
-      db.query(insertQuery, [orderId], (err, result) => {
+      db.query(insertQuery, [finalTotal, discount, discountValue, orderId], (err, result) => {
         if (err) {
           console.error('Error inserting into confirmed_order:', err);
           return db.rollback(() => res.status(500).json({ error: 'Failed to confirm order', details: err.message }));
@@ -262,7 +267,7 @@ router.put('/pending-orders/confirm/:orderId', (req, res) => {
           if (achievementResult.length > 0) {
             // Update existing record
             const { TotalSales, Target } = achievementResult[0];
-            const newTotalSales = parseFloat(TotalSales) + parseFloat(total_value);
+            const newTotalSales = parseFloat(TotalSales) + parseFloat(finalTotal);
             const newPercentage = Target > 0 ? (newTotalSales / Target) * 100 : 0;
 
             const updateAchievementQuery = `
@@ -279,7 +284,7 @@ router.put('/pending-orders/confirm/:orderId', (req, res) => {
             });
           } else {
             // Insert new record
-            const newTotalSales = parseFloat(total_value);
+            const newTotalSales = parseFloat(finalTotal);
             const defaultTarget = 0.00; // Adjust if you have a default target
             const newPercentage = defaultTarget > 0 ? (newTotalSales / defaultTarget) * 100 : 0;
 
