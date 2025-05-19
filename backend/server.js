@@ -26,6 +26,7 @@ const expiryGoodsReport = require("./routes/expiryGoodsReport");
 const repPerformanceReport = require("./routes/repPerformanceReport");
 const productSalesReport = require("./routes/productSalesReport");
 const dashboardRoutes = require("./routes/dashboard"); // New dashboard route
+const forgotPasswordRoutes = require('./routes/forgotPassword');
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use("/api", dashboardRoutes); // Mount dashboard route before generic /api r
 app.use("/api", confirmedOrdersRoute);
 app.use("/api", routeDetails);
 app.use("/api", routeRoutes); // Generic /api routes last to avoid conflicts
+app.use('/api', forgotPasswordRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
