@@ -53,14 +53,14 @@ const AProductlist = () => {
   const validateForm = () => {
     const errors = [];
 
-    // Name validation: alphanumeric only
-    if (!newProduct.Name.match(/^[a-zA-Z0-9]+$/)) {
-      errors.push("Product Name should only contain letters and numbers");
+    // Name validation: alphanumeric and spaces only
+    if (!newProduct.Name.match(/^[a-zA-Z0-9 ]+$/)) {
+      errors.push("Product Name should only contain letters, numbers, and spaces");
     }
 
-    // Batch Number: alphanumeric only
-    if (!newProduct.BatchNumber.match(/^[a-zA-Z0-9]+$/)) {
-      errors.push("Batch Number should be alphanumeric");
+    // Batch Number: alphanumeric and spaces only
+    if (!newProduct.BatchNumber.match(/^[a-zA-Z0-9 ]+$/)) {
+      errors.push("Batch Number should be alphanumeric and can include spaces");
     }
 
     // Expiry Date: must be in future
@@ -102,9 +102,9 @@ const AProductlist = () => {
       errors.push("Supplier ID should be alphanumeric");
     }
 
-    // Generic Name: alphanumeric if provided
-    if (newProduct.GenericName && !newProduct.GenericName.match(/^[a-zA-Z0-9]+$/)) {
-      errors.push("Generic Name should only contain letters and numbers");
+    // Generic Name: alphanumeric and spaces if provided
+    if (newProduct.GenericName && !newProduct.GenericName.match(/^[a-zA-Z0-9 ]+$/)) {
+      errors.push("Generic Name should only contain letters, numbers, and spaces");
     }
 
     return errors;
@@ -194,9 +194,9 @@ const AProductlist = () => {
     const { name, value } = e.target;
     
     if (name === "Name") {
-      // Validate Name field: only letters and numbers
-      if (value && !value.match(/^[a-zA-Z0-9]*$/)) {
-        setNameError("Product Name should only contain letters and numbers");
+      // Validate Name field: only letters, numbers, and spaces
+      if (value && !value.match(/^[a-zA-Z0-9 ]*$/)) {
+        setNameError("Product Name should only contain letters, numbers, and spaces");
       } else {
         setNameError("");
       }
@@ -223,6 +223,14 @@ const AProductlist = () => {
         ...prevProduct,
         [name]: value,
       }));
+    }
+
+    // For BatchNumber and GenericName, allow spaces as well
+    if (name === "BatchNumber" || name === "GenericName") {
+      if (value && !value.match(/^[a-zA-Z0-9 ]*$/)) {
+        // Optionally, you can set an error state for these fields if you want
+        return;
+      }
     }
   };
 

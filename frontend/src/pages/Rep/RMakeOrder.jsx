@@ -13,6 +13,7 @@ const RMakeOrder = () => {
   const [cartItems, setCartItems] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editedQty, setEditedQty] = useState(1);
+  const [productSearch, setProductSearch] = useState("");
 
   useEffect(() => {
     fetch('http://localhost:5000/api/pharmacies/all-pharmacies')
@@ -191,30 +192,40 @@ const RMakeOrder = () => {
           <div className="order-content">
             <div className="product-section">
               <h2>Products</h2>
+              <input
+                type="text"
+                className="product-search-input"
+                placeholder="Search products by name"
+                value={productSearch}
+                onChange={e => setProductSearch(e.target.value)}
+                style={{ marginBottom: '10px', padding: '6px', width: '100%' }}
+              />
               <div className="product-list scroll-view">
-                {products.map(product => (
-                  <div className="product-card" key={product.ProductID}>
-                    <img src={product.ImagePath} alt={product.Name} className="product-image" />
-                    <strong>{product.Name}</strong>
-                    <div className="product-details">
-                      <p>Expiry: {new Date(product.ExpiryDate).toLocaleDateString()}</p>
-                      <p>Rs: {product.UnitPrice}</p>
+                {products
+                  .filter(product => product.Name.toLowerCase().includes(productSearch.toLowerCase()))
+                  .map(product => (
+                    <div className="product-card" key={product.ProductID}>
+                      <img src={product.ImagePath} alt={product.Name} className="product-image" />
+                      <strong>{product.Name}</strong>
+                      <div className="product-details">
+                        <p>Expiry: {new Date(product.ExpiryDate).toLocaleDateString()}</p>
+                        <p>Rs: {product.UnitPrice}</p>
+                      </div>
+                      <div className="product-actions">
+                        <p><strong>Stock:</strong> {product.Quantity}</p>
+                        <input
+                          type="number"
+                          id={`qty-${product.ProductID}`}
+                          defaultValue={1}
+                          min={1}
+                          max={product.Quantity}
+                        />
+                        <button onClick={() => addToCart(product)}>
+                          <ShoppingCart size={24} />
+                        </button>
+                      </div>
                     </div>
-                    <div className="product-actions">
-                      <p><strong>Stock:</strong> {product.Quantity}</p>
-                      <input
-                        type="number"
-                        id={`qty-${product.ProductID}`}
-                        defaultValue={1}
-                        min={1}
-                        max={product.Quantity}
-                      />
-                      <button onClick={() => addToCart(product)}>
-                        <ShoppingCart size={24} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           </div>

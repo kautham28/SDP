@@ -18,8 +18,10 @@ const AExpiryalert = () => {
         const response = await axios.get(
           "http://localhost:5000/api/admin/products/expiring-soon"
         );
+        // Only include active products
+        const activeProducts = response.data.filter(p => p.Status === 'Active');
         // Sort products by ExpiryDate (descending)
-        const sortedProducts = response.data.sort((a, b) => 
+        const sortedProducts = activeProducts.sort((a, b) => 
           new Date(b.ExpiryDate) - new Date(a.ExpiryDate)
         );
         setProducts(sortedProducts);
@@ -61,15 +63,16 @@ const AExpiryalert = () => {
     if (!confirmReturn) return;
 
     try {
+      // Set product status to Inactive instead of deleting
       await axios.delete(`http://localhost:5000/api/admin/products/${productId}`);
 
-      // After successful delete, remove product from state
+      // After successful update, remove product from state
       setProducts((prevProducts) => prevProducts.filter((item) => item.ID !== productId));
       setFilteredProducts((prevFiltered) => prevFiltered.filter((item) => item.ID !== productId));
 
-      console.log("Product returned and deleted successfully.");
+      console.log("Product status set to Inactive successfully.");
     } catch (error) {
-      console.error("Error returning (deleting) product:", error);
+      console.error("Error setting product status to Inactive:", error);
     }
   };
 
@@ -158,21 +161,7 @@ const AExpiryalert = () => {
                       key={index}
                       className={daysToExpiry < 30 ? "expiry-alert-low-stock" : ""}
                     >
-                      <td>{item.Name}</td>
-                      <td>{item.BatchNumber}</td>
-                      <td>{expiryDate}</td>
-                      <td>{item.Quantity}</td>
-                      <td>{item.UnitPrice.toFixed(2)}</td> {/* Display Unit Price */}
-                      <td>{item.TotalPrice.toFixed(2)}</td> {/* Display Total Value */}
-                      <td className="expiry-alert-days-to-expiry">{daysToExpiry}</td>
-                      <td>
-                        <button
-                          className="expiry-alert-return-button"
-                          onClick={() => handleReturn(item.ID)}
-                        >
-                          Return
-                        </button>
-                      </td>
+                      <td>{item.Name}</td><td>{item.BatchNumber}</td><td>{expiryDate}</td><td>{item.Quantity}</td><td>{item.UnitPrice.toFixed(2)}</td><td>{item.TotalPrice.toFixed(2)}</td><td className="expiry-alert-days-to-expiry">{daysToExpiry}</td><td><button className="expiry-alert-return-button" onClick={() => handleReturn(item.ProductID)}>Return</button></td>
                     </tr>
                   );
                 })}
