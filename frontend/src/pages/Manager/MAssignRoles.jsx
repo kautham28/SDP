@@ -3,7 +3,8 @@ import MNavbar from "../../components/Manager/MNavbar";
 import MSidebar from "../../components/Manager/MSidebar";
 import MButton from "../../components/Manager/MButton";
 import MDropdown from "../../components/Manager/MDropdown";
-import { Eye } from "lucide-react";
+import { Eye, Trash2, Check } from "lucide-react";
+import Swal from "sweetalert2";
 import "./MAssignRoles.css";
 
 const MAssignRoles = () => {
@@ -86,7 +87,7 @@ const MAssignRoles = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...newUser, status: "working" }), // Ensure new users have status 'working'
+        body: JSON.stringify({ ...newUser, status: "working" }),
       });
 
       const data = await response.json();
@@ -142,17 +143,59 @@ const MAssignRoles = () => {
     }
   };
 
+  const handleTerminateUser = (user) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleStatusChange(user.id, "terminated");
+        Swal.fire({
+          title: "Deleted!",
+          text: "User has been terminated.",
+          icon: "success"
+        });
+      }
+    });
+  };
+
+  const handleRejoinUser = (user) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to rejoin this person?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, rejoin!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleStatusChange(user.id, "working");
+        Swal.fire({
+          title: "Rejoined!",
+          text: "User has been rejoined.",
+          icon: "success"
+        });
+      }
+    });
+  };
+
   return (
-    <div className="assign-roles-container">
+    <div className="m-assign-roles-container">
       <MNavbar />
-      <div className="assign-roles-content">
+      <div className="m-assign-roles-content">
         <MSidebar />
-        <div className="assign-roles-main">
+        <div className="m-assign-roles-main">
           <h1>Assign Roles</h1>
           <p>Assign roles to team members.</p>
           <MButton label="Add New User" onClick={handleAddUserModal} variant="primary" />
           <h3>Assigned Users</h3>
-          <table className="assign-role-table">
+          <table className="m-assign-role-table">
             <thead>
               <tr>
                 <th>Username</th>
@@ -174,22 +217,20 @@ const MAssignRoles = () => {
                   <td>
                     <Eye
                       onClick={() => handleShowModal(user)}
-                      className="eye-icon"
+                      className="m-eye-icon"
                       style={{ cursor: "pointer", color: "blue", marginRight: "10px" }}
                     />
                     {user.status === "working" ? (
-                      <MButton
-                        label="Terminate"
-                        onClick={() => handleStatusChange(user.id, "terminated")}
-                        variant="danger"
-                        style={{ padding: "5px 10px" }}
+                      <Trash2
+                        onClick={() => handleTerminateUser(user)}
+                        className="m-trash-icon"
+                        style={{ marginLeft: "5px" }}
                       />
                     ) : (
-                      <MButton
-                        label="Rejoin"
-                        onClick={() => handleStatusChange(user.id, "working")}
-                        variant="success"
-                        style={{ padding: "5px 10px" }}
+                      <Check
+                        onClick={() => handleRejoinUser(user)}
+                        className="m-rejoin-icon"
+                        style={{ marginLeft: "5px", color: "#28a745", cursor: "pointer", fontSize: 20 }}
                       />
                     )}
                   </td>
@@ -198,13 +239,13 @@ const MAssignRoles = () => {
             </tbody>
           </table>
           {showModal && selectedUser && (
-            <div className="modal">
-              <div className="modal-content">
-                <button className="close" onClick={handleCloseModal}>
+            <div className="m-modal">
+              <div className="m-modal-content">
+                <button className="m-close" onClick={handleCloseModal}>
                   X
                 </button>
                 <h2>User Details</h2>
-                <table className="user-details-table">
+                <table className="m-user-details-table">
                   <tbody>
                     <tr>
                       <td>
@@ -257,7 +298,7 @@ const MAssignRoles = () => {
                   </tbody>
                 </table>
                 {selectedUser.photo && (
-                  <div className="user-photo">
+                  <div className="m-user-photo">
                     <strong>Photo:</strong>
                     <img
                       src={`data:image/jpeg;base64,${selectedUser.photo}`}
@@ -270,14 +311,14 @@ const MAssignRoles = () => {
             </div>
           )}
           {showAddUserModal && (
-            <div className="modal">
-              <div className="modal-content">
-                <button className="close" onClick={handleCloseAddUserModal}>
+            <div className="m-modal">
+              <div className="m-modal-content">
+                <button className="m-close" onClick={handleCloseAddUserModal}>
                   X
                 </button>
                 <h2>Add New User</h2>
                 {error && (
-                  <p className="error-message" style={{ color: "red" }}>
+                  <p className="m-error-message" style={{ color: "red" }}>
                     {error}
                   </p>
                 )}
@@ -288,7 +329,7 @@ const MAssignRoles = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, username: e.target.value })
                   }
-                  className="input-field"
+                  className="m-input-field"
                 />
                 <input
                   type="password"
@@ -297,7 +338,7 @@ const MAssignRoles = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, password: e.target.value })
                   }
-                  className="input-field"
+                  className="m-input-field"
                 />
                 <input
                   type="email"
@@ -306,7 +347,7 @@ const MAssignRoles = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, email: e.target.value })
                   }
-                  className="input-field"
+                  className="m-input-field"
                 />
                 <input
                   type="text"
@@ -315,7 +356,7 @@ const MAssignRoles = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, phone_number: e.target.value })
                   }
-                  className="input-field"
+                  className="m-input-field"
                 />
                 <input
                   type="text"
@@ -324,7 +365,7 @@ const MAssignRoles = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, address: e.target.value })
                   }
-                  className="input-field"
+                  className="m-input-field"
                 />
                 <input
                   type="text"
@@ -333,7 +374,7 @@ const MAssignRoles = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, ic_number: e.target.value })
                   }
-                  className="input-field"
+                  className="m-input-field"
                 />
                 <input
                   type="date"
@@ -342,7 +383,7 @@ const MAssignRoles = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, date_of_birth: e.target.value })
                   }
-                  className="input-field"
+                  className="m-input-field"
                 />
                 <MDropdown
                   options={["Admin", "Manager", "Rep"]}

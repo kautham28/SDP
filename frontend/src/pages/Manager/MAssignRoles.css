@@ -1,49 +1,54 @@
 /* Assign Roles Page Container */
-.assign-roles-container {
+.m-assign-roles-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vw;
-  background-color:  rgb(201, 239, 234); /* Updated background color */
+  background-color: rgb(201, 239, 234);
+  margin-top: 50px;
 }
 
 /* Content Layout */
-.assign-roles-content {
+.m-assign-roles-content {
   display: flex;
-  height: calc(100vh - 60px); /* Adjusted height to prevent overlap */
-  width: calc(100vw - 250px); /* Leaves space for sidebar */
-  margin-left: 250px; /* Matches sidebar width */
-  margin-top: 60px; /* Matches navbar height */
+  flex: 1;
+  padding-left: 250px; /* Matches sidebar width */
   overflow: auto;
 }
 
 /* Main Section */
-.assign-roles-main {
-  flex-grow: 1;
+.m-assign-roles-main {
+  flex: 1;
   padding: 20px;
+  overflow-y: auto; /* Allow vertical scrolling */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  width: 100%;
 }
 
 /* Page Title */
-.assign-roles-main h1 {
-  font-size: 28px;
+.m-assign-roles-main h1 {
+  font-size: 40px;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 10px;
-  color: #003f4f; /* Updated title color */
+  color: #003f4f;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.m-assign-roles-main p {
+  text-align: center;
+  color: #003f4f;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
 /* Role Assignment Form */
-.assign-role-form {
+.m-assign-role-form {
   display: flex;
   align-items: center;
   gap: 15px;
   margin: 20px 0;
-  background: rgba(0, 127, 161, 0.7); /* Updated background color */
+  background: rgba(0, 127, 161, 0.7);
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -51,193 +56,148 @@
 }
 
 /* Input Field */
-.assign-input {
+.m-assign-input {
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #003f4f; /* Updated border color */
+  border: 1px solid #003f4f;
   border-radius: 5px;
   outline: none;
   width: 200px;
 }
 
-/* Assigned Users Table */
-.assign-role-table {
-  width: 80%;
-  border-collapse: collapse;
+/* Scrollable Table Container */
+.m-table-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 75vh;
   margin-top: 20px;
+  width: 80%;
 }
 
-.assign-role-table th, 
-.assign-role-table td {
+/* Assigned Users Table */
+.m-assign-role-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.m-assign-role-table th,
+.m-assign-role-table td {
+  padding: 10px;
   border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
+  text-align: center;
+  white-space: nowrap;
 }
 
-/* Header Style */
-.assign-role-table th {
-  background-color: #003f4f; /* Updated header background color */
+.m-assign-role-table th {
+  background-color: #003f4f;
   color: white;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
-/* Row Styling */
-.assign-role-table tr:nth-child(even) {
-  background-color: rgba(0, 127, 161, 0.3); /* Updated row color */
+/* Column Adjustments */
+.m-assign-role-table th:nth-child(1),
+.m-assign-role-table td:nth-child(1) {
+  width: 15%; /* Username */
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .assign-roles-content {
-      width: 100vw;
-      margin-left: 0;
-  }
+.m-assign-role-table th:nth-child(2),
+.m-assign-role-table td:nth-child(2) {
+  width: 20%; /* Role */
+}
 
-  .assign-role-form {
-      flex-direction: column;
-      align-items: stretch;
-      width: 100%;
-  }
+.m-assign-role-table th:nth-child(3),
+.m-assign-role-table td:nth-child(3) {
+  width: 20%; /* Email */
+}
 
-  .assign-input, 
-  .assign-role-table {
-      width: 100%;
-  }
+.m-assign-role-table th:nth-child(4),
+.m-assign-role-table td:nth-child(4) {
+  width: 20%; /* Phone Number */
+}
+
+.m-assign-role-table th:nth-child(5),
+.m-assign-role-table td:nth-child(5) {
+  width: 15%; /* Status */
+}
+
+.m-assign-role-table th:nth-child(6),
+.m-assign-role-table td:nth-child(6) {
+  width: 10%; /* Actions */
+}
+
+/* Alternating Row Colors */
+.m-assign-role-table tbody tr:nth-child(odd) {
+  background-color: #e6f7ff;
+}
+
+.m-assign-role-table tbody tr:nth-child(even) {
+  background-color: #cce7f0;
+}
+
+/* Hover Effect */
+.m-assign-role-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Eye Icon Style */
+.m-eye-icon {
+  cursor: pointer;
+  color: #007bff;
+  font-size: 20px;
+  transition: color 0.3s;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.m-eye-icon:hover {
+  color: #0056b3;
+}
+
+/* Trash Icon Style */
+.m-trash-icon {
+  cursor: pointer;
+  color: #e74c3c;
+  font-size: 20px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.m-trash-icon:hover {
+  color: #c0392b;
 }
 
 /* Modal Background */
-.modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.m-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 9999;
 }
 
 /* Modal Content */
-.modal-content {
+.m-modal-content {
   background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  width: 50%;
-  max-height: 80%;
-  overflow-y: auto;
-  position: relative; /* To make room for the close button */
-  text-align: justify; /* Justify text */
-}
-
-/* Close Button inside Modal Box */
-.close {
-  font-size: 18px;
-  background-color: #ff4c4c;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
-
-.close:hover {
-  background-color: red;
-}
-
-/* Eye Icon Style */
-.eye-icon {
-  font-size: 20px;
-  cursor: pointer;
-  color: rgb(12, 12, 47);
-}
-
-.eye-icon:hover {
-  color: green;
-}
-
-/* Table Styles */
-.assign-role-table th,
-.assign-role-table td {
-  padding: 8px;
-  text-align: left;
-}
-
-/* Add padding for table data */
-.assign-role-table td {
-  padding-left: 20px;
-}
-
-/* Justified text for user details in modal */
-.user-details p {
-  margin: 10px 0;
-  text-align: justify; /* Justify text */
-}
-/* Row Styling for Assign Role Table */
-.assign-role-table tr:nth-child(odd) {
-  background-color: hsla(200, 100%, 95%, 1); /* Light blue (hsla) */
-}
-
-.assign-role-table tr:nth-child(even) {
-  background-color: #cce7f0; /* Slightly darker light blue (hsla) */
-}
-
-.user-details-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.user-details-table td {
-  padding: 8px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.user-details-table td:first-child {
-  font-weight: bold;
-  background-color: #f5f5f5;
-}
-
-.modal-content {
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-}
-
-.user-photo {
-  text-align: center;
-  margin-top: 15px;
-}
-
-/* Modal Styles */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  background-color: #fff;
   padding: 20px;
   border-radius: 8px;
   max-width: 600px;
   width: 100%;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 80%;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   position: relative;
 }
 
-.close {
+/* Close Button */
+.m-close {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -248,73 +208,42 @@
   color: #333;
 }
 
-.close:hover {
-  color: #e74c3c; /* Red color on hover */
+.m-close:hover {
+  color: #e74c3c;
 }
 
-h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-h3 {
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
-.input-field {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: #6c5ce7;
-}
-
-.modal-content table {
+/* User Details Table */
+.m-user-details-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
-.modal-content table td {
+.m-user-details-table td {
   padding: 8px;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
+  text-align: left;
 }
 
-.modal-content table td strong {
+.m-user-details-table td:first-child {
   font-weight: bold;
+  background-color: #f5f5f5;
 }
 
-.user-photo {
-  margin-top: 20px;
+/* User Photo */
+.m-user-photo {
   text-align: center;
+  margin-top: 15px;
 }
 
-.user-photo img {
+.m-user-photo img {
   border-radius: 50%;
   max-width: 100px;
   max-height: 100px;
 }
 
-.eye-icon {
-  cursor: pointer;
-  color: #007bff;
-  font-size: 20px;
-  transition: color 0.3s;
-}
-
-.eye-icon:hover {
-  color: #0056b3;
-}
-
 /* Add New User Button */
-.add-user-btn {
+.m-add-user-btn {
   background-color: #493ab9;
   color: white;
   padding: 10px 15px;
@@ -323,12 +252,27 @@ h3 {
   cursor: pointer;
 }
 
-.add-user-btn:hover {
+.m-add-user-btn:hover {
   background-color: #372993;
 }
 
-/* Add User Modal Specific */
-.modal-content input[type="password"] {
+/* Input Fields */
+.m-input-field {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.m-input-field:focus {
+  outline: none;
+  border-color: #6c5ce7;
+}
+
+input[type="password"],
+input[type="date"] {
   width: calc(100% - 20px);
   padding: 10px;
   margin: 10px 0;
@@ -336,77 +280,27 @@ h3 {
   border-radius: 4px;
 }
 
-input[type="date"] {
-  width: 100%;
-  padding: 10px;
-}
-/* New styles for scrollable table and remove button */
-.table-container {
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  margin-top: 20px;
-}
-
-.assign-role-table tbody tr:hover {
-  background-color: #f5f5f5;
-}
-
-.trash-icon {
-  cursor: pointer;
-}
-
-.assign-role-table td .eye-icon,
-.assign-role-table td .trash-icon {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-/* Existing modal styles (assumed, not modified) */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 600px;
-  width: 100%;
-}
-
-.close {
-  float: right;
-  cursor: pointer;
-}
-
-.input-field {
-  width: 100%;
-  padding: 8px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.error-message {
+/* Error Message */
+.m-error-message {
   color: red;
   margin-bottom: 10px;
 }
 
-.user-details-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+/* Responsive */
+@media (max-width: 900px) {
+  .m-assign-roles-content {
+    padding-left: 0;
+  }
 
-.user-details-table td {
-  padding: 8px;
-  border: 1px solid #ddd;
+  .m-assign-role-form {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .m-assign-input,
+  .m-table-container,
+  .m-assign-role-table {
+    width: 100%;
+  }
 }

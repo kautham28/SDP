@@ -97,24 +97,59 @@
 /* Table Header & Cell Styles */
 .ap-product-table th,
 .ap-product-table td {
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ddd;
   white-space: nowrap;
-  text-align: left;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Adjust width for the Medicine Name column */
+.ap-product-table th:nth-child(2),
+.ap-product-table td:nth-child(2) {
+  width: 20%; /* Adjust as needed */
+  text-align: center;
+  white-space: normal; /* Allow text to wrap if needed */
+}
+
+/* Table Row Styling */
+.ap-product-table tbody tr:nth-child(odd) {
+  background-color: #e6f7ff; /* Light blue for odd rows */
+}
+
+.ap-product-table tbody tr:nth-child(even) {
+  background-color: #cce7f0; /* Lighter blue for even rows */
 }
 
 /* Action Buttons */
 .ap-action-button {
-  background: none;
   border: none;
+  background-color: transparent;
   cursor: pointer;
-  margin-right: 10px;
-  color: #003f4f;
-  transition: color 0.3s;
+  padding: 10px;
+  margin: 2px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .ap-action-button:hover {
-  color: #3010b1;
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.ap-action-button-view {
+  color: #3498db;
+}
+
+.ap-action-button-edit {
+  color: #27338a;
+}
+
+.ap-action-button-delete {
+  color: #e74c3c;
 }
 
 /* Loading & No Products Text */
@@ -144,7 +179,10 @@
   background: white;
   padding: 25px;
   border-radius: 12px;
-  width: 500px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 700px;
+  overflow-y: auto;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   text-align: center;
   display: flex;
@@ -162,7 +200,6 @@
 }
 
 /* Two-column Form Layout */
-/* Two-column Form Layout */
 .ap-popup-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -170,9 +207,50 @@
   margin-top: 20px;
 }
 
-/* Full-width fields (if needed) */
-.ap-popup-form .full-width {
-  grid-column: span 2;
+/* Input Container */
+.input-container {
+  margin-bottom: 10px;
+}
+
+/* Input Fields and Select */
+.ap-popup-container input,
+.ap-popup-container select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f9f9f9;
+  margin-bottom: 10px;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.ap-popup-container input:focus,
+.ap-popup-container select:focus {
+  border-color: #3498db;
+  outline: none;
+  background: white;
+}
+
+/* Read-only Inputs */
+.ap-popup-container input[readonly] {
+  background: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Image Preview */
+.image-preview {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #333;
 }
 
 /* Buttons Section */
@@ -184,155 +262,46 @@
   gap: 20px;
 }
 
-/* Input Fields */
-.ap-popup-container input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  background: #f9f9f9;
-  margin-bottom: 10px;
-  transition: 0.3s;
-}
-
-.ap-popup-container input:focus {
-  border-color: #3498db;
-  outline: none;
-  background: white;
-}
-
-/* Buttons */
-
-
-.ap-popup-container button {
+/* Submit Button */
+.submit-btn {
   padding: 12px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  transition: 0.3s;
-  width: 48%;
-}
-
-/* Submit Button */
-.ap-popup-container button[type="submit"] {
   background: #280e91;
   color: white;
+  width: 48%;
+  transition: background 0.3s;
 }
 
-.ap-popup-container button[type="submit"]:hover {
+.submit-btn:hover {
   background: #218838;
 }
 
 /* Cancel Button */
-.ap-popup-container button[type="button"] {
+.cancel-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
   background: #280e91;
   color: white;
+  width: 48%;
+  transition: background 0.3s;
 }
 
-.ap-popup-container button[type="button"]:hover {
+.cancel-btn:hover {
   background: #c82333;
 }
 
-/* Table Enhancements */
-.ap-product-table tbody tr:nth-child(odd) {
-  background-color: #f2f2f2;
-}
-
-.ap-product-table tbody tr:nth-child(even) {
-  background-color: #e6f7ff;
-}
-
-.ap-product-table th,
-.ap-product-table td {
-  text-align: center;
-  vertical-align: middle;
-  padding: 12px;
-}
-
-/* Action Buttons */
-.ap-action-button {
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  padding: 10px;
-  margin: 2px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.3s;
-}
-
-.ap-action-button:hover {
-  opacity: 0.8;
-  transform: scale(1.1);
-}
-
-.ap-action-button-view {
-  color: #3498db;
-}
-
-.ap-action-button-edit {
-  color: #27338a;
-}
-
-.ap-action-button-delete {
-  color: #e74c3c;
-}
-
-
-.ap-product-table tbody tr:nth-child(odd) {
-  background-color: #e6f7ff; /* Light gray for odd rows */
-}
-
-.ap-product-table tbody tr:nth-child(even) {
-  background-color: #cce7f0; /* White for even rows */
-}
-/* Center-align all table cell content */
-.ap-product-table th,
-.ap-product-table td {
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* Adjust width for the Medicine Name column */
-.ap-product-table th:nth-child(2), /* Assuming Medicine Name is the second column */
-.ap-product-table td:nth-child(2) {
-  width: 20%; /* Adjust as needed */
-  text-align: center; /* Keep text left-aligned for readability */
-  white-space: normal; /* Allow text to wrap if needed */
-}
-
-/* AProductlist.css */
-
-/* General styles for the popup container */
-.ap-popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.ap-popup-container {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 80%;
-  max-width: 600px;
-  max-height: 700px;
+/* View Popup Table */
+.ap-product-details-table-container {
+  max-height: 300px;
   overflow-y: auto;
 }
 
-/* Table styles for the view popup */
 .ap-product-details-table {
   width: 100%;
   border-collapse: collapse;
@@ -357,39 +326,4 @@
 
 .ap-product-details-table tbody tr:last-child td {
   border-bottom: none;
-}
-
-/* Scrollable table container */
-.ap-product-details-table-container {
-  max-height: 300px; /* Adjust the height as needed */
-  overflow-y: auto;
-}
-
-/* Button styles for the popup */
-.ap-popup-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.ap-popup-buttons button {
-  margin-left: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-.ap-popup-buttons button:hover {
-  background-color: #0056b3;
-}
-
-.ap-popup-buttons button:last-child {
-  background-color: #6c757d;
-}
-
-.ap-popup-buttons button:last-child:hover {
-  background-color: #545b62;
 }
