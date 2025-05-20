@@ -3,6 +3,7 @@ import ASidebar from '../../components/Admin/ASidebar';
 import ANavbar from '../../components/Admin/ANavbar';
 import { Eye } from 'lucide-react';
 import { FaPrint } from 'react-icons/fa';
+import { Trash2 } from 'lucide-react';
 import axios from 'axios';
 import './AConfirmedorder.css';
 
@@ -49,6 +50,17 @@ const AConfirmedorder = () => {
             setShowPopup(true);
         } catch (error) {
             console.error('Error fetching order details:', error);
+        }
+    };
+
+    const handleRevertOrder = async (orderId) => {
+        if (!window.confirm('Are you sure you want to revert this order to pending and refill inventory?')) return;
+        try {
+            await axios.put(`http://localhost:5000/api/confirmed-orders/revert/${orderId}`);
+            setOrders(orders.filter(order => order.OrderID !== orderId));
+            alert('Order reverted to pending and inventory refilled.');
+        } catch (err) {
+            alert('Failed to revert order: ' + (err.response?.data?.error || err.message));
         }
     };
 
@@ -142,6 +154,9 @@ const AConfirmedorder = () => {
                                             <div className="aco-action-buttons">
                                                 <Button className="aco-view-button" onClick={() => handleViewOrder(order.OrderID)}>
                                                     <Eye />
+                                                </Button>
+                                                <Button className="aco-delete-button" onClick={() => handleRevertOrder(order.OrderID)} style={{ marginLeft: '8px', background: '#e74c3c', color: '#fff' }}>
+                                                    <Trash2 />
                                                 </Button>
                                             </div>
                                         </TableCell>
