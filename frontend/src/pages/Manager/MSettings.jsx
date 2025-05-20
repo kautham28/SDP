@@ -3,6 +3,7 @@ import axios from 'axios';
 import MSidebar from '../../components/Manager/MSidebar';
 import MNavbar from '../../components/Manager/MNavbar';
 import './MSettings.css';
+import adminPlaceholder from '../../assets/admin.jpeg';
 
 const MSettingsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -40,7 +41,7 @@ const MSettingsPage = () => {
 
         if (loggedInUser) {
           setUser({
-            picture: loggedInUser.picture || '../../src/assets/manager.jpeg',
+            picture: loggedInUser.photo_link || '', // Use photo_link from backend
             name: loggedInUser.username,
             id: loggedInUser.id,
             date_of_birth: loggedInUser.date_of_birth || 'Date not available',
@@ -49,6 +50,7 @@ const MSettingsPage = () => {
             nic_number: loggedInUser.ic_number || 'IC not available',
             residentAddress: loggedInUser.address || 'Address not available',
           });
+          setPhotoLink(loggedInUser.photo_link || '');
         } else {
           console.error('User not found!');
         }
@@ -131,9 +133,14 @@ const MSettingsPage = () => {
         <div className="manager-settings-profile-content">
           <h1 className="manager-settings-title">Settings</h1>
           <div className="manager-settings-profile-container">
-            {user.picture ? (
-              <a href={user.picture} target="_blank" rel="noopener noreferrer">
-                <img src={user.picture} alt="User Profile" className="manager-settings-profile-picture" />
+            {user.picture || photoLink ? (
+              <a href={`http://localhost:5000${photoLink || user.picture}`} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={`http://localhost:5000${photoLink || user.picture}`}
+                  alt="User Profile"
+                  className="manager-settings-profile-picture"
+                  onError={e => { e.target.onerror = null; e.target.src = adminPlaceholder; }}
+                />
               </a>
             ) : null}
             {isEditing ? (

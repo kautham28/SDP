@@ -35,6 +35,9 @@ app.use(cors());
 app.use(bodyParser.json({ limit: "100mb" }));
 app.use(bodyParser.urlencoded({ limit: "100mb", extended: true, parameterLimit: 50000 }));
 
+// Serve uploads folder statically for profile images
+app.use('/uploads', express.static('uploads'));
+
 // Request logging for debugging
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);

@@ -3,6 +3,7 @@ import axios from 'axios';
 import ASidebar from '../../components/Admin/ASidebar';
 import ANavbar from '../../components/Admin/ANavbar';
 import './ASettings.css';
+import adminPlaceholder from '../../assets/admin.jpeg';
 
 const ASettingsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -42,7 +43,7 @@ const ASettingsPage = () => {
 
         if (loggedInUser) {
           setUser({
-            picture: loggedInUser.picture || '../../src/assets/admin.jpeg', // Default to the placeholder picture if not provided
+            picture: loggedInUser.photo_link || '', // Use photo_link from backend
             name: loggedInUser.username,
             id: loggedInUser.id,
             date_of_birth: loggedInUser.date_of_birth || 'Date not available', // Default if not available
@@ -51,6 +52,7 @@ const ASettingsPage = () => {
             nic_number: loggedInUser.ic_number || 'IC not available', // Default if not available
             residentAddress: loggedInUser.address || 'Address not available', // Default if not available
           });
+          setPhotoLink(loggedInUser.photo_link || '');
         } else {
           console.error('User not found!');
         }
@@ -79,7 +81,8 @@ const ASettingsPage = () => {
       const response = await axios.post('http://localhost:5000/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setPhotoLink(response.data.url); // Set Cloudinary URL
+      // Expect backend to return { url: '/profile_pics/filename.jpg' }
+      setPhotoLink(response.data.url); // Set relative URL for public folder
       alert('Image uploaded successfully!');
     } catch (err) {
       alert('Image upload failed');
@@ -133,9 +136,14 @@ const ASettingsPage = () => {
         <div className="admin-settings-profile-content">
           <h1 className="admin-settings-title">Settings</h1>
           <div className="admin-settings-profile-container">
-            {user.picture ? (
-              <a href={user.picture} target="_blank" rel="noopener noreferrer">
-                <img src={user.picture} alt="User Profile" className="admin-settings-profile-picture" />
+            {user.picture || photoLink ? (
+              <a href={`http://localhost:5000${photoLink || user.picture}`} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={`http://localhost:5000${photoLink || user.picture}`}
+                  alt="User Profile"
+                  className="admin-settings-profile-picture"
+                  onError={e => { e.target.onerror = null; e.target.src = adminPlaceholder; }}
+                />
               </a>
             ) : null}
             {isEditing ? (

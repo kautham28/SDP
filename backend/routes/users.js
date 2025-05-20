@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 
 // Fetch all users with status = 'working'
 router.get("/", (req, res) => {
-  const sql = "SELECT id, username, role, email, phone_number, address, ic_number, date_of_birth,status FROM users";
+  const sql = "SELECT id, username, role, email, phone_number, address, ic_number, date_of_birth, status, photo_link FROM users";
   db.query(sql, (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -27,7 +27,7 @@ router.get("/", (req, res) => {
 
 // Fetch user by ID
 router.get("/:id", (req, res) => {
-  const sql = "SELECT id, username, role, email, phone_number, address, ic_number, date_of_birth FROM users WHERE id = ?";
+  const sql = "SELECT id, username, role, email, phone_number, address, ic_number, date_of_birth, status, photo_link FROM users WHERE id = ?";
   db.query(sql, [req.params.id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
