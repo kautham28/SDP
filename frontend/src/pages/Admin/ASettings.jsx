@@ -17,16 +17,15 @@ const ASettingsPage = () => {
     nic_number: '',
     residentAddress: '',
   });
+  const [photoLink, setPhotoLink] = useState(user.picture || '');
   const [password, setPassword] = useState("");
-  const [photoLink, setPhotoLink] = useState(user.picture || "");
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = sessionStorage.getItem('token'); // Get token from session storage
+      const token = sessionStorage.getItem('token');
 
       if (!token) {
         console.error('No token found! Redirecting to login...');
-        // Redirect to login page if token is not found
         window.location.href = '/login';
         return;
       }
@@ -38,19 +37,18 @@ const ASettingsPage = () => {
           },
         });
 
-        // Assuming the API returns an array of users, filter the logged-in user's data
         const loggedInUser = response.data.find(user => user.id === parseInt(sessionStorage.getItem('userID')));
 
         if (loggedInUser) {
           setUser({
-            picture: loggedInUser.photo_link || '', // Use photo_link from backend
+            picture: loggedInUser.photo_link || '',
             name: loggedInUser.username,
             id: loggedInUser.id,
-            date_of_birth: loggedInUser.date_of_birth || 'Date not available', // Default if not available
+            date_of_birth: loggedInUser.date_of_birth || 'Date not available',
             telephone: loggedInUser.phone_number,
             email: loggedInUser.email,
-            nic_number: loggedInUser.ic_number || 'IC not available', // Default if not available
-            residentAddress: loggedInUser.address || 'Address not available', // Default if not available
+            nic_number: loggedInUser.ic_number || 'IC not available',
+            residentAddress: loggedInUser.address || 'Address not available',
           });
           setPhotoLink(loggedInUser.photo_link || '');
         } else {
@@ -65,11 +63,15 @@ const ASettingsPage = () => {
   }, []);
 
   const handleEditClick = () => {
-    setIsEditing(!isEditing);
+    setIsEditing(true);
   };
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
   };
 
   const handleImageChange = async (e) => {
@@ -81,8 +83,7 @@ const ASettingsPage = () => {
       const response = await axios.post('http://localhost:5000/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      // Expect backend to return { url: '/profile_pics/filename.jpg' }
-      setPhotoLink(response.data.url); // Set relative URL for public folder
+      setPhotoLink(response.data.url);
       alert('Image uploaded successfully!');
     } catch (err) {
       alert('Image upload failed');
@@ -91,7 +92,7 @@ const ASettingsPage = () => {
   };
 
   const handleSaveProfile = async () => {
-    const token = sessionStorage.getItem('token'); // Get token from session storage
+    const token = sessionStorage.getItem('token');
 
     if (!token) {
       console.error('No token found! Redirecting to login...');
@@ -120,7 +121,7 @@ const ASettingsPage = () => {
           },
         }
       );
-      setIsEditing(false); // Exit edit mode after saving
+      setIsEditing(false); // Switch back to view mode after saving
       alert('Profile updated successfully');
     } catch (error) {
       console.error('Error updating user data:', error);
@@ -134,98 +135,150 @@ const ASettingsPage = () => {
       <div className="admin-settings-main-content">
         <ANavbar />
         <div className="admin-settings-profile-content">
-          <h1 className="admin-settings-title">Settings</h1>
+          <h1 className="admin-settings-title">Personal Information</h1>
           <div className="admin-settings-profile-container">
-            {user.picture || photoLink ? (
-              <a href={`http://localhost:5000${photoLink || user.picture}`} target="_blank" rel="noopener noreferrer">
+            <div className="admin-settings-profile-picture-container">
+              {user.picture || photoLink ? (
+                <a href={`http://localhost:5000${photoLink || user.picture}`} target="_blank" rel="noopener noreferrer">
+                  <img
+                    src={`http://localhost:5000${photoLink || user.picture}`}
+                    alt="User Profile"
+                    className="admin-settings-profile-picture"
+                    onError={e => { e.target.onerror = null; e.target.src = adminPlaceholder; }}
+                  />
+                </a>
+              ) : (
                 <img
-                  src={`http://localhost:5000${photoLink || user.picture}`}
-                  alt="User Profile"
+                  src={adminPlaceholder}
+                  alt="User Profile Placeholder"
                   className="admin-settings-profile-picture"
-                  onError={e => { e.target.onerror = null; e.target.src = adminPlaceholder; }}
                 />
-              </a>
-            ) : null}
-            {isEditing ? (
-              <>
+              )}
+              {isEditing && (
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="admin-settings-input"
+                  className="admin-settings-input-file"
                 />
-                <input
-                  type="text"
-                  name="name"
-                  value={user.name}
-                  onChange={handleChange}
-                  className="admin-settings-input"
-                />
-                <input
-                  type="password"
-                  name="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="New Password"
-                  className="admin-settings-input"
-                />
-                <input
-                  type="text"
-                  name="photo_link"
-                  value={photoLink}
-                  onChange={e => setPhotoLink(e.target.value)}
-                  placeholder="Profile Picture URL"
-                  className="admin-settings-input"
-                />
-              </>
-            ) : (
-              <h2 className="admin-settings-name">{user.name}</h2>
-            )}
-            <p><strong>ID:</strong> {user.id}</p>
-            <p><strong>Date of Birth:</strong> {user.date_of_birth}</p>
-            <p><strong>NIC Number:</strong> {user.nic_number}</p>
-            <p><strong>Role:</strong> Administrator</p>
-            <p>
-              <strong>Telephone:</strong> {isEditing ? (
-                <input
-                  type="text"
-                  name="telephone"
-                  value={user.telephone}
-                  onChange={handleChange}
-                  className="admin-settings-input"
-                />
-              ) : (
-                user.telephone
               )}
-            </p>
-            <p>
-              <strong>Email:</strong> {isEditing ? (
-                <input
-                  type="email"
-                  name="email"
-                  value={user.email}
-                  onChange={handleChange}
-                  className="admin-settings-input"
-                />
-              ) : (
-                user.email
-              )}
-            </p>
-            <p>
-              <strong>Resident Address:</strong> {isEditing ? (
-                <input
-                  type="text"
-                  name="residentAddress"
-                  value={user.residentAddress}
-                  onChange={handleChange}
-                  className="admin-settings-input"
-                />
-              ) : (
-                user.residentAddress
-              )}
-            </p>
-            <button onClick={isEditing ? handleSaveProfile : handleEditClick} className="admin-settings-edit-button">
-              {isEditing ? 'Save Profile' : 'Edit Profile'}
+            </div>
+            <div className="admin-settings-fields">
+              <div className="admin-settings-column">
+                <div className="admin-settings-field">
+                  <label>Name</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="name"
+                      value={user.name}
+                      onChange={handleChange}
+                      className="admin-settings-input"
+                    />
+                  ) : (
+                    <p className="admin-settings-value">{user.name}</p>
+                  )}
+                </div>
+                <div className="admin-settings-field">
+                  <label>ID</label>
+                  <p className="admin-settings-value">{user.id}</p>
+                </div>
+                <div className="admin-settings-field">
+                  <label>Date of Birth</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="date_of_birth"
+                      value={user.date_of_birth}
+                      onChange={handleChange}
+                      className="admin-settings-input"
+                    />
+                  ) : (
+                    <p className="admin-settings-value">{user.date_of_birth}</p>
+                  )}
+                </div>
+                <div className="admin-settings-field">
+                  <label>Telephone</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="telephone"
+                      value={user.telephone}
+                      onChange={handleChange}
+                      className="admin-settings-input"
+                    />
+                  ) : (
+                    <p className="admin-settings-value">{user.telephone}</p>
+                  )}
+                </div>
+                {isEditing && (
+                  <div className="admin-settings-field">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={password}
+                      onChange={handlePasswordChange}
+                      className="admin-settings-input"
+                      placeholder="New Password"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="admin-settings-column">
+                <div className="admin-settings-field">
+                  <label>NIC Number</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="nic_number"
+                      value={user.nic_number}
+                      onChange={handleChange}
+                      className="admin-settings-input"
+                    />
+                  ) : (
+                    <p className="admin-settings-value">{user.nic_number}</p>
+                  )}
+                </div>
+                <div className="admin-settings-field">
+                  <label>Role</label>
+                  <p className="admin-settings-value">Administrator</p>
+                </div>
+                <div className="admin-settings-field">
+                  <label>Email Address</label>
+                  {isEditing ? (
+                    <input
+                      type="email"
+                      name="email"
+                      value={user.email}
+                      onChange={handleChange}
+                      className="admin-settings-input"
+                    />
+                  ) : (
+                    <p className="admin-settings-value">{user.email}</p>
+                  )}
+                </div>
+                <div className="admin-settings-field">
+                  <label>Resident Address</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="residentAddress"
+                      value={user.residentAddress}
+                      onChange={handleChange}
+                      className="admin-settings-input"
+                    />
+                  ) : (
+                    <p className="admin-settings-value">{user.residentAddress}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={isEditing ? handleSaveProfile : handleEditClick}
+              className="admin-settings-edit-button"
+            >
+              {isEditing ? 'Save Changes' : 'Edit Profile'}
             </button>
           </div>
         </div>

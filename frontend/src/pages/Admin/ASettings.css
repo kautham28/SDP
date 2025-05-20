@@ -2,142 +2,203 @@
 .admin-settings-page-container {
     display: flex;
     min-height: 100vh;
-  }
-  
-  .admin-settings-main-content {
+    height: 100vh;
+    width: 100vw;
+    background-color: rgb(201, 239, 234); /* Updated from white to match other admin/manager pages */
+}
+
+.admin-settings-main-content {
     flex-grow: 1;
-    padding: 20px;
-    margin-left: 250px; /* Adjust for the sidebar width */
-    margin-top: 70px; /* Prevent content from going under the navbar */
-    background-color: rgb(201, 239, 234); /* Light background for the main content */
-  }
-  
-  .admin-settings-profile-content {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #fff;
+    padding: 0;
+    margin-left: 250px;
+    margin-top: 0;
+    background-color:rgb(201, 239, 234); /* Updated from #f5f7fa to a blue shade used in admin tables */
+    height: 100vh;
+    width: calc(100vw - 250px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-settings-profile-content {
+    width: 90%;
+    height: 85vh;
+    background-color: #e6f7ff; /* Updated from #fff to light blue used in admin tables */
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    height: 80vh; /* Set the height to enable scroll */
-    overflow-y: auto; /* Enable vertical scroll */
-  }
-  
-  .admin-settings-title {
-    font-size: 32px;
-    color: #003f4f; /* Dark teal color */
-    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: auto;
+}
+
+.admin-settings-title {
+    font-size: 24px;
     font-weight: bold;
-    text-align: center;
-  }
-  
-  .admin-settings-profile-container {
+    color: #003f4f; /* Updated to dark teal for headings */
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.admin-settings-profile-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    padding: 10px 0;
-  }
-  
-  .admin-settings-profile-picture {
-    width: 150px;
-    height: 150px;
+}
+
+/* Profile Picture */
+.admin-settings-profile-picture-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.admin-settings-profile-picture {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 20px;
-  }
-  
-  /* Input Fields */
-  .admin-settings-input {
+    margin-bottom: 10px;
+    border: 2px solid #003f4f; /* Add border for consistency */
+}
+
+.admin-settings-input-file {
+    font-size: 14px;
+    color: #666;
+    width: 100%;
+    text-align: center;
+    
+}
+
+/* Two-Column Layout */
+.admin-settings-fields {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+    background-color: #e6f7ff; /* Updated from #fff to light blue used in admin tables */
+}
+
+.admin-settings-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Fields */
+.admin-settings-field {
+    width: 100%;
+}
+
+.admin-settings-field label {
+    display: block;
+    font-size: 14px;
+    color: #003f4f; /* Updated to dark teal for labels */
+    margin-bottom: 5px;
+}
+
+.admin-settings-input {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
-    background-color: #f9f9f9;
-  }
-  
-  .admin-settings-input:focus {
-    border-color: #003f4f; /* Dark teal for focus */
+    background-color: #f9f9f9; /* Updated from #fff to match other input backgrounds */
+}
+
+.admin-settings-input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+.admin-settings-input:focus {
+    border-color: #003f4f; /* Updated to dark teal for focus */
     outline: none;
-  }
-  
-  .admin-settings-name {
-    font-size: 24px;
-    color: #003f4f; /* Dark teal color */
-    font-weight: bold;
-  }
-  
-  .admin-settings-profile-container p {
-    font-size: 18px;
-    margin: 10px 0;
-  }
-  
-  .admin-settings-profile-container p strong {
-    font-weight: bold;
-    color: #003f4f; /* Dark teal for labels */
-  }
-  
-  .admin-settings-edit-button {
-    background-color: #3498db; /* Blue button */
+}
+
+.admin-settings-value {
+    font-size: 16px;
+    color: #003f4f; /* Updated to dark teal for values */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #e6f7ff; /* Updated from #f9f9f9 to light blue */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-settings-note {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* Save Button */
+.admin-settings-edit-button {
+    background-color: #003f4f; /* Updated to dark teal */
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 10px 20px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
     margin-top: 20px;
     width: 200px;
-  }
-  
-  .admin-settings-edit-button:hover {
-    background-color: #2980b9; /* Darker blue on hover */
-  }
-  
-  /* Edit Mode */
-  .admin-settings-profile-container input[type="text"],
-  .admin-settings-profile-container input[type="email"] {
-    width: 80%;
-    max-width: 500px;
-  }
-  
-  .admin-settings-profile-container input[type="text"]:disabled,
-  .admin-settings-profile-container input[type="email"]:disabled {
-    background-color: #e9ecef;
-    cursor: not-allowed;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
+}
+
+.admin-settings-edit-button:hover {
+    background-color: #2980b9; /* Blue on hover for consistency */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
     .admin-settings-page-container {
-      flex-direction: column;
+        flex-direction: column;
     }
-  
+
     .admin-settings-main-content {
-      margin-left: 0;
-      margin-top: 0;
-      padding: 10px;
+        margin-left: 0;
+        margin-top: 0;
+        padding: 10px;
+        width: 100vw;
     }
-  
+
     .admin-settings-profile-content {
-      padding: 20px;
-      width: 100%;
+        padding: 20px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
     }
-  
-    .admin-settings-profile-container {
-      margin-top: 20px;
+
+    .admin-settings-fields {
+        flex-direction: column;
     }
-  
-    .admin-settings-profile-picture {
-      width: 120px;
-      height: 120px;
+
+    .admin-settings-column {
+        width: 100%;
     }
-  
-    .admin-settings-edit-button {
-      width: 100%;
+}
+
+@media (max-width: 900px) {
+    .admin-settings-main-content {
+        margin-left: 0;
+        width: 100vw;
+        padding: 0;
     }
-  }
-  
+
+    .admin-settings-profile-content {
+        padding: 20px;
+        width: 100vw;
+        max-width: 100vw;
+    }
+}

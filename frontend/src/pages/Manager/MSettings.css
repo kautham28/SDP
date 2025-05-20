@@ -2,60 +2,117 @@
 .manager-settings-page-container {
     display: flex;
     min-height: 100vh;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgb(201, 239, 234);
 }
 
 .manager-settings-main-content {
     flex-grow: 1;
-    padding: 20px;
+    padding: 0;
     margin-left: 250px; /* Adjust for the sidebar width */
-    margin-top: 70px; /* Prevent content from going under the navbar */
+    margin-top: 0;
     background-color: rgb(201, 239, 234); /* Light background for the main content */
+    height: 100vh;
+    width: calc(100vw - 250px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .manager-settings-profile-content {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #fff;
+    width: 90%;
+    height: 85vh;
+    background-color: #e6f7ff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    height: 80vh; /* Set the height to enable scroll */
-    overflow-y: auto; /* Enable vertical scroll */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: auto;
 }
 
 .manager-settings-title {
-    font-size: 32px;
+    font-size: 24px;
+    font-weight: bold;
     color: #003f4f; /* Dark teal color */
     margin-bottom: 20px;
-    font-weight: bold;
-    text-align: center;
+    text-align: left;
 }
 
 .manager-settings-profile-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    padding: 10px 0;
+}
+
+.manager-settings-profile-picture-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
 .manager-settings-profile-picture {
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    border: 2px solid #003f4f;
 }
 
-/* Input Fields */
+.manager-settings-input-file {
+    font-size: 14px;
+    color: #666;
+    width: 100%;
+    text-align: center;
+}
+
+.manager-settings-fields {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+    background-color: #e6f7ff;
+}
+
+.manager-settings-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.manager-settings-field {
+    width: 100%;
+}
+
+.manager-settings-field label {
+    display: block;
+    font-size: 14px;
+    color: #003f4f;
+    margin-bottom: 5px;
+}
+
 .manager-settings-input {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
     background-color: #f9f9f9;
+}
+
+.manager-settings-input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
 }
 
 .manager-settings-input:focus {
@@ -63,29 +120,30 @@
     outline: none;
 }
 
-.manager-settings-name {
-    font-size: 24px;
-    color: #003f4f; /* Dark teal color */
-    font-weight: bold;
+.manager-settings-value {
+    font-size: 16px;
+    color: #003f4f;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #e6f7ff;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.manager-settings-profile-container p {
-    font-size: 18px;
-    margin: 10px 0;
-}
-
-.manager-settings-profile-container p strong {
-    font-weight: bold;
-    color: #003f4f; /* Dark teal for labels */
+.manager-settings-note {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
 }
 
 .manager-settings-edit-button {
-    background-color: #3498db; /* Blue button */
+    background-color: #003f4f;
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 10px 20px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
@@ -120,10 +178,21 @@
         margin-left: 0;
         margin-top: 0;
         padding: 10px;
+        width: 100vw;
     }
 
     .manager-settings-profile-content {
         padding: 20px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .manager-settings-fields {
+        flex-direction: column;
+    }
+
+    .manager-settings-column {
         width: 100%;
     }
 
@@ -138,5 +207,19 @@
 
     .manager-settings-edit-button {
         width: 100%;
+    }
+}
+
+@media (max-width: 900px) {
+    .manager-settings-main-content {
+        margin-left: 0;
+        width: 100vw;
+        padding: 0;
+    }
+    .manager-settings-profile-content {
+        padding: 20px 5px;
+        width: 100vw;
+        max-width: 100vw;
+        height: 100vh;
     }
 }
