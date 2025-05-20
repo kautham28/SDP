@@ -3,9 +3,8 @@ const router = express.Router();
 const db = require("../config/db.js");
 const authMiddleware = require("../middleware/authMiddleware");
 const nodemailer = require("nodemailer");
-const bcrypt = require("bcrypt");
 
-// Configure nodemailer transporter (reusing the same configuration)
+// Configure nodemailer transporter
 const transporter = nodemailer.createTransport({
   service: process.env.EMAIL_SERVICE || "gmail",
   auth: {
@@ -14,7 +13,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Fetch all users with status = 'working'
+// Fetch all users
 router.get("/", (req, res) => {
   const sql = "SELECT id, username, role, email, phone_number, address, ic_number, date_of_birth, status, photo_link FROM users";
   db.query(sql, (err, results) => {
@@ -48,22 +47,28 @@ router.post("/add-user", async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // Validate role
-  const validRoles = ["Admin", "Manager", "Rep"];
-  if (!validRoles.includes(role)) {
-    return res.status(400).json({ message: "Invalid role" });
+  // Validate role (case-insensitive)
+  const validRoles = ["admin", "manager", "rep"];
+  const normalizedRole = role.toLowerCase();
+  if (!validRoles.includes(normalizedRole)) {
+    console.log(`Invalid role received: ${role}`);
+    return res.status(400).json({ message: "Invalid role. Only Admin, Manager, or Rep roles are allowed." });
   }
 
-  try {
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+  // Normalize role for database (capitalize first letter)
+  const formattedRole = normalizedRole.charAt(0).toUpperCase() + normalizedRole.slice(1);
 
-    // Insert user into database
+  try {
+    console.log(`Attempting to add user: ${username} with role: ${formattedRole}`);
+    // Insert user into database with plain text password
     const sql = "INSERT INTO users (username, password, role, email, phone_number, address, ic_number, date_of_birth) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    db.query(sql, [username, hashedPassword, role, email, phone_number, address, ic_number, date_of_birth], (err, result) => {
+    db.query(sql, [username, password, formattedRole, email, phone_number, address, ic_number, date_of_birth], (err, result) => {
       if (err) {
-        return res.status(500).json({ error: err.message });
+        console.error("Database error:", err);
+        return res.status(500).json({ error: `Failed to add user: ${err.message}` });
       }
+
+      console.log(`User added successfully: ${username}, ID: ${result.insertId}`);
 
       // Send email to the user with their details
       const mailOptions = {
@@ -84,7 +89,7 @@ router.post("/add-user", async (req, res) => {
             </tr>
             <tr style="border: 1px solid #ddd;">
               <td style="padding: 8px; font-weight: bold;">Role:</td>
-              <td style="padding: 8px;">${role}</td>
+              <td style="padding: 8px;">${formattedRole}</td>
             </tr>
             <tr style="border: 1px solid #ddd;">
               <td style="padding: 8px; font-weight: bold;">Email:</td>
@@ -117,7 +122,6 @@ router.post("/add-user", async (req, res) => {
       transporter.sendMail(mailOptions, (emailErr, info) => {
         if (emailErr) {
           console.error("Email sending error:", emailErr);
-          // Note: We still return success for user creation even if email fails
           return res.status(201).json({
             message: "User created successfully, but failed to send email",
             userId: result.insertId,
@@ -151,10 +155,8 @@ router.put("/:id", authMiddleware, async (req, res) => {
   let fields = ["username = ?", "email = ?", "phone_number = ?", "address = ?", "ic_number = ?", "date_of_birth = ?"];
   let values = [username, email, phone_number, address, ic_number, date_of_birth];
 
-  // If password is provided, hash and update it
+  // If password is provided, update it as plain text
   if (password) {
-    const bcrypt = require("bcrypt");
-    password = await bcrypt.hash(password, 10);
     fields.push("password = ?");
     values.push(password);
   }

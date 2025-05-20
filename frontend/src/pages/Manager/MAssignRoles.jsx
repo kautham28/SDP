@@ -8,8 +8,6 @@ import Swal from "sweetalert2";
 import "./MAssignRoles.css";
 
 const MAssignRoles = () => {
-  const [selectedRole, setSelectedRole] = useState("");
-  const [userName, setUserName] = useState("");
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -26,6 +24,7 @@ const MAssignRoles = () => {
   });
   const [error, setError] = useState("");
 
+  // Fetch users on component mount
   useEffect(() => {
     fetch("http://localhost:5000/users")
       .then((response) => response.json())
@@ -35,30 +34,24 @@ const MAssignRoles = () => {
       .catch((error) => console.error("Error fetching users:", error));
   }, []);
 
-  const handleAssignRole = () => {
-    if (userName && selectedRole) {
-      setAssignedUsers([...assignedUsers, { username: userName, role: selectedRole }]);
-      setUserName("");
-      setSelectedRole("");
-    } else {
-      alert("Please enter a name and select a role.");
-    }
-  };
-
+  // Show user details modal
   const handleShowModal = (user) => {
     setSelectedUser(user);
     setShowModal(true);
   };
 
+  // Close user details modal
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedUser(null);
   };
 
+  // Show add user modal
   const handleAddUserModal = () => {
     setShowAddUserModal(true);
   };
 
+  // Close add user modal and reset form
   const handleCloseAddUserModal = () => {
     setShowAddUserModal(false);
     setError("");
@@ -74,6 +67,7 @@ const MAssignRoles = () => {
     });
   };
 
+  // Add new user to the system
   const handleAddNewUser = async () => {
     const { username, password, role, email, phone_number, address, ic_number, date_of_birth } = newUser;
     if (!username || !password || !role || !email || !phone_number || !address || !ic_number || !date_of_birth) {
@@ -108,14 +102,16 @@ const MAssignRoles = () => {
         });
         alert("User added successfully!");
       } else {
-        setError(data.message || "Failed to add user");
+        console.error("Add user failed:", data, response.status, response.statusText);
+        setError(data.message || `Failed to add user: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error adding user:", error);
-      setError("An error occurred while adding the user");
+      setError(`An error occurred while adding the user: ${error.message}`);
     }
   };
 
+  // Update user status
   const handleStatusChange = async (userId, newStatus) => {
     try {
       const response = await fetch(`http://localhost:5000/users/${userId}/status`, {
@@ -135,14 +131,15 @@ const MAssignRoles = () => {
         alert(`User status updated to ${newStatus}`);
       } else {
         const data = await response.json();
-        alert(data.message || "Failed to update status");
+        alert(data.message || `Failed to update status: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("An error occurred while updating the status");
+      alert(`An error occurred while updating the status: ${error.message}`);
     }
   };
 
+  // Terminate user with confirmation
   const handleTerminateUser = (user) => {
     Swal.fire({
       title: "Are you sure?",
@@ -164,6 +161,7 @@ const MAssignRoles = () => {
     });
   };
 
+  // Rejoin user with confirmation
   const handleRejoinUser = (user) => {
     Swal.fire({
       title: "Are you sure?",
@@ -297,11 +295,11 @@ const MAssignRoles = () => {
                     </tr>
                   </tbody>
                 </table>
-                {selectedUser.photo && (
+                {selectedUser.photo_link && (
                   <div className="m-user-photo">
                     <strong>Photo:</strong>
                     <img
-                      src={`data:image/jpeg;base64,${selectedUser.photo}`}
+                      src={`data:image/jpeg;base64,${selectedUser.photo_link}`}
                       alt="User Photo"
                       style={{ width: "100px", height: "100px", marginTop: "10px" }}
                     />
@@ -385,10 +383,15 @@ const MAssignRoles = () => {
                   }
                   className="m-input-field"
                 />
+                <label htmlFor="role-dropdown" className="m-input-label">
+                  Roles
+                </label>
                 <MDropdown
+                  id="role-dropdown"
                   options={["Admin", "Manager", "Rep"]}
                   selectedValue={newUser.role}
                   onSelect={(role) => setNewUser({ ...newUser, role })}
+                  placeholder="Select a role"
                 />
                 <MButton
                   label="Add User"

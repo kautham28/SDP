@@ -19,8 +19,11 @@ const RepAchievementCard = ({ rep, onMonthYearChange }) => {
     datasets: [
       {
         data: [percentage, 100 - percentage],
-        backgroundColor: ["#36A2EB", "#E0E0E0"],
-        hoverBackgroundColor: ["#36A2EB", "#E0E0E0"],
+      
+        hoverBackgroundColor: ["#00C49F", "#ec7063"],
+        backgroundColor: ['#00C49F', '#ec7063'],
+                        borderColor: ['#000000', '#000000'],
+                        borderWidth: 1,
       },
     ],
   };
@@ -46,9 +49,11 @@ const RepAchievementCard = ({ rep, onMonthYearChange }) => {
   };
 
   const filename = rep.photo_link ? rep.photo_link.split("/").pop() : null;
-  const imageUrl = filename && imageMap[filename]
-    ? imageMap[filename]
-    : "https://placehold.co/150?text=No+Image";
+  const imageUrl = rep.photo_link
+    ? `http://localhost:5000/${rep.photo_link.replace(/^\/+/, "")}`
+    : (filename && imageMap[filename]
+        ? imageMap[filename]
+        : "https://placehold.co/150?text=No+Image");
 
   return (
     <div

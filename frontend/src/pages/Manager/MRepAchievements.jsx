@@ -275,7 +275,7 @@ export default function MRepAchievements() {
                 type="submit"
                 style={{
                   padding: "0.5rem 1rem",
-                  backgroundColor: "#36A2EB",
+                  backgroundColor: "#003f4f",
                   color: "#fff",
                   border: "none",
                   borderRadius: "4px",
