@@ -70,6 +70,34 @@ const MAssignRoles = () => {
   // Add new user to the system
   const handleAddNewUser = async () => {
     const { username, password, role, email, phone_number, address, ic_number, date_of_birth } = newUser;
+
+    // Username: only letters
+    if (!/^[A-Za-z]+$/.test(username)) {
+      setError("Username must contain only letters");
+      return;
+    }
+    // Password: accept all characters (no validation)
+
+    // Email: must contain @
+    if (!/^.+@.+\..+$/.test(email)) {
+      setError("Invalid email address");
+      return;
+    }
+    // Phone number: exactly 10 digits
+    if (!/^\d{10}$/.test(phone_number)) {
+      setError("Phone number must be exactly 10 digits");
+      return;
+    }
+    // Address: allow numbers and letters (spaces allowed)
+    if (!/^[A-Za-z0-9\s]+$/.test(address)) {
+      setError("Address can only contain letters, numbers, and spaces");
+      return;
+    }
+    // IC number: all digits, or all digits except last is letter
+    if (!/^\d+$/.test(ic_number) && !/^\d+[A-Za-z]$/.test(ic_number)) {
+      setError("IC Number must be all digits or digits with last character as a letter");
+      return;
+    }
     if (!username || !password || !role || !email || !phone_number || !address || !ic_number || !date_of_birth) {
       setError("All fields are required");
       return;
@@ -316,7 +344,7 @@ const MAssignRoles = () => {
                 </button>
                 <h2>Add New User</h2>
                 {error && (
-                  <p className="m-error-message" style={{ color: "red" }}>
+                  <p className="m-error-message" style={{ color: "red", marginBottom: 8 }}>
                     {error}
                   </p>
                 )}
@@ -324,63 +352,91 @@ const MAssignRoles = () => {
                   type="text"
                   placeholder="Username"
                   value={newUser.username}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, username: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser({ ...newUser, username: value });
+                    if (!/^[A-Za-z]*$/.test(value)) {
+                      setError("Username must contain only letters");
+                    } else {
+                      setError("");
+                    }
+                  }}
                   className="m-input-field"
                 />
                 <input
                   type="password"
                   placeholder="Password"
                   value={newUser.password}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, password: e.target.value })
-                  }
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                   className="m-input-field"
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={newUser.email}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, email: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser({ ...newUser, email: value });
+                    if (value && !/^.+@.+\..+$/.test(value)) {
+                      setError("Invalid email address");
+                    } else {
+                      setError("");
+                    }
+                  }}
                   className="m-input-field"
                 />
                 <input
                   type="text"
                   placeholder="Phone Number"
                   value={newUser.phone_number}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, phone_number: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser({ ...newUser, phone_number: value });
+                    if (value && !/^\d{0,10}$/.test(value)) {
+                      setError("Phone number must be up to 10 digits");
+                    } else if (value.length === 10 && !/^\d{10}$/.test(value)) {
+                      setError("Phone number must be exactly 10 digits");
+                    } else {
+                      setError("");
+                    }
+                  }}
                   className="m-input-field"
                 />
                 <input
                   type="text"
                   placeholder="Address"
                   value={newUser.address}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, address: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser({ ...newUser, address: value });
+                    if (value && !/^[A-Za-z0-9\s]*$/.test(value)) {
+                      setError("Address can only contain letters, numbers, and spaces");
+                    } else {
+                      setError("");
+                    }
+                  }}
                   className="m-input-field"
                 />
                 <input
                   type="text"
                   placeholder="IC Number"
                   value={newUser.ic_number}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, ic_number: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser({ ...newUser, ic_number: value });
+                    if (value && !/^\d*$/.test(value) && !/^\d+[A-Za-z]$/.test(value)) {
+                      setError("IC Number must be all digits or digits with last character as a letter");
+                    } else {
+                      setError("");
+                    }
+                  }}
                   className="m-input-field"
                 />
                 <input
                   type="date"
                   placeholder="Date of Birth"
                   value={newUser.date_of_birth}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, date_of_birth: e.target.value })
-                  }
+                  onChange={(e) => setNewUser({ ...newUser, date_of_birth: e.target.value })}
                   className="m-input-field"
                 />
                 <label htmlFor="role-dropdown" className="m-input-label">
